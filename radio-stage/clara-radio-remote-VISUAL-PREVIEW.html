@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#211008">
+<title>Clara's Gamehouse Radio Remote — Visual Preview</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#100706;color:#ffe6b2;font-family:Georgia,'Times New Roman',serif}
+.preview-banner{max-width:941px;margin:0 auto;padding:9px 12px;background:linear-gradient(120deg,#583219,#261309);border-bottom:2px solid #a77a44;text-align:center}
+.preview-banner strong{font:800 13px/1.25 Arial,sans-serif;color:#ffdc96;letter-spacing:.06em}
+.preview-banner p{margin:4px 0 0;color:#e8ca96;font:12px/1.35 Arial,sans-serif}
+.main{margin:0 auto;max-width:941px}
+.stage{position:relative;width:100%;aspect-ratio:941/1672;overflow:hidden;background:#231008;user-select:none}
+.stage-art{display:block;width:100%;height:100%;object-fit:fill;pointer-events:none}
+#btn-jukebox{position:absolute;left:71.5%;top:16.8%;width:27.5%;height:16.2%;z-index:10;border:0;background:transparent;cursor:pointer}
+#btn-jukebox:focus-visible{outline:3px solid #ffe3a0}
+.preview-footer{max-width:941px;margin:auto;padding:13px 16px 20px;text-align:center;font:13px/1.45 Arial,sans-serif;color:#dcc39a}
+.preview-footer b{color:#ffe3af}
+[hidden]{display:none!important}
+</style>
+<link href="solitaire-phase1-staging/css/gamehouse-jukebox-visual.css" rel="stylesheet">
+<style id="clara-review-remote-style">
+/* Clara: Gamehouse saloon jukebox controls — overlay only, approved scene stays untouched.
+   Coordinates relate to the locked 941x1672 art. The remote sits on the
+   lower-left wooden tabletop, above the painted four game controls. */
+.stage .tscms-radio-remote {
+  position:absolute;z-index:9;left:3.5%;top:72.5%;width:45.8%;height:9.1%;
+  box-sizing:border-box;display:grid;grid-template-rows:17% 54% 29%;
+  padding:1.1% 1.7% 1.25%;border-radius:9px;
+  border:2px solid #bd8849;isolation:isolate;color:#f8e2a9;
+  background:linear-gradient(155deg,#845127 0%,#3a1b0d 13%,#261007 49%,#60351b 91%,#8e542c);
+  box-shadow:inset 0 0 0 2px #180b06,inset 0 3px 5px #f9d58c33,
+    inset 0 -3px 7px #050100aa,0 4px 8px #080302cb,0 0 0 1px #3b1c0f;
+  touch-action:manipulation;overflow:hidden;
+}
+.stage .tscms-radio-remote:before{content:"";position:absolute;inset:5px;z-index:-1;pointer-events:none;
+  border:1px solid #bd8b5159;border-radius:6px;background:repeating-linear-gradient(175deg,transparent 0 9px,#f9bc6220 10px,transparent 12px 23px)}
+.tscms-radio-remote .remote-brand{display:flex;align-items:center;justify-content:space-between;
+  margin:0 2px;color:#f5cb85;font:800 clamp(7px,1.45vw,13px)/1 Arial,sans-serif;
+  letter-spacing:.10em;text-shadow:0 1px 2px #000;white-space:nowrap}
+.tscms-radio-remote .remote-indicator{width:7px;height:7px;flex:none;border-radius:50%;
+  background:#7b5635;box-shadow:inset 0 1px 2px #080400,0 0 0 1px #e8ba6e}
+.tscms-radio-remote[data-playing="true"] .remote-indicator{background:#72f1b0;box-shadow:0 0 7px #36efa1,0 0 0 1px #d6bd80}
+.tscms-radio-remote .remote-transport{display:grid;grid-template-columns:1fr 1.27fr 1fr;gap:4%;align-items:stretch;padding:1px 4px}
+.tscms-radio-remote .remote-key{appearance:none;min-width:0;min-height:0;display:grid;place-items:center;
+  border:1px solid #d4a15c;border-radius:6px;color:#ffe1a3;
+  background:linear-gradient(160deg,#78502e,#321a0f 49%,#1c0d08 50%,#5d3219);
+  box-shadow:inset 0 1px 2px #ffe4a54a,0 2px 3px #080303;
+  font:bold clamp(14px,3vw,27px)/1 Arial,sans-serif;text-shadow:0 2px 3px #000;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.tscms-radio-remote .remote-key.remote-toggle{color:#fbe3a6;border-color:#e9bb71;
+  background:radial-gradient(ellipse at 50% 22%,#935e2c,#3b180b 75%,#211008)}
+.tscms-radio-remote .remote-key:active:not(:disabled){transform:translateY(1px);filter:brightness(1.2)}
+.tscms-radio-remote .remote-key:disabled{opacity:.54;cursor:wait}
+.tscms-radio-remote .remote-key:focus-visible,.tscms-radio-remote input:focus-visible{outline:2px solid #fff4ce;outline-offset:2px}
+.tscms-radio-remote .remote-volume{display:grid;grid-template-columns:17% 1fr 16%;
+  align-items:center;gap:2%;padding:0 5%;font:700 clamp(9px,2vw,15px)/1 Arial,sans-serif;color:#edc78a}
+.tscms-radio-remote .remote-volume-icon{text-align:center;line-height:1}
+.tscms-radio-remote .remote-volume-level{font-size:clamp(7px,1.4vw,11px);text-align:right;white-space:nowrap}
+.tscms-radio-remote input[type=range]{appearance:none;-webkit-appearance:none;width:100%;min-width:0;
+  height:5px;border:1px solid #bd8b4a;border-radius:20px;
+  background:linear-gradient(90deg,#ecc17b 0 var(--remote-fill,75%),#26130d var(--remote-fill,75%) 100%);cursor:pointer}
+.tscms-radio-remote input[type=range]::-webkit-slider-thumb{appearance:none;width:15px;height:15px;
+  background:radial-gradient(circle at 30% 25%,#fff3cf,#d6a059 55%,#815024);border:1px solid #48280c;border-radius:50%;
+  box-shadow:0 1px 4px #000}
+.tscms-radio-remote input[type=range]::-moz-range-thumb{width:15px;height:15px;border:1px solid #48280c;
+  background:#e8bc76;border-radius:50%}
+.stage .tscms-radio-face{position:absolute;z-index:9;pointer-events:none;
+  left:80.95%;top:22.70%;width:15.0%;height:8.55%;
+  display:grid;grid-template-rows:18% 49% 33%;overflow:hidden;
+  padding:1px;border:1px solid #8b673d;border-radius:4px;
+  background:linear-gradient(155deg,#080d12,#130a11 50%,#080d17);
+  box-shadow:inset 0 0 5px #28f6f54d,0 0 0 1px #120806,0 1px 8px #000a;
+  color:#ffe8ba;text-align:center}
+.tscms-radio-face .radio-face-brand{display:flex;align-items:center;justify-content:center;
+  color:#ffe29c;text-shadow:0 0 4px #e9a7479e;
+  font:800 clamp(5px,.93vw,9px)/1.05 Arial,sans-serif;letter-spacing:.03em}
+.tscms-radio-face .radio-face-track{min-height:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;overflow:hidden;padding:0 2px;line-height:1.08}
+.tscms-radio-face .radio-face-title{font:800 clamp(7px,1.32vw,12px)/1.08 Georgia,serif;
+  max-width:100%;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+  text-overflow:ellipsis;overflow:hidden;overflow-wrap:anywhere}
+.tscms-radio-face .radio-face-artist{font:600 clamp(6px,.95vw,9px)/1.04 Arial,sans-serif;
+  color:#8ee2e9;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.tscms-radio-face canvas{width:100%;height:100%;min-height:0;display:block;background:#03080b}
+@media(max-width:420px){
+  .stage .tscms-radio-remote{border-width:1px;border-radius:6px}
+  .tscms-radio-remote .remote-transport{gap:3%;padding:0 1px}
+  .tscms-radio-remote .remote-key{border-radius:4px}
+  .tscms-radio-remote .remote-volume{padding:0 2%}
+  .tscms-radio-remote input[type=range]::-webkit-slider-thumb{height:13px;width:13px}
+}
+@media(prefers-reduced-motion:reduce){
+  .stage .tscms-radio-remote *, .stage .tscms-radio-face *{animation:none!important;transition:none!important}
+}
+
+.tscms-radio-remote .radio-remote-srstatus{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+</style></head><body>
+<header class="preview-banner">
+<strong>🎵 CLARA'S SALOON RADIO — PREVIEW</strong>
+<p>Try Play, Skip and Volume below. Tap the jukebox for the full player.</p>
+</header>
+<main class="main" aria-label="Gamehouse scene and working radio remote preview">
+<div class="stage" id="stage">
+<img class="stage-art" src="assets/TSCMS_APPROVED_MASTER_DOWNLOAD.png" alt="Approved Gamehouse saloon environment with a jukebox at upper right">
+<button id="btn-jukebox" type="button" aria-label="Open the full TSCMS Radio jukebox"></button>
+</div>
+</main>
+<footer class="preview-footer">
+<b>Radio-only review.</b> The saloon art is the approved original. The playable card engine is intentionally not loaded here, so opening this preview cannot replace or reset your saved Solitaire game.
+</footer>
+<script src="solitaire-phase1-staging/js/gamehouse-jukebox.js"></script>
+<script src="solitaire-phase1-staging/js/gamehouse-jukebox-v7-ui.js"></script>
+<script id="clara-review-radio-js">
+/* Clara / TSCMS Gamehouse: saloon radio remote and miniature cabinet display.
+ * VIEW LAYER ONLY: uses the existing TSCMSJukebox single audio element.
+ * Real FFT from J.getSpectrumFrame() only; no fabricated reactive animation.
+ * The full approved V7 jukebox, its equalizer, and gameplay are unchanged.
+ */
+(function () {
+  'use strict';
+  function init() {
+    const J=window.TSCMSJukebox, stage=document.getElementById('stage');
+    if(!stage || !J || document.getElementById('tscms-radio-remote')) return;
+
+    const remote=document.createElement('section');
+    remote.id='tscms-radio-remote';
+    remote.className='tscms-radio-remote';
+    remote.setAttribute('aria-label','TSCMS Radio jukebox remote');
+    remote.dataset.playing='false';
+    remote.innerHTML='<div class="remote-brand"><span>♫ JUKEBOX REMOTE</span><span class="remote-indicator" aria-hidden="true"></span></div>'+
+      '<div class="remote-transport" role="group" aria-label="Radio playback">'+
+        '<button class="remote-key" id="radio-remote-prev" type="button" aria-label="Previous song" title="Previous song" disabled>⏮</button>'+
+        '<button class="remote-key remote-toggle" id="radio-remote-play" type="button" aria-label="Play radio" title="Play radio" disabled>▶</button>'+
+        '<button class="remote-key" id="radio-remote-next" type="button" aria-label="Next song" title="Next song" disabled>⏭</button>'+
+      '</div>'+
+      '<label class="remote-volume"><span class="remote-volume-icon" aria-hidden="true">♪</span>'+
+        '<input id="radio-remote-volume" type="range" min="0" max="100" step="1" aria-label="Radio volume">'+
+        '<span class="remote-volume-level" aria-hidden="true">100%</span></label>'+
+      '<span class="radio-remote-srstatus" role="status" aria-live="polite"></span>';
+
+    const face=document.createElement('section');
+    face.id='tscms-radio-face';
+    face.className='tscms-radio-face';
+    face.setAttribute('aria-label','TSCMS Radio song and equalizer');
+    face.innerHTML='<div class="radio-face-brand">TSCMS RADIO</div>'+
+      '<div class="radio-face-track">'+
+        '<span class="radio-face-title" id="radio-face-title">Radio Ready</span>'+
+        '<span class="radio-face-artist" id="radio-face-artist">Tap ▶ to listen</span></div>'+
+      '<canvas id="radio-face-eq" aria-label="Static equalizer until verified music frequencies are available" role="img"></canvas>';
+
+    // Draw these AFTER the artwork and BEFORE the game controls in the stack.
+    // Neither the approved photographic master nor the painted jukebox is edited.
+    stage.append(remote,face);
+    const prev=remote.querySelector('#radio-remote-prev');
+    const play=remote.querySelector('#radio-remote-play');
+    const next=remote.querySelector('#radio-remote-next');
+    const volume=remote.querySelector('#radio-remote-volume');
+    const volumeLevel=remote.querySelector('.remote-volume-level');
+    const srstatus=remote.querySelector('.radio-remote-srstatus');
+    const title=face.querySelector('#radio-face-title');
+    const artist=face.querySelector('#radio-face-artist');
+    const canvas=face.querySelector('#radio-face-eq');
+    let raf=0,lastRefresh=0,lastStatic=-1,resizeStamp='';
+
+    function currentState(){
+      return typeof J._state==='function' ? J._state() : {ready:false,count:0};
+    }
+    function mirrorModalVolume(){
+      // The full jukebox preloads independently; keep its volume slider in
+      // sync if present, without causing recursive input events.
+      const host=document.getElementById('tscms-v7-modal-host');
+      const control=host && host.shadowRoot && host.shadowRoot.getElementById('volume');
+      if(control){
+        control.value=volume.value;
+        control.style.setProperty('--fill',volume.value+'%');
+      }
+    }
+    function volumeDisplay(syncFromPlayer) {
+      let val=syncFromPlayer ? Math.round(J.getVolume()*100) : Number(volume.value);
+      if(!Number.isFinite(val)) val=100;
+      val=Math.max(0,Math.min(100,val));
+      volume.value=String(val);
+      volume.style.setProperty('--remote-fill',val+'%');
+      volumeLevel.textContent=val+'%';
+    }
+    function updateTrack(){
+      const track=J.currentTrack&&J.currentTrack();
+      const state=currentState();
+      const song=track&&track.title|| (state.ready?'TSCMS Radio':'Radio Loading');
+      const singer=track&&track.artist||'Suno Country Music Spot';
+      title.textContent=song;
+      artist.textContent=singer;
+      face.setAttribute('aria-label','TSCMS Radio — '+song+' by '+singer);
+      title.title=song;
+      artist.title=singer;
+      remote.setAttribute('aria-label','Jukebox remote. '+song+' by '+singer);
+      srstatus.textContent=state.ready ? 'Selected '+song+' by '+singer : 'Loading TSCMS Radio';
+    }
+    function updateControls(){
+      const state=currentState(),playing=!!J.isPlaying();
+      prev.disabled=play.disabled=next.disabled=!state.ready;
+      play.textContent=playing?'❚❚':'▶';
+      play.title=playing?'Pause radio':'Play radio';
+      play.setAttribute('aria-label',playing?'Pause radio':'Play radio');
+      play.setAttribute('aria-pressed',String(playing));
+      remote.dataset.playing=String(playing);
+      volumeDisplay(true);
+      if(!playing) {stopFrames();drawBars(null);}
+      else startFrames();
+    }
+    function stopFrames(){if(raf){cancelAnimationFrame(raf);raf=0;}lastRefresh=0;lastStatic=-1;}
+    function setUpCanvas(){
+      const box=canvas.getBoundingClientRect();
+      const dpr=Math.min(window.devicePixelRatio||1,2);
+      const w=Math.max(50,Math.round(box.width*dpr));
+      const h=Math.max(20,Math.round(box.height*dpr));
+      const sz=w+'x'+h;
+      if(sz!==resizeStamp){canvas.width=w;canvas.height=h;resizeStamp=sz;}
+    }
+    function drawBars(spectrum){
+      setUpCanvas();
+      const ctx=canvas.getContext('2d');
+      if(!ctx)return;
+      const w=canvas.width,h=canvas.height,count=13,gap=Math.max(1,Math.round(w*.022));
+      const pad=Math.max(2,Math.floor(w*.038));
+      const bw=(w-2*pad-(count-1)*gap)/count;
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle='#03080b';ctx.fillRect(0,0,w,h);
+      const trueSignal=!!(spectrum && spectrum.bins && spectrum.bins.length);
+      canvas.setAttribute('aria-label',trueSignal?'Real measured music frequency equalizer':'Decorative stationary bars; real frequency data unavailable or music paused');
+      face.dataset.eqMode=trueSignal?'real':'stationary';
+      for(let i=0;i<count;i++){
+        let fraction;
+        if(trueSignal){
+          const bins=spectrum.bins;
+          // Log-spaced frequency buckets, read ONLY actual analyser data.
+          const maxIndex=Math.min(bins.length-1,430);
+          const start=Math.max(1,Math.floor(Math.pow(maxIndex,(i+.1)/count)));
+          const end=Math.max(start+1,Math.floor(Math.pow(maxIndex,(i+1)/count)));
+          let peak=0;
+          for(let b=start;b<=Math.min(end,maxIndex);b++)peak=Math.max(peak,bins[b]);
+          fraction=Math.max(.06,Math.min(.98,peak/255));
+        } else {
+          const still=[.21,.28,.17,.37,.32,.44,.29,.35,.48,.28,.39,.24,.19];
+          fraction=still[i];
+        }
+        const bh=Math.max(2,Math.round((h-4)*fraction));
+        const x=pad+i*(bw+gap),y=h-bh-2;
+        const palette=[['#67f5fe','#087ba1'],['#ff79bc','#863562'],['#ffe88d','#916029']][i%3];
+        const fill=ctx.createLinearGradient(0,y,0,h);
+        fill.addColorStop(0,palette[0]);fill.addColorStop(1,palette[1]);
+        ctx.fillStyle=fill;ctx.fillRect(x,y,bw,bh);
+      }
+    }
+    function animate(ts){
+      raf=0;
+      if(!J.isPlaying() || document.hidden)return;
+      if(ts-lastRefresh >= 80){
+        const measured=typeof J.getSpectrumFrame==='function' ? J.getSpectrumFrame() : null;
+        // Do NOT animate invented levels if CORS prevents the real FFT.
+        if(measured){drawBars(measured);lastStatic=-1;}
+        else if(lastStatic<0){drawBars(null);lastStatic=ts;}
+        lastRefresh=ts;
+      }
+      raf=requestAnimationFrame(animate);
+    }
+    function startFrames(){
+      if(document.hidden || raf || !J.isPlaying())return;
+      raf=requestAnimationFrame(animate);
+    }
+
+    prev.addEventListener('click',()=>{
+      if(!currentState().ready)return;
+      J.prev();updateTrack();updateControls();
+    });
+    next.addEventListener('click',()=>{
+      if(!currentState().ready)return;
+      J.next();updateTrack();updateControls();
+    });
+    play.addEventListener('click',()=>{
+      if(!currentState().ready){
+        srstatus.textContent='Radio is loading. Try again shortly.';
+        return;
+      }
+      // IMPORTANT: synchronous call within tap for Samsung/Android autoplay.
+      J.toggle();
+      updateControls();
+    });
+    volume.addEventListener('input',()=>{
+      J.setVolume(Number(volume.value)/100);
+      volumeDisplay(false);
+      mirrorModalVolume();
+    });
+    document.addEventListener('tscms:jukebox',e=>{
+      const detail=e.detail||{};
+      updateTrack();updateControls();
+      if(detail.message)srstatus.textContent=detail.message;
+    });
+    J.on('trackchange',()=>{updateTrack();updateControls();});
+    document.addEventListener('visibilitychange',()=>{
+      if(document.hidden)stopFrames();
+      else {updateControls();drawBars(null);}
+    });
+    window.addEventListener('resize',()=>{resizeStamp='';drawBars(null);if(J.isPlaying())startFrames();},{passive:true});
+    // When full V7 cabinet volume is changed, refresh miniature remote.
+    document.addEventListener('input',e=>{
+      const path=typeof e.composedPath==='function' ? e.composedPath() : [];
+      if(path.some(node=>node&&node.id==='volume'))volumeDisplay(true);
+    },true);
+    // When the user opens the full cabinet, its slider should reflect any
+    // changes made on this remote, without resetting playback.
+    document.getElementById('btn-jukebox')?.addEventListener('click',()=>{
+      setTimeout(mirrorModalVolume,0);
+    });
+    updateTrack();updateControls();drawBars(null);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+  else init();
+})();
+
+</script>
+</body></html>

@@ -1,0 +1,39 @@
+name: TSCMS Favorites Pilot — STAGING SAFETY
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tscms-favorites.js'
+      - 'tscms-favorites-core.mjs'
+      - 'tscms-favorites.css'
+      - 'my-playlist.html'
+      - 'index.html'
+      - 'tscms-today.html'
+      - 'tscms-search.html'
+      - 'gamehouse.html'
+      - 'admin.html'
+      - 'tscms-favorites-owner.js'
+      - 'solitaire-phase1-staging/js/gamehouse-jukebox.js'
+      - 'favorites-pilot/**'
+      - 'scripts/test-favorites-staging.cjs'
+      - 'test-favorites-core.mjs'
+      - '.github/workflows/tscms-favorites-staging.yml'
+jobs:
+  local-contract-and-player:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JS syntax
+        run: |
+          node --check tscms-favorites.js
+          node --check tscms-favorites-core.mjs
+          node --check solitaire-phase1-staging/js/gamehouse-jukebox.js
+      - name: Owner widget and backend JavaScript syntax
+        run: |
+          node --check tscms-favorites-owner.js
+          node --check favorites-pilot/backend/team-favorites-aggregate.cjs
+      - name: Signed-out contract and single-player unit checks
+        run: node scripts/test-favorites-staging.cjs

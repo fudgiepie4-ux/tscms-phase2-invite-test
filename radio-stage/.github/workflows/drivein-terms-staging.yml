@@ -1,0 +1,21 @@
+name: TSCMS Drive-In Terms Staging
+on:
+  pull_request:
+    paths:
+      - 'drive-in-terms.html'
+      - 'videos.html'
+      - 'scripts/test-drivein-terms-staging.cjs'
+      - '.github/workflows/drivein-terms-staging.yml'
+  workflow_dispatch:
+jobs:
+  terms-preflight:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check exact-copy publication gate and print layout
+        run: node scripts/test-drivein-terms-staging.cjs

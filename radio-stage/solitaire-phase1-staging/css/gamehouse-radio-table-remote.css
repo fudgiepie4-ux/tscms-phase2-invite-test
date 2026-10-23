@@ -1,0 +1,78 @@
+/* Restored approved Gamehouse radio remote styling, scoped to the locked saloon image. */
+
+/* Clara: Gamehouse saloon jukebox controls — overlay only, approved scene stays untouched.
+   Coordinates relate to the locked 941x1672 art. The remote sits on the
+   lower-left wooden tabletop, above the painted four game controls. */
+.stage .tscms-radio-remote {
+  position:absolute;z-index:9;left:3.5%;top:72.5%;width:36.6%;height:7.3%;
+  box-sizing:border-box;display:grid;grid-template-rows:17% 54% 29%;
+  padding:1.1% 1.7% 1.25%;border-radius:9px;
+  border:2px solid #bd8849;isolation:isolate;color:#f8e2a9;
+  background:linear-gradient(155deg,#845127 0%,#3a1b0d 13%,#261007 49%,#60351b 91%,#8e542c);
+  box-shadow:inset 0 0 0 2px #180b06,inset 0 3px 5px #f9d58c33,
+    inset 0 -3px 7px #050100aa,0 4px 8px #080302cb,0 0 0 1px #3b1c0f;
+  touch-action:manipulation;overflow:hidden;
+}
+.stage .tscms-radio-remote:before{content:"";position:absolute;inset:5px;z-index:-1;pointer-events:none;
+  border:1px solid #bd8b5159;border-radius:6px;background:repeating-linear-gradient(175deg,transparent 0 9px,#f9bc6220 10px,transparent 12px 23px)}
+.tscms-radio-remote .remote-brand{display:flex;align-items:center;justify-content:space-between;
+  margin:0 2px;color:#f5cb85;font:800 clamp(7px,1.45vw,13px)/1 Arial,sans-serif;
+  letter-spacing:.10em;text-shadow:0 1px 2px #000;white-space:nowrap}
+.tscms-radio-remote .remote-indicator{width:7px;height:7px;flex:none;border-radius:50%;
+  background:#7b5635;box-shadow:inset 0 1px 2px #080400,0 0 0 1px #e8ba6e}
+.tscms-radio-remote[data-playing="true"] .remote-indicator{background:#72f1b0;box-shadow:0 0 7px #36efa1,0 0 0 1px #d6bd80}
+.tscms-radio-remote .remote-transport{display:grid;grid-template-columns:1fr 1.27fr 1fr;gap:4%;align-items:stretch;padding:1px 4px}
+.tscms-radio-remote .remote-key{appearance:none;min-width:0;min-height:0;display:grid;place-items:center;
+  border:1px solid #d4a15c;border-radius:6px;color:#ffe1a3;
+  background:linear-gradient(160deg,#78502e,#321a0f 49%,#1c0d08 50%,#5d3219);
+  box-shadow:inset 0 1px 2px #ffe4a54a,0 2px 3px #080303;
+  font:bold clamp(14px,3vw,27px)/1 Arial,sans-serif;text-shadow:0 2px 3px #000;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.tscms-radio-remote .remote-key.remote-toggle{color:#fbe3a6;border-color:#e9bb71;
+  background:radial-gradient(ellipse at 50% 22%,#935e2c,#3b180b 75%,#211008)}
+.tscms-radio-remote .remote-key:active:not(:disabled){transform:translateY(1px);filter:brightness(1.2)}
+.tscms-radio-remote .remote-key:disabled{opacity:.54;cursor:wait}
+.tscms-radio-remote .remote-key:focus-visible,.tscms-radio-remote input:focus-visible{outline:2px solid #fff4ce;outline-offset:2px}
+.tscms-radio-remote .remote-volume{display:grid;grid-template-columns:17% 1fr 16%;
+  align-items:center;gap:2%;padding:0 5%;font:700 clamp(9px,2vw,15px)/1 Arial,sans-serif;color:#edc78a}
+.tscms-radio-remote .remote-volume-icon{text-align:center;line-height:1}
+.tscms-radio-remote .remote-volume-level{font-size:clamp(7px,1.4vw,11px);text-align:right;white-space:nowrap}
+.tscms-radio-remote input[type=range]{appearance:none;-webkit-appearance:none;width:100%;min-width:0;
+  height:5px;border:1px solid #bd8b4a;border-radius:20px;
+  background:linear-gradient(90deg,#ecc17b 0 var(--remote-fill,75%),#26130d var(--remote-fill,75%) 100%);cursor:pointer}
+.tscms-radio-remote input[type=range]::-webkit-slider-thumb{appearance:none;width:15px;height:15px;
+  background:radial-gradient(circle at 30% 25%,#fff3cf,#d6a059 55%,#815024);border:1px solid #48280c;border-radius:50%;
+  box-shadow:0 1px 4px #000}
+.tscms-radio-remote input[type=range]::-moz-range-thumb{width:15px;height:15px;border:1px solid #48280c;
+  background:#e8bc76;border-radius:50%}
+.stage .tscms-radio-face{position:absolute;z-index:9;pointer-events:none;
+  left:80.95%;top:22.70%;width:15.0%;height:8.55%;
+  display:grid;grid-template-rows:18% 49% 33%;overflow:hidden;
+  padding:1px;border:1px solid #8b673d;border-radius:4px;
+  background:linear-gradient(155deg,#080d12,#130a11 50%,#080d17);
+  box-shadow:inset 0 0 5px #28f6f54d,0 0 0 1px #120806,0 1px 8px #000a;
+  color:#ffe8ba;text-align:center}
+.tscms-radio-face .radio-face-brand{display:flex;align-items:center;justify-content:center;
+  color:#ffe29c;text-shadow:0 0 4px #e9a7479e;
+  font:800 clamp(5px,.93vw,9px)/1.05 Arial,sans-serif;letter-spacing:.03em}
+.tscms-radio-face .radio-face-track{min-height:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;overflow:hidden;padding:0 2px;line-height:1.08}
+.tscms-radio-face .radio-face-title{font:800 clamp(7px,1.32vw,12px)/1.08 Georgia,serif;
+  max-width:100%;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+  text-overflow:ellipsis;overflow:hidden;overflow-wrap:anywhere}
+.tscms-radio-face .radio-face-artist{font:600 clamp(6px,.95vw,9px)/1.04 Arial,sans-serif;
+  color:#8ee2e9;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.tscms-radio-face canvas{width:100%;height:100%;min-height:0;display:block;background:#03080b}
+@media(max-width:420px){
+  .stage .tscms-radio-remote{border-width:1px;border-radius:6px}
+  .tscms-radio-remote .remote-transport{gap:3%;padding:0 1px}
+  .tscms-radio-remote .remote-key{border-radius:4px}
+  .tscms-radio-remote .remote-volume{padding:0 2%}
+  .tscms-radio-remote input[type=range]::-webkit-slider-thumb{height:13px;width:13px}
+}
+@media(prefers-reduced-motion:reduce){
+  .stage .tscms-radio-remote *, .stage .tscms-radio-face *{animation:none!important;transition:none!important}
+}
+
+.tscms-radio-remote .radio-remote-srstatus{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+

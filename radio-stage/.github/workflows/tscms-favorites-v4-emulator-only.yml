@@ -1,0 +1,28 @@
+name: TSCMS Favorites v4 Security — EMULATOR ONLY
+on:
+  push:
+    branches:
+      - clara/favorites-team-pilot-staging-20261022
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  firestore-emulator-security:
+    name: Verify merged Firestore rules in isolated localhost (NEVER deploy)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - name: Install pinned test-only emulator dependencies
+        working-directory: favorites-pilot/production-candidate
+        run: npm install --no-audit --no-fund
+      - name: Run real Firebase Rules Emulator negative / positive matrix
+        working-directory: favorites-pilot/production-candidate
+        run: npm run test:rules

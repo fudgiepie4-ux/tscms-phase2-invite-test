@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#20120d">
+<title>TSCMS Gamehouse — Real Storm Audio Listening Lab</title>
+<style>
+:root{color-scheme:dark;--gold:#e7b872;--paper:#f9e7c7;--bronze:#986c40;--bg:#160e0e}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;color:var(--paper);background:linear-gradient(160deg,#150e17,#2c1b13 50%,#140d12);font-family:Georgia,"Times New Roman",serif;min-height:100dvh}
+button,select,input{font:inherit}button{cursor:pointer}a{color:#91e2f4}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #80dbff;outline-offset:3px}
+.shell{width:min(760px,100%);margin:0 auto;padding:16px clamp(13px,3vw,26px) 42px}
+header{text-align:center;padding:10px 0 16px}header small{font:700 12px/1.3 system-ui,sans-serif;letter-spacing:.16em;color:#d9b87d}
+h1{margin:8px 0 6px;color:#ffda91;text-shadow:0 2px 4px #000;font-size:clamp(28px,6.5vw,46px)}
+h2{margin:0 0 10px;color:#ffdc9b;font-size:clamp(20px,5vw,26px)}p{line-height:1.5}
+.lead{max-width:600px;margin:9px auto;color:#e6cdae;font-size:clamp(14px,3.3vw,17px)}
+.note{border:1px solid #916f50;border-radius:12px;background:#1d1311;padding:11px;margin:12px 0;font:13px/1.4 system-ui,sans-serif;color:#e2cebd}
+.sample,.mix{padding:15px;border:1px solid var(--bronze);border-radius:15px;margin:12px 0;background:linear-gradient(150deg,#432618,#201313);box-shadow:0 8px 20px #0005}
+.sample-title{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sample h3{margin:0 0 4px;color:#f7d7a2;font-size:clamp(17px,3.7vw,21px)}
+.sample p{margin:4px 0 9px;color:#dcc5a7;font:13px/1.5 system-ui,sans-serif}
+.actionrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0 4px}
+.btn{min-height:44px;border-radius:9px;padding:10px 13px;font-weight:700;border:1px solid #b48856;color:#ffeaca;background:linear-gradient(#603b20,#332015);text-align:center}
+.btn.primary{background:linear-gradient(#2c7180,#214352);border-color:#62bfcd;color:#f2ffff}
+.btn.on{box-shadow:0 0 0 2px #85d9e483}
+.btn.stop{background:linear-gradient(#6e322e,#381f20);border-color:#bb7f73}
+.state{font:12px/1.4 system-ui,sans-serif;color:#e6ceb4;margin:5px 0 0;min-height:17px;overflow-wrap:anywhere}
+.source{font:11px/1.5 system-ui,sans-serif;color:#d1b692;margin:10px 0 0}
+.mix{border-color:#c59751;background:linear-gradient(150deg,#44301c,#201917)}
+.mix .btn{min-width:125px}.mix p{font:14px/1.5 system-ui,sans-serif;color:#f4dabb}
+.tracks{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0}
+.tracks label{font:12px/1.4 system-ui,sans-serif;color:#e5cfb1;background:#231813;padding:8px;border-radius:9px}
+.tracks input{width:100%;accent-color:#66becd}
+.previewArt{width:min(260px,65vw);aspect-ratio:941/1672;border:2px solid #815a36;border-radius:10px;object-fit:contain;display:block;margin:0 auto 10px;box-shadow:0 8px 30px #0009}
+.acknowledge{font:12px/1.5 system-ui,sans-serif;color:#d8bca0;margin:20px auto}
+footer{font:12px/1.6 system-ui,sans-serif;color:#cdb494;border-top:1px solid #725336;padding-top:12px}
+@media(max-width:375px){.btn{width:100%}.tracks{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style></head>
+<body><main class="shell">
+<header><small>TSCMS GAMEHOUSE • PRIVATE AUDIO CONCEPT TEST</small>
+<h1>Storm Outside the Saloon</h1>
+<p class="lead">Real environmental recordings. No synthetic TV-static generator. Listen to the parts separately, then try the storm mixed together.</p></header>
+<img class="previewArt" src="assets/TSCMS_APPROVED_MASTER_DOWNLOAD.png" alt="The approved TSCMS saloon artwork is unchanged in this listening demonstration">
+<section class="mix" aria-labelledby="mixTitle">
+<h2 id="mixTitle">🌧️ Full Saloon Storm Test</h2>
+<p>Soft rain behind the walls, raindrops hitting the window, intermittent gusts, and rolling thunder. The storm changes intensity rather than playing one flat sound.</p>
+<div class="actionrow">
+<button id="mixStart" class="btn primary" type="button">▶ START THE STORM</button>
+<button id="mixThunder" class="btn" type="button">⚡ HEAR THE THUNDER</button>
+<button id="mixStop" class="btn stop" type="button">■ STOP ALL SOUNDS</button>
+</div>
+<p id="mixState" class="state" role="status">Tap Start to hear the actual field recordings.</p>
+<div class="tracks">
+<label>Outdoor rainfall <input id="outLevel" type="range" min="0" max="100" value="40"></label>
+<label>Rain on the windows <input id="windowLevel" type="range" min="0" max="100" value="45"></label>
+<label>Wind gust strength <input id="windLevel" type="range" min="0" max="100" value="33"></label>
+<label>Distant thunder <input id="thunderLevel" type="range" min="0" max="100" value="70"></label>
+</div>
+</section>
+<h2 style="padding:12px 0 0">Hear Each Recording Separately</h2>
+<section class="sample" aria-labelledby="sWindow"><h3 id="sWindow">1. Raindrops Against Glass</h3>
+<p>Close, distinct impacts on a window, so it feels like you're inside looking out.</p>
+<div class="actionrow"><button id="button-window" class="btn" type="button">▶ LISTEN</button><a href="https://opengameart.org/content/rain-on-window-loop" target="_blank" rel="noopener">Original recording</a></div>
+<p class="state" id="state-window" role="status">CC0 · alxl · Rain on Window Loop</p></section>
+<section class="sample" aria-labelledby="sRain"><h3 id="sRain">2. Rainfall Outside</h3>
+<p>Outdoor rain recorded using a GoPro, trimmed into a smooth loop by the OpenMMO contributors.</p>
+<div class="actionrow"><button id="button-rain" class="btn" type="button">▶ LISTEN</button><a href="https://opengameart.org/content/amb-rain-loop-2" target="_blank" rel="noopener">Original recording</a></div>
+<p class="state" id="state-rain" role="status">CC0 · Kresiek The Furry · AMB Rain Loop 2 / OpenMMO excerpt</p></section>
+<section class="sample" aria-labelledby="sWind"><h3 id="sWind">3. Wind Passing By</h3>
+<p>An occasional gust sample—layered in softly, not a constant howling effect.</p>
+<div class="actionrow"><button id="button-wind" class="btn" type="button">▶ LISTEN</button><a href="https://opengameart.org/content/wind-whoosh-loop" target="_blank" rel="noopener">Original recording</a></div>
+<p class="state" id="state-wind" role="status">CC0 · SketchMan3 · wind whoosh loop</p></section>
+<section class="sample" aria-labelledby="sThunder"><h3 id="sThunder">4. Rolling Thunder</h3>
+<p>An actual short thunder sample, separated from the rainfall—not another synthetic noise sweep.</p>
+<div class="actionrow"><button id="button-thunder" class="btn" type="button">▶ LISTEN</button><a href="https://opengameart.org/content/100-cc0-sfx-2" target="_blank" rel="noopener">Original sound pack</a></div>
+<p class="state" id="state-thunder" role="status">CC0 · rubberduck · sfx100v2_thunder_01 via OpenMMO</p></section>
+<div class="note">This page plays external recordings for evaluation only. Your approved V5 visuals and V6 menu are unchanged. No audio has been added to the playable game, and nothing starts automatically. If a remote host blocks a sound, the test will show an error; use its Original Recording link to hear the source.</div>
+<footer>Audio provenance: <a href="https://github.com/Julian-adv/OpenMMO/blob/master/doc/assets/sfx.md" target="_blank" rel="noopener">OpenMMO source documentation</a> for the CC0 rainfall and thunder clips; <a href="https://opengameart.org/content/rain-on-window-loop" target="_blank" rel="noopener">alxl window rain</a>; and <a href="https://opengameart.org/content/wind-whoosh-loop" target="_blank" rel="noopener">SketchMan3 wind</a>. All included sources marked CC0 by their source publishers. External links are credited for traceability even where not legally required.</footer>
+</main>
+<script>
+(function(){
+"use strict";
+var paths={
+ window:"https://opengameart.org/sites/default/files/rain_on_window_loop.wav",
+ rain:"https://raw.githubusercontent.com/Julian-adv/OpenMMO/master/client/public/sounds/rain-loop.ogg",
+ wind:"https://opengameart.org/sites/default/files/wind%20woosh%20loop.ogg",
+ thunder:"https://raw.githubusercontent.com/Julian-adv/OpenMMO/master/client/public/sounds/thunder-distant.ogg"
+};
+var ids=["window","rain","wind","thunder"],audios={},single=null,mixing=false,fadeTick=null,weatherTick=null,thunderTick=null,rainIntensity=.85,windIntensity=.25,desiredWind=.25;
+var state=document.getElementById("mixState");
+function msg(t){state.textContent=t}
+ids.forEach(function(id){
+ var a=document.createElement("audio");
+ a.src=paths[id];a.preload="none";a.loop=id!=="thunder";a.volume=id==="thunder"?.65:.3;
+ a.addEventListener("error",function(){var el=document.getElementById("state-"+id);el.textContent="This external recording failed to load. Tap Original Recording above.";if(mixing)msg("At least one external sound couldn't load. Use the recording links below to check it.")});
+ audios[id]=a;
+ document.getElementById("button-"+id).addEventListener("click",function(){playSolo(id)});
+});
+function playSafe(a,label){try{return a.play().then(function(){return true}).catch(function(e){msg("Audio blocked or unavailable: "+label+". Try the original recording link.");return false})}catch(e){msg("Audio playback was blocked: "+label);return Promise.resolve(false)}}
+function stopTimers(){clearInterval(fadeTick);clearInterval(weatherTick);clearTimeout(thunderTick);fadeTick=weatherTick=thunderTick=null}
+function stopAll(){
+ stopTimers();mixing=false;single=null;
+ ids.forEach(function(id){var a=audios[id];a.pause();try{a.currentTime=0}catch(e){};document.getElementById("button-"+id).textContent="▶ LISTEN";document.getElementById("button-"+id).classList.remove("on")});
+ document.getElementById("mixStart").classList.remove("on");
+ document.getElementById("mixStart").textContent="▶ START THE STORM";
+ msg("Sound stopped.");
+}
+function volume(id){return Number(document.getElementById(({window:"windowLevel",rain:"outLevel",wind:"windLevel",thunder:"thunderLevel"})[id]).value)/100}
+function playSolo(id){
+ if(!mixing&&single===id&&!audios[id].paused){stopAll();return}
+ stopAll();single=id;audios[id].loop=id!=="thunder";
+ audios[id].volume=id==="thunder"?.65:.58;
+ playSafe(audios[id],id).then(function(ok){if(!ok||single!==id)return;document.getElementById("button-"+id).textContent="■ STOP";document.getElementById("button-"+id).classList.add("on");msg("Now playing: "+({window:"rain on the window",rain:"outdoor rainfall",wind:"wind gust",thunder:"rolling thunder"})[id]);});
+ if(id==="thunder")audios[id].addEventListener("ended",function(){if(single==="thunder")stopAll()},{once:true});
+}
+function playThunder(){
+ if(single)stopAll();
+ var a=audios.thunder;if(mixing){a.volume=Math.max(.03,volume("thunder")*.76)}else{a.volume=volume("thunder")}
+ try{a.pause();a.currentTime=0}catch(e){}
+ playSafe(a,"thunder");if(mixing)msg("Distant thunder rolls outside the saloon.");
+}
+function scheduleThunder(){
+ clearTimeout(thunderTick);
+ if(!mixing)return;
+ thunderTick=setTimeout(function(){if(!mixing)return;playThunder();scheduleThunder()},21000+Math.random()*22000);
+}
+function startStorm(){
+ if(mixing){stopAll();return}
+ stopAll();mixing=true;
+ audios.rain.loop=true;audios.window.loop=true;audios.wind.loop=true;
+ audios.rain.volume=.001;audios.window.volume=.001;audios.wind.volume=.001;
+ // Each media element is started directly inside the user's click gesture.
+ // No audio starts automatically before the owner taps START.
+ var starts=[playSafe(audios.rain,"outdoor rain"),playSafe(audios.window,"window rain"),playSafe(audios.wind,"wind")];
+ document.getElementById("mixStart").textContent="■ STOP THE STORM";
+ document.getElementById("mixStart").classList.add("on");
+ msg("Opening the outdoor rainfall and window recordings…");
+ Promise.all(starts).then(function(results){
+  if(!mixing)return;
+  if(results.some(Boolean))msg("Storm playing. The rain and gust strength shift slowly; test thunder any time.");
+  else msg("None of the external recordings could play. Please use the individual Original Recording links.");
+ });
+ weatherTick=setInterval(function(){
+  if(!mixing)return;
+  rainIntensity=.55+Math.random()*.4;desiredWind=Math.random()<.4?.02:.18+Math.random()*.63;
+ },10500);
+ fadeTick=setInterval(function(){
+  if(!mixing)return;
+  windIntensity+=(desiredWind-windIntensity)*.10;
+  var rainFactor=.25+rainIntensity*.45;
+  audios.rain.volume=Math.min(1,volume("rain")*rainFactor);
+  audios.window.volume=Math.min(1,volume("window")*(.35+rainIntensity*.28));
+  audios.wind.volume=Math.min(1,volume("wind")*windIntensity*.56);
+ },400);
+ scheduleThunder();
+}
+document.getElementById("mixStart").addEventListener("click",startStorm);
+document.getElementById("mixStop").addEventListener("click",stopAll);
+document.getElementById("mixThunder").addEventListener("click",playThunder);
+document.addEventListener("visibilitychange",function(){if(document.hidden&&mixing)stopAll()});
+window.addEventListener("pagehide",stopAll);
+})();
+</script></body></html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<meta content="#1d0c08" name="theme-color"/><title>TSCMS Gamehouse — Solitaire</title>
+<style>
+:root{color-scheme:dark;--gold:#eecb81;--cream:#ffe6af;--wood:#371b10;--outline:#bd8642;}
+*{box-sizing:border-box}html,body{margin:0;background:#0c0605;color:var(--cream);font-family:Georgia,'Times New Roman',serif}button{font-family:inherit;cursor:pointer}button:focus-visible{outline:3px solid #fce1aa;outline-offset:3px}
+.main{width:100%;max-width:820px;margin:0 auto;padding:0 0 env(safe-area-inset-bottom);background:#1b0907;box-shadow:0 0 32px #0009;overflow:hidden}
+.stage{position:relative;width:100%;aspect-ratio:1024/1291;overflow:hidden;background:#25100c;user-select:none;touch-action:pan-y}
+.stage-art{display:block;width:100%;height:100%;object-fit:fill;pointer-events:none;-webkit-user-drag:none}
+.card-hit,.menu-hit{display:block;position:absolute;appearance:none;padding:0;margin:0;border:0;background:transparent;color:transparent;touch-action:pan-y;-webkit-tap-highlight-color:transparent;user-select:none;outline-offset:-2px}
+.card-hit{z-index:2}.card-hit:focus-visible,.menu-hit:focus-visible{outline:3px solid #ffd384;outline-offset:-3px}
+.card-hit.holding::after{content:'';position:absolute;inset:-2px;border:2px solid #ffdb8f;border-radius:7px;box-shadow:0 0 16px #ffc464aa;pointer-events:none}
+.menu-hit{left:87.2%;top:.7%;width:11.3%;height:8.5%;z-index:3;border-radius:14px}
+.bottom-rail{position:relative;padding:10px 10px 13px;background:linear-gradient(180deg,#3f2417 0,#210e08 20%,#4d2814 70%,#211009 100%);border-top:4px ridge #9a5b2d;box-shadow:0 -4px 12px #0006 inset}
+.bottom-rail::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.12;background:repeating-linear-gradient(177deg,transparent 0 6px,#e2aa5f 7px,transparent 10px 19px,#050300 22px)}
+.primary-controls{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.wood-btn{min-width:0;min-height:60px;display:flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:6px;padding:7px 3px;color:#ffe6b6;font-size:clamp(10px,2.7vw,18px);font-weight:bold;white-space:nowrap;text-shadow:0 1px 3px #000;letter-spacing:-.015em;border:2px solid #c7924d;border-radius:12px;background:linear-gradient(165deg,#633718 0%,#32170b 50%,#2c1308 75%,#4c260c 100%);box-shadow:inset 0 0 0 2px #1e0f09,inset 0 3px 2px #ffdf9052,0 3px 2px #0a0403;position:relative}
+.wood-btn:active{transform:translateY(2px);filter:brightness(1.14)}.wood-btn .icon{font-family:Arial,sans-serif;font-size:clamp(16px,4.8vw,27px);font-weight:800;color:#f6c36e;line-height:1;flex-shrink:0}
+.wood-btn .word{overflow:hidden;text-overflow:clip}
+.note{padding:8px 16px 12px;max-width:820px;margin:auto;color:#cba97d;background:#1b0907;font:12px/1.45 system-ui,sans-serif;text-align:center}
+.layer{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:18px;overflow-y:auto;background:#090403de;backdrop-filter:blur(6px);}
+[hidden]{display:none!important}
+.panel{position:relative;max-width:440px;width:100%;padding:24px 19px 20px;border:3px solid #b47b3e;border-radius:16px;background:linear-gradient(148deg,#53301a,#281206 60%,#3d200f);box-shadow:0 0 0 2px #1b0b05,0 17px 70px #000b,inset 0 0 0 3px #7d4a28;text-align:center}
+.panel h2{color:#ffe2a6;font-size:clamp(22px,5.7vw,30px);letter-spacing:.03em;margin:0 0 8px;text-shadow:0 3px 3px #000}
+.panel p{font-size:15px;line-height:1.5;margin:5px auto 16px;max-width:32ch}
+.p-btn{border:2px solid #c79351;color:#ffe7be;border-radius:9px;background:linear-gradient(#74502b,#371808);font-size:16px;font-weight:bold;padding:11px 18px;min-height:45px;box-shadow:inset 0 1px 1px #f8d89d75;cursor:pointer}
+.p-btn.ghost{background:linear-gradient(#443221,#29170b);margin-top:8px}.p-btn:active{filter:brightness(1.3)}
+.close{position:absolute;right:9px;top:9px;width:43px;height:43px;display:grid;place-items:center;border:2px solid #d7a96c;border-radius:50%;background:#42210f;color:#ffdf9e;font:27px/1 Arial,sans-serif;cursor:pointer}
+.menulist{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.menulist .p-btn.selected{outline:2px solid #ffe0a0}
+.small{color:#d5b889;font:12px/1.5 system-ui,sans-serif}
+#viewer{z-index:30;background:radial-gradient(ellipse at center,#201006eb,#060303f5 90%)}
+.viewer-content{position:relative;display:flex;align-items:center;flex-direction:column;justify-content:center;gap:8px;max-height:100%;max-width:470px;width:100%}
+.viewer-label{font-weight:bold;font-size:clamp(11px,3vw,15px);letter-spacing:.17em;color:#e6bc78;text-shadow:0 2px 5px #000;padding:0 55px;text-align:center;margin-bottom:3px}
+.viewer-card{position:relative;display:grid;place-items:center;min-height:0;max-height:calc(100dvh - 168px);max-width:calc(100vw - 46px);width:auto;border-radius:9px;border:2px solid #c5a06d;box-shadow:0 0 0 3px #3b210f,0 10px 33px #000e;background:#fdf4e4;aspect-ratio:338/600;overflow:hidden}
+.viewer-card img{display:block;height:auto;max-height:calc(100dvh - 168px);max-width:calc(100vw - 46px);width:auto;object-fit:contain;aspect-ratio:338/600}
+.big-pip{aspect-ratio:338/600;width:min(70vw,305px);color:#131014;position:relative;display:grid;place-items:center;font-size:clamp(115px,28vw,185px);background:linear-gradient(140deg,#fffbed,#f3e6c8)}
+.big-pip.red{color:#a0152a}.big-corner{position:absolute;top:11px;left:14px;font-size:43px;line-height:.93;font-weight:bold;display:grid;text-align:center}.big-corner span{font-size:37px}.big-pip>span:last-child{filter:drop-shadow(0 2px 0 #ddd)}
+.viewer-name{color:#f7dbac;font-size:18px;font-weight:bold;text-align:center}.viewer-content .close{right:0;top:0;z-index:2}
+@media(max-width:370px){.bottom-rail{padding:7px 6px 9px}.primary-controls{gap:4px}.wood-btn{min-height:51px;padding:6px 1px;gap:4px;border-radius:9px;font-size:clamp(9px,2.65vw,13px)}.wood-btn .icon{font-size:15px}}
+@media(min-width:720px){.wood-btn{min-height:72px}.bottom-rail{padding:13px 16px 16px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0s!important;transition:none!important}}
+#toast{position:fixed;z-index:50;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);width:max-content;max-width:90vw;padding:10px 14px;border:1px solid #c08e54;background:#2c170e;color:#fff0cd;box-shadow:0 4px 14px #000a;border-radius:8px;font:13px system-ui,sans-serif;text-align:center}
+</style><style>
+/* CHERISH PHASE 1 contract scaffold -- not final rendering */
+.integration-warning {padding:10px 14px;color:#ffdf9e;background:#3d1a12;font:12px/1.45 system-ui;text-align:center}
+.engine-slot-placeholder{position:absolute;z-index:4;pointer-events:none;box-sizing:border-box;border:1px dashed rgba(255,215,128,.26);border-radius:6px;}
+.engine-value-pending{position:absolute;left:-9999px;top:auto}
+.integration-choices{display:none;gap:8px;flex-direction:column;margin-top:12px}
+.integration-choices .p-btn{width:100%}
+/* Cherish owns visibility/behavior of pause choices; remove reference image's painted cards before integrating live cards. */
+</style><link href="solitaire-phase1-staging/css/live-cards.css" rel="stylesheet"/>
+<link href="solitaire-phase1-staging/css/locked-visual-overlay.css" rel="stylesheet"/>
+<link href="solitaire-phase1-staging/css/gamehouse-jukebox-visual.css" rel="stylesheet"/>
+<link href="solitaire-phase1-staging/css/gamehouse-radio-table-remote.css?v=20261020b" rel="stylesheet"/>
+<link rel="stylesheet" href="solitaire-phase1-staging/css/halloween-theme.css?v=20261018-window-storm-1">
+<style id="tscms-menu-restoration-style">
+/* Restored owner-approved menu controls. No board/gameplay changes. */
+#menu .panel{max-height:calc(100dvh - 34px);overflow-y:auto;overscroll-behavior:contain;}
+#menu .menu-extra-settings{border-top:1px solid #91613b;margin-top:15px;padding-top:13px;text-align:left;}
+#menu .menu-extra-settings h3{color:#ffe2a6;font-size:17px;margin:0 0 9px;}
+#menu .menu-extra-settings .menulist{margin-top:0;gap:8px;}
+#menu .menu-extra-settings .p-btn{min-height:45px;padding:9px 5px;font:700 clamp(12px,3.3vw,15px)/1.3 system-ui,sans-serif;}
+#menu .menu-extra-settings .p-btn.selected{outline:2px solid #ffe0a0;background:linear-gradient(#846133,#492713);}
+#menu .menu-extra-settings .menu-extra-note{font:12px/1.5 system-ui,sans-serif;color:#e6d0a8;margin:9px 0 13px;}
+#menu #launch-back-to-saloon{width:100%;display:block;margin-top:15px;}
+#menu #launch-settings-status{min-height:1.3em;color:#ffe8ac;}
+</style><script data-goatcounter="https://fudgiepielabsai.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<link rel="stylesheet" href="./tscms-legibility.css?v=wave-20261022"></head><body>
+<main aria-label="TSCMS Gamehouse playable Solitaire" class="main">
+<div class="stage" id="stage" data-tscms-legibility-fixed="game-board">
+<button aria-label="Exit to TSCMS homepage; save game before leaving" id="btn-exit" title="Exit and Save" type="button"></button><img alt="Locked approved warm Old West Solitaire saloon with TSCMS Radio neon color equalizer jukebox, empty board, and four wooden control buttons" class="stage-art" draggable="false" src="assets/TSCMS_APPROVED_MASTER_DOWNLOAD.png"/>
+<button id="btn-jukebox" type="button" aria-label="Open TSCMS Radio jukebox" aria-haspopup="dialog" title="TSCMS Radio"></button>
+<button aria-label="Open menu" class="menu-hit" id="btn-menu" title="Open menu" type="button"></button>
+<div aria-label="Stock" class="engine-slot-placeholder" data-engine-owned="true" id="stock-pile" style="left:3.2%;top:43.0%;width:13.0%;height:15.0%"></div><div aria-label="Waste" class="engine-slot-placeholder" data-engine-owned="true" id="waste-pile" style="left:18.9%;top:43%;width:12.9%;height:14.3%"></div><div aria-label="Spades foundation" class="engine-slot-placeholder" data-engine-owned="true" id="foundation-0" style="left:36.4%;top:43.0%;width:11.5%;height:15.0%"></div><div aria-label="Hearts foundation" class="engine-slot-placeholder" data-engine-owned="true" id="foundation-1" style="left:49.0%;top:43.0%;width:11.5%;height:15.0%"></div><div aria-label="Diamonds foundation (rightmost)" class="engine-slot-placeholder" data-engine-owned="true" id="foundation-2" style="left:61.0%;top:43.0%;width:11.5%;height:15.0%"></div><div aria-label="Clubs foundation (third position)" class="engine-slot-placeholder" data-engine-owned="true" id="foundation-3" style="left:73.0%;top:43.0%;width:11.5%;height:15.0%"></div><div aria-label="Tableau 1" class="engine-slot-placeholder" data-engine-owned="true" id="tableau-0" style="left:2.8%;top:61.0%;width:12.4%;height:26.0%"></div><div aria-label="Tableau 2" class="engine-slot-placeholder" data-engine-owned="true" id="tableau-1" style="left:16.6%;top:61.9%;width:12.4%;height:26.0%"></div><div aria-label="Tableau 3" class="engine-slot-placeholder" data-engine-owned="true" id="tableau-2" style="left:29.8%;top:62.8%;width:12.4%;height:26.0%"></div><div aria-label="Tableau 4" class="engine-slot-placeholder" data-engine-owned="true" id="tableau-3" style="left:42.6%;top:63.7%;width:12.4%;height:26.0%"></div><div aria-label="Tableau 5" class="engine-slot-placeholder" data-engine-owned="true" id="tableau-4" style="left:56.3%;top:64.6%;width:12.4%;height:26.0%"></div><div aria-label="Tableau 6" class="engine-slot-placeholder" data-engine-owned="true" id="tableau-5" style="left:69.6%;top:65.5%;width:12.4%;height:26.0%"></div><div aria-label="Tableau 7" class="engine-slot-placeholder" data-engine-owned="true" id="tableau-6" style="left:84.5%;top:66.4%;width:12.4%;height:26.0%"></div><output aria-label="Timer" class="engine-value-pending" id="timer-display">—</output><output aria-label="Moves" class="engine-value-pending" id="move-counter">—</output><div class="bottom-rail"><nav aria-label="Primary game controls" class="primary-controls">
+<button class="wood-btn" id="btn-undo" type="button"><span aria-hidden="true" class="icon">↶</span><span class="word">Undo</span></button>
+<button class="wood-btn" id="btn-hint" type="button"><span aria-hidden="true" class="icon">✧</span><span class="word">Hint</span></button>
+<button class="wood-btn" id="btn-pause" type="button"><span aria-hidden="true" class="icon">Ⅱ</span><span class="word">Pause</span></button>
+<button class="wood-btn" id="btn-newgame" type="button"><span aria-hidden="true" class="icon">⟳</span><span class="word">New Game</span></button>
+</nav></div></div>
+
+</main>
+<div aria-labelledby="cardTitle" aria-modal="true" class="layer" hidden="" id="viewer" role="dialog">
+<div class="viewer-content"><button aria-label="Close card viewer" class="close" id="closeViewer" type="button">×</button>
+<div class="viewer-label">A CLOSER LOOK</div><div class="viewer-card" id="fullCard"></div><div class="viewer-name" id="cardTitle"></div></div>
+</div>
+<div aria-labelledby="pauseTitle" aria-modal="true" class="layer" hidden="" id="pause-screen" role="dialog">
+<div class="panel"><h2 id="pause-message">GAME PAUSED</h2><p>Your cards will be waiting right where you left them, partner.</p><button class="p-btn" id="pause-resume" type="button">▶ Resume Game</button><div class="integration-choices" id="pause-choices"><button class="p-btn" id="pause-continue" type="button">Continue Game</button><button class="p-btn" id="pause-newgame" type="button">New Game</button></div></div>
+</div>
+<div aria-labelledby="menuTitle" aria-modal="true" class="layer" hidden="" id="menu" role="dialog">
+<div class="panel"><button aria-label="Close menu" class="close" id="closeMenu" type="button">×</button><h2 id="menuTitle">SALOON SETTINGS</h2><p>Draw preference</p><div class="menulist"><button aria-pressed="true" class="p-btn selected" id="draw1" type="button">Draw 1</button><button aria-pressed="false" class="p-btn" id="draw3" type="button">Draw 3</button></div>
+<p style="margin-top:20px">Saloon theme</p>
+<div class="menulist"><button aria-pressed="true" class="p-btn selected" id="theme-classic" type="button" onclick="window.TSCMSHalloween&&window.TSCMSHalloween.setTheme('classic',false);this.classList.add('selected');document.getElementById('theme-halloween').classList.remove('selected');">🤠 Classic Saloon</button><button aria-pressed="false" class="p-btn" id="theme-halloween" type="button" onclick="window.TSCMSHalloween&&window.TSCMSHalloween.setTheme('halloween',false);this.classList.add('selected');document.getElementById('theme-classic').classList.remove('selected');">🎃 Halloween</button></div>
+<p class="small" style="margin-top:10px">Theme takes effect on your next new game.</p>
+<div style="margin-top:12px;display:flex;align-items:center;gap:10px;">
+  <button id="lightning-toggle" type="button" class="p-btn" aria-pressed="true" style="font-size:14px;padding:8px 12px;" onclick="var on=this.getAttribute('aria-pressed')!=='true';this.setAttribute('aria-pressed',on);this.textContent=on?'⚡ Lightning: ON':'⚡ Lightning: OFF';if(window.TSCMSHalloween)window.TSCMSHalloween.setLightning(on);">⚡ Lightning: ON</button>
+</div>
+<p class="small" style="margin-top:6px;font-size:11px;opacity:0.8;">Turn off for accessibility (no flashing lights).</p>
+<section class="menu-extra-settings" aria-label="Timer and return controls">
+<h3 id="launch-timer-heading">GAME TIMER</h3>
+<div class="menulist" role="group" aria-labelledby="launch-timer-heading">
+<button type="button" class="p-btn" id="launch-timer-stopwatch" aria-pressed="true">⏱ Stopwatch</button>
+<button type="button" class="p-btn" id="launch-timer-relaxed" aria-pressed="false">Relaxed</button>
+</div>
+<p class="menu-extra-note">Relaxed plays without a running clock. A timer change starts with your next new game; your current game is preserved.</p>
+<button type="button" class="p-btn ghost" id="launch-back-to-saloon">BACK TO SALOON</button>
+<p class="menu-extra-note" id="launch-settings-status" role="status" aria-live="polite"></p>
+</section>
+<p class="small" style="margin-top:15px">Draw mode must persist and agree with the saved game. </p></div>
+</div>
+<div hidden="" id="toast" role="status"></div>
+<!-- Phase 1: Cherish's game systems -->
+<script src="solitaire-phase1-staging/js/saloon-engine.js"></script>
+<script src="solitaire-phase1-staging/js/save-system.js"></script>
+<script src="solitaire-phase1-staging/js/pause-system.js"></script>
+<script src="solitaire-phase1-staging/js/session-manager.js"></script>
+<script src="solitaire-phase1-staging/js/mischief-engine.js"></script>
+<script src="solitaire-phase1-staging/js/mischief-integration.js"></script>
+<script src="solitaire-phase1-staging/js/tscms-swiper-testmode.js"></script>
+<script src="solitaire-phase1-staging/js/swiper-testmode-integration.js"></script>
+<script src="solitaire-phase1-staging/js/swiper-launch-bootstrap.js"></script>
+<script src="solitaire-phase1-staging/js/swiper-visual-bridge-v2.js"></script>
+<script src="solitaire-phase1-staging/js/halloween-theme.js?v=20261018-window-storm-1"></script>
+<script>
+// Theme switcher wiring
+(function() {
+  function updateThemeButtons() {
+    var theme = (window.TSCMSHalloween && window.TSCMSHalloween.getTheme()) || 'classic';
+    var classicBtn = document.getElementById('theme-classic');
+    var halloweenBtn = document.getElementById('theme-halloween');
+    if (classicBtn) {
+      classicBtn.classList.toggle('selected', theme === 'classic');
+      classicBtn.setAttribute('aria-pressed', theme === 'classic');
+    }
+    if (halloweenBtn) {
+      halloweenBtn.classList.toggle('selected', theme === 'halloween');
+      halloweenBtn.setAttribute('aria-pressed', theme === 'halloween');
+    }
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    var classicBtn = document.getElementById('theme-classic');
+    var halloweenBtn = document.getElementById('theme-halloween');
+    if (classicBtn) classicBtn.addEventListener('click', function() {
+      if (window.TSCMSHalloween) window.TSCMSHalloween.setTheme('classic', false);
+      updateThemeButtons();
+    });
+    if (halloweenBtn) halloweenBtn.addEventListener('click', function() {
+      if (window.TSCMSHalloween) window.TSCMSHalloween.setTheme('halloween', false);
+      updateThemeButtons();
+    });
+    document.addEventListener('tscms:theme-changed', updateThemeButtons);
+    // Initial state
+    setTimeout(function() {
+      updateThemeButtons();
+      // Sync lightning toggle
+      var lt = document.getElementById('lightning-toggle');
+      if (lt && window.TSCMSHalloween) {
+        var on = window.TSCMSHalloween.getLightning();
+        lt.setAttribute('aria-pressed', on);
+        lt.textContent = on ? '⚡ Lightning: ON' : '⚡ Lightning: OFF';
+      }
+    }, 500);
+  });
+})();
+</script>
+<script id="tscms-menu-restoration-script">
+/* Scoped menu restoration — no engine, Swiper, or save-data mutations. */
+(function(){
+  'use strict';
+  var watch = document.getElementById('launch-timer-stopwatch');
+  var relaxed = document.getElementById('launch-timer-relaxed');
+  var back = document.getElementById('launch-back-to-saloon');
+  if(!watch || !relaxed || !back)return;
+  var message = document.getElementById('launch-settings-status');
+  function prefs(){
+    if(typeof SessionManager==='undefined')return null;
+    return SessionManager.getPrefs() || SessionManager.defaultPrefs();
+  }
+  function update(){
+    var p=prefs();
+    var mode=p && p.timerMode==='relaxed'?'relaxed':'stopwatch';
+    [[watch,'stopwatch'],[relaxed,'relaxed']].forEach(function(entry){
+      var selected=entry[1]===mode;
+      entry[0].classList.toggle('selected',selected);
+      entry[0].setAttribute('aria-pressed',selected?'true':'false');
+    });
+  }
+  function choose(mode){
+    var p=prefs();
+    if(!p || typeof SessionManager==='undefined' || !SessionManager.savePrefs){
+      if(message)message.textContent='Timer preference could not be saved.';
+      return;
+    }
+    p.timerMode=mode;
+    var ok=SessionManager.savePrefs(p);
+    if(message)message.textContent=ok
+      ?(mode==='relaxed'?'Relaxed':'Stopwatch')+' saved for your next new game.'
+      :'Timer preference could not be saved.';
+    update();
+  }
+  function init(){
+    watch.addEventListener('click',function(){choose('stopwatch');});
+    relaxed.addEventListener('click',function(){choose('relaxed');});
+    back.addEventListener('click',function(){
+      var close=document.getElementById('closeMenu');
+      if(close)close.click(); // Use the existing menu close handler.
+      var opener=document.getElementById('btn-menu');
+      if(opener)opener.focus();
+    });
+    var open=document.getElementById('btn-menu');
+    if(open)open.addEventListener('click',function(){setTimeout(update,0);});
+    document.addEventListener('game:new',update);
+    update();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+  else init();
+})();
+</script>
+<script src="tscms-solitaire-tracking.js?v=20261020-a"></script>
+<script src="solitaire-phase1-staging/js/renderer-binding.js"></script>
+<script src="solitaire-phase1-staging/js/locked-visual-adapter.js"></script><script>
+// Initialize on DOM ready — Swiper bootstrap wraps renderer init
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    SwiperVisualBridgeV2.init();
+    SwiperLaunchBootstrap.start(() => {
+      // Wrapped AFTER Swiper's preference/engine hooks, BEFORE the initial new deal.
+      if (window.TSCMS_SOLITAIRE_TRACK) window.TSCMS_SOLITAIRE_TRACK.installStartHook();
+      RendererBinding.init();
+    });
+    console.log('Phase 1 staging initialized (Swiper bootstrap)');
+  } catch (e) {
+    console.error('Phase 1 init failed:', e);
+  }
+});
+</script>
+<script src="solitaire-phase1-staging/js/victory-dicey.js"></script>
+<script src="solitaire-phase1-staging/js/gamehouse-jukebox.js?v=20261020-shuffle"></script>
+<script src="solitaire-phase1-staging/js/gamehouse-jukebox-v7-ui.js?v=20261020-full-titles"></script>
+<script src="solitaire-phase1-staging/js/gamehouse-radio-table-remote.js?v=20261020"></script>
+<script src="gamehouse-help.js" defer></script>
+<!-- Fudgie-approved Gamehouse-only Feedback: one compact button in upper-left saloon corner, 2026-10-20.
+     Button is anchored to the game stage, not the viewport. The modal remains at body level.
+     Game dialogs (Swiper/jukebox/menu) cover the button; no duplicate Feedback controls. -->
+<style id="tscms-game-feedback-park">
+/* Hide until moved into the game stage; prevents the shared widget's viewport-sized fallback. */
+body > #tscms-fb-btn{display:none!important}
+#stage > #tscms-fb-btn{
+  position:absolute!important;
+  z-index:8!important;
+  top:clamp(14px,2.5vw,26px)!important;
+  left:clamp(14px,3vw,30px)!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:122px!important;
+  min-width:0!important;
+  max-width:calc(100% - 30px)!important;
+  height:44px!important;
+  min-height:44px!important;
+  max-height:44px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  box-sizing:border-box!important;
+  padding:8px 12px!important;
+  border:2px solid #eac16c!important;
+  border-radius:24px!important;
+  background:#111!important;
+  color:#ffd75e!important;
+  font:700 14px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif!important;
+  white-space:nowrap!important;
+  text-align:center!important;
+  transform:none!important;
+  box-shadow:0 3px 9px #000a!important;
+}
+#stage > #tscms-fb-btn:hover,#stage > #tscms-fb-btn:focus-visible{
+  background:#ffe09b!important;
+  color:#201208!important;
+  outline:2px solid #fff1ce!important;
+  outline-offset:2px!important;
+}
+@media(max-width:380px){
+  #stage > #tscms-fb-btn{width:108px!important;height:42px!important;min-height:42px!important;max-height:42px!important;font-size:13px!important}
+}
+</style>
+<script src="tscms-feedback.js"></script>
+<script>
+(function(){
+  'use strict';
+  function parkGamehouseFeedback(){
+    var stage=document.getElementById('stage');
+    var button=document.getElementById('tscms-fb-btn');
+    if(!stage || !button || button.parentElement===stage)return;
+    stage.appendChild(button);
+    button.setAttribute('title','Send feedback about the Gamehouse');
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',parkGamehouseFeedback,{once:true});
+  }else{
+    parkGamehouseFeedback();
+  }
+})();
+</script>
+<script src="./tscms-legibility.js?v=gamehouse-locked-stage-20261023" defer></script><link rel="stylesheet" href="./tscms-favorites.css"><script type="module" src="./tscms-favorites.js"></script><link rel="stylesheet" href="./tscms-sitewide-radio.css?v=20261023-stage1">
+<script src="./tscms-sitewide-radio.js?v=20261023-stage1" defer></script>
+</body></html>

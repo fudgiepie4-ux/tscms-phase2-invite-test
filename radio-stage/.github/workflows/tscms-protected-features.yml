@@ -1,0 +1,21 @@
+name: TSCMS Protected Features
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  verify-public-preservation:
+    name: Verify preserved public features
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get source
+        uses: actions/checkout@v4
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Block if protected features are missing
+        run: node scripts/verify-public-preservation.mjs

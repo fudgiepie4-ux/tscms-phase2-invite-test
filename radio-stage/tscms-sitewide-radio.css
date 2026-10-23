@@ -1,0 +1,22 @@
+/* TSCMS site-wide radio — isolated staging visual; no Gamehouse art changes. */
+#tscms-sitewide-radio{position:fixed;z-index:10020;left:50%;bottom:max(72px,calc(env(safe-area-inset-bottom) + 68px));transform:translateX(-50%);width:min(620px,calc(100vw - 24px));box-sizing:border-box;padding:10px 14px;background:linear-gradient(155deg,#503016,#24150c);color:#ffeaca;border:2px solid #d9a959;border-radius:13px;box-shadow:0 4px 24px #000b;font:14px/1.35 system-ui,sans-serif}
+#tscms-sitewide-radio *{box-sizing:border-box}
+#tscms-sitewide-radio .tc-radio-head{display:flex;gap:8px;align-items:center;justify-content:space-between;min-width:0}
+#tscms-sitewide-radio .tc-radio-head strong{font:700 13px Georgia,serif;color:#ffdb94;white-space:nowrap}
+#tscms-sitewide-radio .tc-radio-title{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+#tscms-sitewide-radio .tc-radio-controls{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin-top:6px}
+#tscms-sitewide-radio button{min-height:44px;min-width:44px;padding:7px 9px;border:1px solid #f0c276;border-radius:8px;background:#27190e;color:#fff1d4;font:700 14px system-ui;cursor:pointer}
+#tscms-sitewide-radio button.tc-radio-play{min-width:132px;background:#70421b}
+#tscms-sitewide-radio button:disabled{opacity:.55;cursor:wait}
+#tscms-sitewide-radio button:focus-visible,#tscms-sitewide-radio input:focus-visible{outline:3px solid #ffdc88;outline-offset:2px}
+#tscms-sitewide-radio label{display:inline-flex;gap:4px;align-items:center;font:700 12px system-ui;color:#ffe5b1}
+#tscms-sitewide-radio input[type=range]{width:73px;accent-color:#ffd087;min-height:28px}
+#tscms-sitewide-radio .tc-radio-status{font-size:12px;margin:5px 0 0;line-height:1.4;text-align:center;color:#ffdb9e}
+@media(max-width:410px){
+ #tscms-sitewide-radio{padding:8px 9px;bottom:max(70px,calc(env(safe-area-inset-bottom) + 68px))}
+ #tscms-sitewide-radio .tc-radio-head{display:block;text-align:center}
+ #tscms-sitewide-radio .tc-radio-title{display:block;margin-top:2px}
+ #tscms-sitewide-radio .tc-radio-controls{gap:4px}
+ #tscms-sitewide-radio button{min-width:40px;padding:6px}
+ #tscms-sitewide-radio button.tc-radio-play{min-width:116px}
+}

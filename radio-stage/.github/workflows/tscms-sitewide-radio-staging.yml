@@ -1,0 +1,45 @@
+name: TSCMS Site-Wide Radio — STAGING ONLY
+on:
+  push:
+    branches:
+      - clara/sitewide-radio-staging-20261023
+  pull_request:
+    paths:
+      - 'tscms-sitewide-radio.js'
+      - 'tscms-sitewide-radio.css'
+      - 'tscms-public-runtime.js'
+      - 'solitaire-phase1-staging/js/gamehouse-jukebox.js'
+      - 'index.html'
+      - 'tscms-today.html'
+      - 'tscms-search.html'
+      - 'my-playlist.html'
+      - 'town-journal.html'
+      - 'videos.html'
+      - 'gamehouse.html'
+      - 'scripts/test-sitewide-radio.cjs'
+      - '.github/workflows/tscms-sitewide-radio-staging.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  radio-staging-safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated test DOM (no production package changes)
+        run: npm install --no-save --no-package-lock --ignore-scripts linkedom@0.18.12
+      - name: Syntax and cross-page continuity preflight
+        run: |
+          node --check tscms-sitewide-radio.js
+          node --check solitaire-phase1-staging/js/gamehouse-jukebox.js
+          node --check scripts/test-sitewide-radio.cjs
+          node scripts/test-sitewide-radio.cjs
+      - name: Regression checks for protected existing features
+        run: |
+          node scripts/test-favorites-staging.cjs
+          node scripts/test-pathway-pack.cjs
+          node scripts/test-town-journal-staging.cjs

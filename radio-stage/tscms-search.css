@@ -1,0 +1,17 @@
+/* TSCMS Search — scoped autumn radio styling, low-risk standalone prototype. */
+.tscms-search-wrap{max-width:920px;margin:28px auto;padding:0 18px 48px;color:#fff0d3;font-family:system-ui,sans-serif}
+.tscms-search-wrap h1{font:800 clamp(25px,5vw,40px)/1.15 Georgia,serif;color:#ffe1a4;margin:24px 0 12px}
+.tscms-search-back{display:inline-flex;min-height:44px;align-items:center;color:#ffe1a4;text-decoration:none;font-weight:700;padding:7px 0}
+.tscms-search-intro{line-height:1.6;color:#e4ca9f}
+#tscms-search-form{display:flex;flex-direction:column;gap:8px;margin:22px 0 14px}
+#tscms-search-form label{font-weight:700;color:#ffe4aa}
+#tscms-search-input{min-height:48px;box-sizing:border-box;width:100%;padding:12px 15px;background:#1b170f;color:#fff0d3;border:2px solid #b78b4f;border-radius:10px;font:16px system-ui,sans-serif}
+#tscms-search-input:focus-visible,.tscms-search-wrap button:focus-visible,.tscms-search-wrap a:focus-visible{outline:3px solid #ffda8b;outline-offset:3px}
+#tscms-search-coverage,#tscms-search-status{color:#ffe0a0;line-height:1.5;margin:10px 0}
+#tscms-search-results{list-style:none;padding:0;margin:20px 0;display:grid;gap:12px}
+.tscms-search-result{padding:18px;border-radius:12px;border:1px solid #755630;background:linear-gradient(160deg,#3a2918,#20160e)}
+.tscms-search-result strong{display:block;font-size:18px;overflow-wrap:anywhere}
+.tscms-search-meta{font-size:14px;color:#e1c49a;margin:8px 0 12px;overflow-wrap:anywhere}
+.tscms-search-actions{display:flex;gap:12px;flex-wrap:wrap}
+.tscms-search-actions button,.tscms-search-actions a{box-sizing:border-box;min-height:44px;display:inline-flex;align-items:center;padding:10px 18px;border:1px solid #d5a55d;border-radius:9px;background:#281b11;color:#ffe3a2;text-decoration:none;font:700 14px system-ui,sans-serif;cursor:pointer}
+.tscms-search-actions button:hover,.tscms-search-actions a:hover{background:#3c2917}

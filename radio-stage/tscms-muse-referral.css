@@ -1,0 +1,51 @@
+/* TSCMS Muse referral card: isolated public stylesheet, safe from homepage rebuilds.
+   Compact sizing per Fudgie (2026-10-20): the original full-size block was "too much" —
+   same card, same code, roughly a third of the height. */
+#tscms-muse-referral{box-sizing:border-box;max-width:100%;margin:26px 0 18px;scroll-margin-top:85px}
+#tscms-muse-referral *{box-sizing:border-box}
+.tscms-muse-referral-inner{
+  position:relative;overflow:hidden;text-align:center;padding:17px clamp(14px,4vw,30px) 14px;
+  border:2px solid #bb843e;border-radius:16px;
+  color:#f4e4cd;font:400 14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:radial-gradient(circle at 50% -20%,#71431a80 0%,transparent 56%),linear-gradient(150deg,#392315,#1c120b 63%,#2d1b0d);
+  box-shadow:inset 0 1px 0 #ffe09e58,0 9px 23px #0007
+}
+.tscms-muse-referral-inner:before,.tscms-muse-referral-inner:after{
+  content:"✦";position:absolute;top:10px;color:#c58d3e;font-size:16px
+}
+.tscms-muse-referral-inner:before{left:12px}.tscms-muse-referral-inner:after{right:12px}
+.tscms-muse-referral-inner .tscms-muse-eyebrow{
+  margin:0 0 5px;color:#d9a95e;font:800 10.5px/1.35 system-ui,sans-serif;letter-spacing:2px
+}
+.tscms-muse-referral-inner h2{
+  margin:0 auto 7px;color:#ffe1a4;font:800 clamp(17px,3.8vw,21px)/1.25 Georgia,serif;
+  text-shadow:0 2px 5px #0d0703
+}
+.tscms-muse-referral-inner p{max-width:640px;margin:8px auto;line-height:1.5}
+.tscms-muse-referral-inner strong{color:#ffdb94}
+.tscms-muse-referral-inner .tscms-muse-lead{font-size:14.5px}
+.tscms-muse-referral-inner .tscms-muse-foot{font-size:12.5px;color:#e6c896}
+.tscms-muse-code-card{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:12px 12px 10px;margin:12px auto 10px;max-width:400px;
+  border:1px solid #d3a054;border-radius:13px;
+  background:linear-gradient(180deg,#29190e,#1a110b);box-shadow:inset 0 2px 5px #0007
+}
+.tscms-muse-code-label{color:#d6b37e;font:800 10.5px/1.3 system-ui,sans-serif;letter-spacing:1.8px}
+#tscms-muse-code{
+  display:block;padding:2px 8px;user-select:all;-webkit-user-select:all;
+  color:#ffe29e;background:none;font:800 clamp(26px,6vw,34px)/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;
+  letter-spacing:3px;white-space:nowrap
+}
+.tscms-muse-code-help{color:#c9b397;font:500 11px/1.4 system-ui,sans-serif;letter-spacing:.2px}
+.tscms-muse-copy{
+  min-height:40px;min-width:150px;max-width:100%;margin:3px 0 0;padding:9px 16px;
+  border:2px solid #ffd47b;border-radius:11px;
+  background:linear-gradient(180deg,#69411c,#3e2510);color:#ffe8b5;
+  font:800 14px/1.3 system-ui,-apple-system,sans-serif;cursor:pointer
+}
+.tscms-muse-copy:hover,.tscms-muse-copy:focus-visible{background:#88521e;color:#fff5d9}
+.tscms-muse-copy:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.tscms-muse-copy-status{min-height:1em;color:#fbe0a9;font:600 11.5px/1.3 system-ui,sans-serif}
+.tscms-muse-referral-inner .tscms-muse-foot em{color:#dab984}
+@media(max-width:380px){.tscms-muse-referral-inner{padding:16px 11px 13px}.tscms-muse-referral-inner:before{left:6px}.tscms-muse-referral-inner:after{right:6px}#tscms-muse-code{letter-spacing:1.5px}.tscms-muse-code-help{font-size:10px}}

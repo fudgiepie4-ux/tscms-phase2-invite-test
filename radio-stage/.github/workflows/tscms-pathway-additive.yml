@@ -1,0 +1,28 @@
+name: TSCMS Pathway Pack — Additive QA
+on:
+  push:
+    branches:
+      - clara/pathway-pack-additive-20261023
+  pull_request:
+    paths:
+      - 'tscms-pathway-pack.js'
+      - 'tscms-pathway-pack.css'
+      - 'tscms-quick-jump.js'
+      - 'scripts/test-pathway-pack.cjs'
+      - '.github/workflows/tscms-pathway-additive.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  additive-pathway-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated DOM test engine (no production dependencies)
+        run: npm install --no-save --no-package-lock --ignore-scripts linkedom@0.18.12
+      - name: Verify verbatim copy, DOM placement, no intake and existing nav
+        run: node scripts/test-pathway-pack.cjs

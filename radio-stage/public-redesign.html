@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><base target="_blank"><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/><meta content="#0e0a06" name="theme-color"/>
+<title>Today in TSCMS — Country Lounge</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="public-assets/style-1.css"><script data-goatcounter="https://fudgiepielabsai.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<!-- Phone-only six-song window, navigated three songs at a time; no nested scrolling. -->
+<style id="tscms-song-scroll-css">
+#songList{max-height:none!important;overflow:visible!important}
+.song-page-nav{max-width:960px;margin:9px auto;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;flex-wrap:wrap}
+.song-page-nav[hidden],#songList .tscms-song-hidden{display:none!important}
+.song-page-count{flex:1 0 100%;font-size:12px;color:#d3af74;letter-spacing:.025em}
+.song-page-btn{flex:1 1 130px;max-width:230px;min-height:44px;padding:9px 12px;border:1px solid #c49149;border-radius:9px;background:linear-gradient(180deg,#593817,#291b0e);color:#ffdda0;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit}
+.song-page-btn:disabled{opacity:.38;cursor:default}
+.song-page-btn:focus-visible{outline:2px solid #ffdfa8;outline-offset:2px}
+@media(max-width:640px){
+  #songList .song{padding:10px 8px;gap:9px}
+  #songList .avatar{flex:0 0 40px;width:40px;height:40px}
+  #songList .song-info{flex:1 1 0;min-width:0}
+  #songList .song-actions{flex:1 1 100%;width:100%;padding-left:0;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.73fr) minmax(0,.73fr) minmax(0,.9fr);gap:5px}
+  #songList .song-actions>*{box-sizing:border-box;flex:none;width:100%;min-width:0;min-height:40px;display:flex;justify-content:center;align-items:center;padding:8px 3px;font-size:11px;line-height:1.2;white-space:nowrap;text-align:center}
+}
+@media(max-width:360px){#songList .song-actions>*{font-size:10px;padding:7px 2px}}
+</style>
+<link rel="stylesheet" href="./tscms-legibility.css?v=wave-20261022"></head><body class="season-fall"><canvas aria-hidden="true" id="fallLeafCanvas"></canvas><div aria-label="Autumn leaves display settings" class="leaf-corner" role="group">
+<button aria-controls="leafModeMenu" aria-expanded="false" aria-label="Falling leaves: Calm. Change intensity" class="harvest-action" id="leavesToggle" type="button">🍁 <span>Calm</span> <span aria-hidden="true">▾</span></button>
+<div aria-label="Falling leaves intensity" class="leaf-mode-menu" hidden="" id="leafModeMenu" role="group">
+<div class="leaf-menu-title">FALLING LEAVES</div>
+<div class="leaf-mode-buttons">
+<button aria-pressed="false" data-leaf-mode="off" type="button">Off</button>
+<button aria-pressed="true" data-leaf-mode="calm" type="button">Calm</button>
+<button aria-pressed="false" data-leaf-mode="mild" type="button">Mild</button>
+<button aria-pressed="false" data-leaf-mode="stronger" type="button">Stronger</button>
+</div>
+<p class="leaf-mode-hint">Choose the motion that feels comfortable.</p>
+</div>
+<button class="harvest-action gust" id="leavesGust" title="Send a gentle gust through the falling leaves" type="button">💨 <span>Gust</span></button>
+<div aria-live="polite" class="corner-feedback" id="windReadout"></div>
+</div><main class="wrap"><header class="masthead"><span aria-hidden="true" class="autumn-leaf-right">🍂</span><div class="kicker mono">★ THE SUNO COUNTRY MUSIC SPOT ★</div><h1 class="slab">Today in <span class="g">TSCMS</span></h1><div class="groupname slab">The Suno Country Music Spot</div><div class="date">A little country music, community &amp; autumn magic · October 2026</div><div style="text-align:center"><button class="tscms-text-toggle" id="tscms-text-toggle-btn" onclick="tscmsToggleLargeText()">🔍 Larger Text: OFF</button></div></header><div class="gamehouse-entry" style="text-align:center;margin:12px 0"><a href="gamehouse.html" target="_top" style="display:block;padding:14px;border:2px solid #c9a227;border-radius:12px;background:#2c1a0e;color:#fff0c9;text-decoration:none;font-weight:700;line-height:1.45">🎮 PLAY NOW — TSCMS GAMEHOUSE <small style="display:block;font-weight:400">Regular Solitaire or Halloween Solitaire</small></a></div><div class="toplinks"><a class="ytbanner" href="https://www.youtube.com/@TSCMSLive" rel="noopener" target="_blank"><span>📺 TSCMS on YouTube</span><small class="mono">@TSCMSLive</small><b>SUBSCRIBE</b></a></div><section aria-labelledby="showsTitle" class="upcoming-shows" id="upcomingShows">
+<div class="schedule-sign"><div class="sign-line"><span class="sign-kicker">✦ TSCMS LIVE SHOWS &amp; EVENTS ✦</span><span class="sign-series">MUSIC • COMMUNITY • CREATIVITY</span></div>
+<h2 class="slab" id="showsTitle">WEEKLY <span>SHOW</span> SCHEDULE</h2>
+<div class="schedule-range">OCTOBER 15 – 21, 2026 <span class="tz-label">ALL TIMES CENTRAL</span></div><p>Come on in, pull up a chair, and see what’s happening this week.</p>
+</div>
+<div aria-label="Weekly TSCMS show schedule. Swipe horizontally to view all seven days." class="calendar-scroll" id="weeklyCalendarScroll" role="region" tabindex="0"><div class="weekly-poster-track"><div class="calendar-day thu"><div class="calendar-day-head"><b>THURSDAY</b><small>OCT 15</small></div><a aria-label="Campfire Remix Rodeo, Thursday OCT 15, 8:00 PM Central, view event on Luma" class="show-event" data-start="2026-10-15T20:00:00-05:00" href="https://luma.com/2dabyz0z" rel="noopener noreferrer" target="_blank">
+<div class="show-event-art" style="background-image:url(campfire.webp)"><img alt="" loading="lazy" onerror="this.style.display='none'" src="https://images.lumacdn.com/uploads/lr/111a5cc7-01f3-4739-81a8-44c034187dd3.webp"/></div>
+<div class="show-event-name">Campfire Remix Rodeo</div><div class="show-event-time">8:00 PM <small>CT</small><span aria-hidden="true"> ↗</span></div></a></div><div class="calendar-day fri"><div class="calendar-day-head"><b>FRIDAY</b><small>OCT 16</small></div><a aria-label="Styles Box Unboxed, Friday OCT 16, 7:00 PM Central, view event on Luma" class="show-event" data-start="2026-10-16T19:00:00-05:00" href="https://luma.com/889ef6ds" rel="noopener noreferrer" target="_blank">
+<div class="show-event-art" style="background-image:url(styles.webp)"><img alt="" loading="lazy" onerror="this.style.display='none'" src="https://images.lumacdn.com/uploads/jh/7ee24e0a-6b35-4322-8402-10af19712dd5.webp"/></div>
+<div class="show-event-name">Styles Box Unboxed</div><div class="show-event-time">7:00 PM <small>CT</small><span aria-hidden="true"> ↗</span></div></a></div><div class="calendar-day sat"><div class="calendar-day-head"><b>SATURDAY</b><small>OCT 17</small></div><a aria-label="TSCMS Radio, Saturday OCT 17, 4:00 PM Central, view event on Luma" class="show-event" data-start="2026-10-17T16:00:00-05:00" href="https://luma.com/mt3r7ef6" rel="noopener noreferrer" target="_blank">
+<div class="show-event-art" style="background-image:url(radio-sat.webp)"><img alt="" loading="lazy" onerror="this.style.display='none'" src="https://images.lumacdn.com/uploads/kj/4b6bed3c-db5e-4728-b598-2addeab2dfb3.webp"/></div>
+<div class="show-event-name">TSCMS Radio</div><div class="show-event-time">4:00 PM <small>CT</small><span aria-hidden="true"> ↗</span></div></a></div><div class="calendar-day sun"><div class="calendar-day-head"><b>SUNDAY</b><small>OCT 18</small></div><a aria-label="Red Dirt &amp; Redemption, Sunday OCT 18, 3:00 PM Central, view event on Luma" class="show-event" data-start="2026-10-18T15:00:00-05:00" href="https://luma.com/5jztfstq" rel="noopener noreferrer" target="_blank">
+<div class="show-event-art" style="background-image:url(red-dirt.webp)"><img alt="" loading="lazy" onerror="this.style.display='none'" src="https://images.lumacdn.com/uploads/z5/2aa8dc8d-3ed5-43d7-863e-d3b79ad5852e.webp"/></div>
+<div class="show-event-name">Red Dirt &amp; Redemption</div><div class="show-event-time">3:00 PM <small>CT</small><span aria-hidden="true"> ↗</span></div></a><a aria-label="Ladies’ Night, Sunday OCT 18, 7:00 PM Central, view event on Luma" class="show-event" data-start="2026-10-18T19:00:00-05:00" href="https://luma.com/uec5hqzg" rel="noopener noreferrer" target="_blank">
+<div class="show-event-art" style="background-image:url(ladies.webp)"><img alt="" loading="lazy" onerror="this.style.display='none'" src="https://images.lumacdn.com/uploads/ze/6b2ed9a9-2c08-4d86-82d0-de9580ac1c0c.webp"/></div>
+<div class="show-event-name">Ladies’ Night</div><div class="show-event-time">7:00 PM <small>CT</small><span aria-hidden="true"> ↗</span></div></a></div><div class="calendar-day mon"><div class="calendar-day-head"><b>MONDAY</b><small>OCT 19</small></div><div class="calendar-rest" style="background-image:url(public-assets/calendar-scene.jpg);background-size:cover;background-position:center"></div><div class="offair">A LITTLE COUNTRY QUIET</div></div><div class="calendar-day tue"><div class="calendar-day-head"><b>TUESDAY</b><small>OCT 20</small></div><a aria-label="Songwriters Workshop, Tuesday OCT 20, 7:00 PM Central, view event on Luma" class="show-event" data-start="2026-10-20T19:00:00-05:00" href="https://luma.com/gex7c85u" rel="noopener noreferrer" target="_blank">
+<div class="show-event-art" style="background-image:url(writers.webp)"><img alt="" loading="lazy" onerror="this.style.display='none'" src="https://images.lumacdn.com/uploads/v3/25325173-32fe-4faa-8915-813f83bfa0ad.webp"/></div>
+<div class="show-event-name">Songwriters Workshop</div><div class="show-event-time">7:00 PM <small>CT</small><span aria-hidden="true"> ↗</span></div></a></div><div class="calendar-day wed"><div class="calendar-day-head"><b>WEDNESDAY</b><small>OCT 21</small></div><a aria-label="TSCMS Radio, Wednesday OCT 21, 4:00 PM Central, view event on Luma" class="show-event" data-start="2026-10-21T16:00:00-05:00" href="https://luma.com/you8y8pm" rel="noopener noreferrer" target="_blank">
+<div class="show-event-art" style="background-image:url(radio-wed.webp)"><img alt="" loading="lazy" onerror="this.style.display='none'" src="https://images.lumacdn.com/uploads/ho/7cfa9780-f406-45eb-bde1-fef29c4a4a2f.webp"/></div>
+<div class="show-event-name">TSCMS Radio</div><div class="show-event-time">4:00 PM <small>CT</small><span aria-hidden="true"> ↗</span></div></a><a aria-label="Campfire Remix Rodeo Results Show, Wednesday OCT 21, 8:00 PM Central, view event on Luma" class="show-event" data-start="2026-10-21T20:00:00-05:00" href="https://luma.com/2rivksn5" rel="noopener noreferrer" target="_blank">
+<div class="show-event-art" style="background-image:url(results.webp)"><img alt="" loading="lazy" onerror="this.style.display='none'" src="https://images.lumacdn.com/uploads/8y/220a3e78-c9fb-4e26-aae1-e76040458618.webp"/></div>
+<div class="show-event-name">Campfire Remix Rodeo Results Show</div><div class="show-event-time">8:00 PM <small>CT</small><span aria-hidden="true"> ↗</span></div></a></div></div></div>
+<div class="calendar-rail"><div class="calendar-pager"><button aria-label="Scroll shows left" id="schedulePrev" type="button">‹</button><span>SWIPE TO EXPLORE THE WEEK</span><button aria-label="Scroll shows right" id="scheduleNext" type="button">›</button></div>
+<a class="luma-room-link" href="https://luma.com/Tscms" rel="noopener noreferrer" target="_blank">📅 Visit Our Full Luma Calendar <span aria-hidden="true">↗</span></a></div>
+<p class="schedule-footnote">Tap any show for details and registration on Luma · Schedule preview from October 14, 2026</p>
+</section>
+<!-- ===== TSCMS RADIO (production) ===== -->
+<div class="radio" id="radioSection" style="max-width:960px;margin:20px auto;">
+<div class="radio-brand"><span class="rb-t mono">📻 TSCMS RADIO</span><span class="stereo mono" id="stereo">● STANDBY</span></div>
+<div class="led">
+<div class="led-line" id="ledMain">TSCMS RADIO — 198 songs on the dial</div>
+<div class="led-line dim" id="ledSub">TAP START · SIT BACK · ENJOY THE SHOW</div>
+</div>
+<div class="stations">
+<button class="station on" id="stPlaylist" onclick="radioStation('playlist')">📻 PLAYLIST<small>198 songs</small></button>
+<button class="station" id="stWeek" onclick="radioStation('week')">📅 THIS WEEK<small>95 songs</small></button>
+</div>
+<div class="rcontrols">
+<button class="rbtn" onclick="radioPrev()">⏮ PREV</button>
+<button class="rbtn play" id="playBtn" onclick="radioPlay()">▶ START</button>
+<button class="rbtn" onclick="radioPause()">⏸ PAUSE</button>
+<button class="rbtn" onclick="radioNext()">NEXT ⏭</button>
+<button class="rbtn stop" onclick="radioStop()">■ STOP</button>
+</div>
+<div class="rrow">
+<span class="vol-label mono">VOL −</span>
+<input type="range" class="vol" id="vol" min="0" max="100" value="70" oninput="radioVol(this.value)">
+<span class="vol-label mono">+</span>
+</div>
+<div class="rprogress"><i id="rprog"></i></div>
+<audio id="raudio" preload="metadata"></audio>
+</div>
+
+<!-- ===== REAL DICEY DISCOVERY (production) ===== -->
+<div class="dice-section" id="diceSection">
+<div class="dice-kicker mono">✦ TSCMS RADIO PRESENTS ✦</div>
+<div class="dice-title slab">🎲 Dicey Discovery</div>
+<div class="dice-tagline">Roll the Dice. Discover a Voice.</div>
+<div class="dice-table" id="diceTable">
+<div class="die-col"><div class="die-wrap"><div class="die" id="die1"></div></div><div class="die-shadow"></div></div>
+<div class="die-col"><div class="die-wrap"><div class="die" id="die2"></div></div><div class="die-shadow"></div></div>
+</div>
+<button class="dice-roll-btn" id="diceBtn" onclick="diceRoll()">🎲 ROLL THE DICE!</button>
+<div class="dice-lucky">Feeling lucky? Your next favorite song could be one roll away.</div>
+<div class="dice-result" id="diceResult">
+<div class="dice-now mono">⭐ NOW DISCOVERING</div>
+<div class="dice-member slab" id="diceMember"></div>
+<div class="dice-song" id="diceSong"></div>
+<div class="dice-actions" id="diceActions"></div>
+<div class="dice-count mono" id="diceCount"></div>
+</div>
+<div class="dice-lucky" style="margin-top:18px">Every Great Song Starts With Someone Listening.</div>
+</div><div aria-label="Example public statistics from captured layout" class="stats"><div class="stat"><div class="num mono">15</div><div class="label mono">SONGS TODAY</div></div><div class="stat"><div class="num mono">29</div><div class="label mono">POSTS TODAY</div></div><div class="stat"><div class="num mono">99</div><div class="label mono">SONGS THIS WEEK</div></div>
+<div class="stats-timestamp" id="statsTimestamp" style="width:100%;text-align:center;padding:12px 0 4px;font-size:0.85em;opacity:0.75;border-top:1px solid rgba(255,255,255,0.1);margin-top:8px;">
+<span aria-hidden="true">🕐</span> <span id="statsTimestampText">Stats last updated: Oct 14, 2026 · 4:55 PM CT</span>
+</div></div><section aria-label="Song of the week" class="feature"><div class="feat-kicker mono">🏆 SONG OF THE WEEK · MOST LOVED OCT 05 – OCT 11</div><div class="feat-body"><span class="avatar big">VG</span><div class="feat-info"><div class="feat-title slab">🎬🏆🤣 AND THE FINAL TSCMS HALLOWEEN ACADEMY AWARD GOES TO…</div><div class="by">by Vickie Gibson · 21 comments · 16 reactions</div></div><div class="actions"><a class="tinybtn gold" href="https://suno.com/s/mLzGYUa4dGB0BLaD" rel="noopener" target="_blank">▶ PLAY</a><a class="tinybtn border" href="https://facebook.com/groups/1410002804113962/permalink/1646039793843594/" rel="noopener" target="_blank">VIEW POST</a></div></div></section><h2 class="sect slab"><span class="g">♪</span> SONGS BY DAY</h2><div class="sub playlist-note">Tap a day to hear what dropped · week resets every Monday morning</div><button class="autumn-btn" id="autumnBtn" onclick="renderAutumn()">🎃 Autumn Playlist</button>
+<div aria-label="Sample day tabs" class="tabs" role="tablist"><button aria-selected="false" class="tab" data-day="mon" role="tab"><strong>Mon</strong><small>10/12</small></button><button aria-selected="false" class="tab" data-day="tue" role="tab"><strong>Tue</strong><small>10/13</small></button><button aria-selected="true" class="tab active" data-day="wed" role="tab"><strong>Wed</strong><small>10/14</small></button><button aria-selected="false" class="tab" data-day="thu" role="tab"><strong>Thu</strong><small>10/15</small></button><button aria-selected="false" class="tab" data-day="fri" role="tab"><strong>Fri</strong><small>10/16</small></button><button aria-selected="false" class="tab" data-day="sat" role="tab"><strong>Sat</strong><small>10/17</small></button><button aria-selected="false" class="tab" data-day="sun" role="tab"><strong>Sun</strong><small>10/18</small></button></div><div aria-live="polite" class="panel" id="songList"><div class="status-strip" id="playlistStatus">♫ Playlist idle · choose a song to listen</div>
+<div class="song" data-song="love" data-stream="https://cdn1.suno.ai/2b8d2c8b-7c8d-4a0e-aea4-e2dbf017a6f9.mp4"><span class="avatar">TO</span><div class="song-info"><div class="song-title">Love Ain't Enough</div><div class="by">The Outlaw Saint · sample from current public layout</div></div><div class="song-actions"><button class="tinybtn gold songPlay" type="button">▶ PLAY</button><button class="tinybtn outline songStop" type="button" aria-label="Stop">⏹</button><a class="tinybtn outline" href="https://suno.com/s/Cfd9vgAeaZPISibJ" rel="noopener" target="_blank">SUNO ↗</a></div></div>
+<div class="song" data-song="backroad" data-stream="https://cdn1.suno.ai/1f77e53d-fb3c-4c87-8ff9-30a2f742277f.mp4"><span class="avatar">RG</span><div class="song-info"><div class="song-title">Use Me Like a Backroad</div><div class="by">Rob Gomez · sample from current public layout</div></div><div class="song-actions"><button class="tinybtn gold songPlay" type="button">▶ PLAY</button><button class="tinybtn outline songStop" type="button" aria-label="Stop">⏹</button><a class="tinybtn outline" href="https://suno.com/s/i47ZFMgs42iCFK8S" rel="noopener" target="_blank">SUNO ↗</a></div></div>
+<div class="song" data-song="waves" data-stream="https://cdn1.suno.ai/c3b6e9ce-8ea1-4698-8bd4-f850cfa94491.mp4"><span class="avatar">KT</span><div class="song-info"><div class="song-title">Wherever the Waves May Go</div><div class="by">Kaitlyn Tyler · sample from current public layout</div></div><div class="song-actions"><button class="tinybtn gold songPlay" type="button">▶ PLAY</button><button class="tinybtn outline songStop" type="button" aria-label="Stop">⏹</button><a class="tinybtn outline" href="https://suno.com/s/ozC1GYhNoXFfvpsB" rel="noopener" target="_blank">SUNO ↗</a></div></div>
+</div><h2 class="sect slab">🔥 MOST LOVED TODAY</h2><div class="sub">The posts getting the most conversation right now</div><div class="panel most-loved"><a href="https://facebook.com/groups/1410002804113962/permalink/1649410826839824/" rel="noopener" target="_blank"><span><b>#1</b> A brand new video from the TSCMS community</span><small>12 comments ↗</small></a><a href="https://facebook.com/groups/1410002804113962/permalink/1649562186824688/" rel="noopener" target="_blank"><span><b>#2</b> Sometimes, no matter how deeply we love someone…</span><small>8 comments ↗</small></a></div><section aria-label="Community partner and creator spotlight" class="community-corner" id="communityCorner">
+<div class="corner-heading"><div class="corner-eyebrow mono">🍂 ON THE TSCMS FRONT PORCH 🍂</div><h2 class="corner-title slab">A Little Something From Our Community</h2><p class="corner-intro">Enjoy the music first. These little extras are here whenever you feel like exploring.</p></div>
+<div class="corner-grid">
+<section aria-labelledby="sponsor-heading" class="mini-promo dubby-card">
+<div class="mini-label mono">📺 SPONSOR TV · DUBBY</div>
+<div class="mini-body">
+<div class="mini-tv-box"><div class="mini-tv-bezel">
+<video aria-label="Dubby promotional video; plays only when selected" class="mini-tv-video" controls="" id="dubbyVideo" playsinline="" poster="public-assets/dubby-poster.jpg" preload="metadata" webkit-playsinline=""><source src="public-assets/dubby-promo.mp4" type="video/mp4"/>Your browser does not support the promotional video.</video>
+<button aria-label="Play Dubby promotional video" class="mini-tv-play" id="dubbyPlay" type="button">▶</button>
+<div class="mini-tv-controls" id="dubbyControls">
+  <button type="button" class="tinybtn gold" id="dubbyPlayBtn" aria-label="Play video">▶ PLAY</button>
+  <button type="button" class="tinybtn outline" id="dubbyPauseBtn" aria-label="Pause video">⏸ PAUSE</button>
+  <button type="button" class="tinybtn outline" id="dubbyStopBtn" aria-label="Stop video">⏹ STOP</button>
+</div>
+</div><div class="mini-tv-foot"><span>TSCMS • TV</span><span aria-hidden="true" class="mini-knobs">● ◉</span></div></div>
+<div class="mini-copy"><h3 class="mini-title slab" id="sponsor-heading">Fuel Your Creativity</h3><div class="mini-promo-tag">Save 10% · <strong>TSCMSLIVE</strong></div><p>Take a quick Sponsor TV break, then get right back to your music.</p>
+<a class="mini-cta shop" href="https://www.dubby.gg/discount/TSCMSLIVE?ref=xdejzekt" rel="sponsored noopener noreferrer" target="_blank">🛒 Fuel Up Now ↗</a></div>
+</div>
+<div aria-live="polite" class="mini-footnote" id="audioNotice">Video plays when you press Play · music pauses automatically.</div>
+<p class="mini-disclosure">Affiliate partner · TSCMS may earn from qualifying purchases.</p>
+</section>
+<section aria-labelledby="bookTitle" class="mini-promo book-card">
+<div class="mini-label mono">🐾 TSCMS ADMINISTRATOR · BOOK SPOTLIGHT</div>
+<div class="mini-body">
+<div aria-label="Real Western Pugs cover displayed on a rustic autumn table with crayons and leaves" class="mini-book-set">
+<span class="mini-wood"></span><span aria-hidden="true" class="mini-leaf one">🍁</span><span aria-hidden="true" class="mini-leaf two">🍂</span>
+<div class="mini-book-standing"><img alt="Actual Western Pugs coloring book cover with a small TSCMS tribute on the cowboy boot" height="1200" loading="lazy" src="public-assets/western-pugs-book.webp" width="805"/></div>
+<span aria-hidden="true" class="mini-crayon red"></span><span aria-hidden="true" class="mini-crayon gold"></span><span aria-hidden="true" class="mini-crayon teal"></span>
+</div>
+<div class="mini-copy"><h3 class="mini-title slab" id="bookTitle">Western Pugs</h3><div class="mini-promo-tag">Color · Laugh · Relax</div><p>Created by <strong>Christopher “FudgiePie” Fudge</strong>, a TSCMS Administrator and creative artist.</p>
+<a class="mini-cta amazon" href="https://www.amazon.com/dp/B0HMG247TY" rel="noopener noreferrer" target="_blank">📚 View on Amazon ↗</a></div>
+</div>
+<div class="mini-footnote">Look closely at the cowboy boot on the cover for a little nod to TSCMS. 👢</div>
+</section>
+</div>
+</section><section aria-label="Mystery corner - something new is coming" class="mystery-corner" id="mysteryCorner">
+<div class="corner-heading"><div class="corner-eyebrow mono">🔒 OFF LIMITS 🔒</div><h2 class="corner-title slab">Something's Brewin' Backstage</h2><p class="corner-intro">This corner of the lounge is under construction. Check back soon — we've got something special in the works for the TSCMS family.</p></div>
+<div class="mystery-tape" aria-hidden="true"><span>UNDER CONSTRUCTION</span><span>COMING SOON</span><span>UNDER CONSTRUCTION</span></div>
+</section><footer class="footer mono">MADE WITH LOVE FOR THE TSCMS FAMILY · Y'ALL COME BACK NOW</footer></main>
+<audio id="songAudio" preload="none" style="display:none"></audio>
+<script src="public-assets/script-01.js"></script>
+<script src="public-assets/script-02.js"></script>
+<script src="public-assets/script-03.js"></script>
+<script src="public-assets/script-04.js"></script><script src="public-assets/script-05.js"></script><script src="public-assets/script-06.js"></script><script src="public-assets/script-07.js"></script>
+<script src="public-assets/script-08.js"></script>
+
+
+<script src="public-assets/script-09.js"></script><script src="public-assets/script-10.js"></script>
+
+
+<script>
+/* TSCMS MOBILE SONG WINDOW — fixed six rows; arrow buttons advance three, no inner scroll. */
+(function(){
+  'use strict';
+  const list=document.getElementById('songList');
+  if(!list)return;
+  const WINDOW=6,STEP=3;
+  let page=0, positions=[0], queued=false;
+  function navigation(location){
+    const nav=document.createElement('div');
+    nav.className='song-page-nav';
+    nav.hidden=true;
+    const count=document.createElement('span');
+    count.className='song-page-count';
+    if(location==='top')count.setAttribute('aria-live','polite');
+    const up=document.createElement('button');
+    up.type='button';up.className='song-page-btn';up.textContent='▲ Previous songs';
+    up.setAttribute('aria-label','Show previous songs');
+    const down=document.createElement('button');
+    down.type='button';down.className='song-page-btn';down.textContent='▼ Next songs';
+    down.setAttribute('aria-label','Show next songs');
+    nav.append(count,up,down);
+    const delta=function(step){
+      const next=Math.max(0,Math.min(positions.length-1,page+step));
+      if(next===page)return;
+      page=next;paint();
+      // Keep newly selected songs in sight, rather than trapping vertical swipes.
+      list.scrollIntoView({block:'start',behavior:'auto'});
+    };
+    up.addEventListener('click',function(){delta(-1)});
+    down.addEventListener('click',function(){delta(1)});
+    return {nav,count,up,down};
+  }
+  const topNav=navigation('top'),bottomNav=navigation('bottom');
+  list.insertAdjacentElement('beforebegin',topNav.nav);
+  list.insertAdjacentElement('afterend',bottomNav.nav);
+  function paint(){
+    queued=false;
+    const rows=Array.from(list.children).filter(el=>el.classList.contains('song'));
+    const phone=window.matchMedia('(max-width:640px)').matches;
+    const max=Math.max(0,rows.length-WINDOW);
+    positions=[0];
+    for(let n=STEP;n<max;n+=STEP)positions.push(n);
+    if(max>0&&positions[positions.length-1]!==max)positions.push(max);
+    page=Math.max(0,Math.min(page,positions.length-1));
+    const start=phone?positions[page]:0;
+    const end=phone?Math.min(start+WINDOW,rows.length):rows.length;
+    list.classList.remove('song-list-scroll');
+    list.style.removeProperty('max-height');
+    list.style.removeProperty('overflow-y');
+    list.style.removeProperty('overflow-x');
+    list.removeAttribute('tabindex');
+    list.removeAttribute('role');
+    list.removeAttribute('aria-label');
+    rows.forEach(function(row,i){row.classList.toggle('tscms-song-hidden',phone&&(i<start||i>=end));});
+    const hasNav=phone&&rows.length>WINDOW;
+    [topNav,bottomNav].forEach(function(ctl){
+      ctl.nav.hidden=!hasNav;
+      ctl.count.textContent='Showing songs '+(start+1)+'–'+end+' of '+rows.length;
+      ctl.up.disabled=page===0;
+      ctl.down.disabled=page>=positions.length-1;
+      const prev=page>0?start-positions[page-1]:0;
+      const next=page<positions.length-1?positions[page+1]-start:0;
+      ctl.up.textContent='▲ Previous '+(prev||STEP);
+      ctl.down.textContent='▼ Next '+(next||STEP);
+    });
+  }
+  function schedule(){if(queued)return;queued=true;requestAnimationFrame(paint);}
+  const observer=new MutationObserver(function(changes){
+    if(changes.some(change=>change.type==='childList'&&change.target===list)){
+      page=0;schedule();
+    }
+  });
+  observer.observe(list,{childList:true});
+  window.addEventListener('resize',schedule,{passive:true});
+  schedule();
+})();
+</script>
+
+<script>
+/* Larger Text toggle - shared with admin side via localStorage */
+function tscmsToggleLargeText(){
+  var on = document.body.classList.toggle('large-text');
+  var btn = document.getElementById('tscms-text-toggle-btn');
+  if(btn){
+    btn.classList.toggle('active', on);
+    btn.innerHTML = '🔍 Larger Text: ' + (on ? 'ON' : 'OFF');
+  }
+  try{ localStorage.setItem('tscms_large_text', on ? '1' : '0'); }catch(e){}
+}
+(function(){
+  try{
+    if(localStorage.getItem('tscms_large_text')==='1'){
+      document.body.classList.add('large-text');
+      document.addEventListener('DOMContentLoaded', function(){
+        var btn = document.getElementById('tscms-text-toggle-btn');
+        if(btn){ btn.classList.add('active'); btn.innerHTML='🔍 Larger Text: ON'; }
+      });
+    }
+  }catch(e){}
+})();
+</script>
+<script>(function(){if(window.self!==window.top)return;var e=document.createElement('script');e.src='tscms-feedback.js';document.body.appendChild(e);})();</script><script src="./tscms-legibility.js?v=wave-20261022" defer></script></body></html>

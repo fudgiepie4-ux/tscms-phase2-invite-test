@@ -1,0 +1,25 @@
+/* Public homepage: compact live stats under Today's headline, above YouTube.
+   Rules deliberately scoped; NEVER override Gamehouse, Quick Jump, or other cards. */
+.wrap .stats.tscms-home-stats {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;margin:0 0 14px;align-items:stretch}
+.wrap .stats.tscms-home-stats .stat {min-width:0;border-radius:10px;padding:9px 5px;background:linear-gradient(150deg,#2b1c0c,#19130e);border:1px solid rgba(200,143,58,.52)}
+.wrap .stats.tscms-home-stats .stat .v {font-size:clamp(19px,4vw,27px);line-height:1.1;font-weight:800;font-variant-numeric:tabular-nums}
+.wrap .stats.tscms-home-stats .stat .l {font-size:clamp(8px,1.65vw,10px);line-height:1.3;letter-spacing:.55px;white-space:normal;margin-top:4px}
+.wrap .tscms-home-dubby {box-sizing:border-box;width:100%;margin:24px 0 18px;padding:16px;border-radius:16px;border:1px solid #9d713c;background:radial-gradient(circle at 10% 0%,#51301990,transparent 60%),linear-gradient(145deg,#2b1d12,#100c09);box-shadow:0 8px 30px #0007;color:#ecd7b8;overflow:hidden}
+.wrap .tscms-dubby-eyebrow {color:#e9b96d;font:800 12px/1.3 system-ui,sans-serif;letter-spacing:1.2px;margin-bottom:13px}
+.wrap .tscms-dubby-inner {display:grid;grid-template-columns:minmax(115px,42%) minmax(0,1fr);gap:15px;align-items:center}
+.wrap .tscms-dubby-screen {min-width:0;max-width:310px;margin:auto;width:100%;box-sizing:border-box;padding:7px;background:linear-gradient(135deg,#966334,#432713);border:3px solid #a57743;border-radius:14px;box-shadow:0 7px 14px #0008}
+.wrap .tscms-dubby-screen video {width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;display:block;background:#070404;border-radius:7px}
+.wrap .tscms-dubby-screen-caption {text-align:center;font:800 9px/1.4 system-ui,sans-serif;color:#e6c492;letter-spacing:1px;padding-top:5px}
+.wrap .tscms-dubby-copy {min-width:0;display:flex;flex-direction:column;align-items:stretch;gap:9px}
+.wrap .tscms-dubby-copy h2 {margin:0;font:700 clamp(18px,2.9vw,27px)/1.2 Georgia,serif;letter-spacing:0;color:#ffe1ae}
+.wrap .tscms-dubby-copy p {margin:0;color:#ead7bc;font:500 13px/1.42 system-ui,sans-serif}
+.wrap .tscms-dubby-copy .tscms-dubby-offer {color:#ffcc76;font-weight:850}
+.wrap .tscms-dubby-shop {box-sizing:border-box;min-height:44px;background:linear-gradient(135deg,#81e120,#4cba00);color:#173108!important;border-radius:10px;padding:10px 9px;display:flex;justify-content:center;align-items:center;text-align:center;text-decoration:none;font:800 13px/1.35 system-ui,sans-serif}
+.wrap .tscms-dubby-shop:hover,.wrap .tscms-dubby-shop:focus-visible {filter:brightness(1.13)}
+.wrap .tscms-dubby-actions {display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin:13px 0 5px}
+.wrap .tscms-dubby-actions button {box-sizing:border-box;min-height:40px;min-width:80px;flex:1 1 90px;border-radius:9px;border:1px solid #b48b4c;background:#382418;color:#ffe4b4;font:750 12px/1.2 system-ui,sans-serif;cursor:pointer}
+.wrap .tscms-dubby-actions button:hover,.wrap .tscms-dubby-actions button:focus-visible {background:#59361a;outline-offset:2px}
+.wrap .tscms-dubby-status {min-height:1.35em;text-align:center;color:#e8cda6;font:500 12px/1.35 system-ui,sans-serif;margin:7px 0 5px}
+.wrap .tscms-dubby-disclosure {color:#bea788;font:500 11px/1.35 system-ui,sans-serif;margin:6px 0 0;text-align:center}
+@media(max-width:400px){.wrap .tscms-home-dubby{padding:12px}.wrap .tscms-dubby-inner{gap:11px;grid-template-columns:minmax(115px,42%) minmax(0,1fr)}.wrap .tscms-dubby-copy p{font-size:11.5px}.wrap .tscms-dubby-copy h2{font-size:19px}.wrap .tscms-dubby-shop{font-size:11px;padding:9px 5px}}
+@media(max-width:340px){.wrap .tscms-dubby-inner{grid-template-columns:1fr}.wrap .tscms-dubby-screen{max-width:220px}.wrap .stats.tscms-home-stats{gap:4px}.wrap .stats.tscms-home-stats .stat{padding:8px 2px}}

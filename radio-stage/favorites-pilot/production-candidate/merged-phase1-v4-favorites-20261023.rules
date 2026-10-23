@@ -1,0 +1,300 @@
+// ============================================================================
+// TSCMS Phase 1 REVISED v4 — Firestore Security Rules
+// STATUS: OCT 23 2026 CANDIDATE ONLY — NOT DEPLOYED. Reconcile against currently installed PRODUCTION rules.
+// Revises v3 per Clara's Oct 19 v3 audit (6 blockers/clarifications addressed).
+// Design goals: free Spark plan only, no Cloud Functions, no Blaze billing.
+// ============================================================================
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- helpers ----------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function userDocExists() {
+      return isSignedIn()
+          && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isOwner() {
+      return isVerified()
+          && userDocExists()
+          && userDoc().owner == true
+          && userDoc().status == 'approved';
+    }
+
+    function isAdmin() {
+      return isVerified()
+          && userDocExists()
+          && userDoc().admin == true
+          && userDoc().status == 'approved';
+    }
+
+    // October 21 controlled rollout: configured cutoff date + manual flag
+    // AND hard November 1 server-time cutoff; no client clock needed.
+    // cutoffDate intentionally limited to Oct 1-Nov 1 2026, when the
+    // cutoff MIDNIGHT is Central Daylight Time = UTC-5.
+    // Malformed/missing config must fail closed.
+    function isPinWindowOpen() {
+      let config = get(/databases/$(database)/documents/config/migration).data;
+      let cutoff = config.get('cutoffDate', '');
+      let fields = cutoff is string ? cutoff.split('-') : [];
+      return config.get('pinRegistrationOpen', false) == true
+          && cutoff is string
+          && cutoff.matches('^2026-(10-(0[1-9]|[12][0-9]|3[01])|11-01)$')
+          && fields.size() == 3
+          && request.time < timestamp.date(
+               int(fields[0]), int(fields[1]), int(fields[2]))
+               + duration.value(5, 'h')
+          && request.time < timestamp.date(2026, 11, 1)
+               + duration.value(5, 'h');
+    }
+
+    // v4 FIX (Clara v3-#2): username normalization enforced IN RULES.
+    // Lowercase alphanumeric + underscore only, 3-30 chars.
+    // "Fudgie" is REJECTED; only "fudgie" is accepted. Client must
+    // lowercase before submitting, but the rule is the enforcement point.
+    function isValidUsername(name) {
+      return name is string
+          && name.matches('^[a-z0-9_]{3,30}$');
+    }
+
+    // ---------- users collection ----------
+    match /users/{uid} {
+
+      allow create: if isSignedIn()
+          && request.auth.uid == uid
+          // Email must match auth token
+          && request.resource.data.email is string
+          && request.resource.data.email == request.auth.token.email
+          // Required fields present, no extras
+          && request.resource.data.keys().hasAll(
+               ['email', 'username', 'fullName', 'admin', 'owner',
+                'status', 'createdAt', 'registrationPath'])
+          && request.resource.data.keys().hasOnly(
+               ['email', 'username', 'fullName', 'admin', 'owner',
+                'status', 'createdAt', 'registrationPath'])
+          // v4: username validated by RULES (not just client)
+          && isValidUsername(request.resource.data.username)
+          && request.resource.data.fullName is string
+          && request.resource.data.fullName.size() >= 1
+          && request.resource.data.fullName.size() <= 100
+          && request.resource.data.createdAt == request.time
+          // Privilege lockdown
+          && request.resource.data.status == 'pending'
+          && request.resource.data.admin == false
+          && request.resource.data.owner == false
+          && (request.resource.data.registrationPath == 'direct'
+              || request.resource.data.registrationPath == 'pin')
+          // v4 FIX (Clara v3-#1): two-way atomic username reservation.
+          // The /usernames/{username} doc must be created in the SAME batch,
+          // AND it must reference this uid. getAfter verifies post-commit state.
+          && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.username)).data.uid == request.auth.uid
+          // PIN path requires open window (server time + config flag).
+          // v4 CLARIFICATION (Clara v3-#4): registrationPath:'pin' is
+          // client-asserted and does NOT prove PIN knowledge. The PIN is
+          // verified by the WEBSITE UI before submission (user enters PIN,
+          // UI checks against known value, then sets this field). The rule
+          // cannot verify the PIN itself. BOTH paths create 'pending' and
+          // require Owner approval — so a forged 'pin' value grants nothing.
+          && (request.resource.data.registrationPath == 'direct'
+              || isPinWindowOpen());
+
+      // Owner + self only (PII protection)
+      allow get: if isOwner()
+                 || (isSignedIn() && request.auth.uid == uid);
+
+      allow list: if isOwner();
+
+      // v4 FIX (Clara v3-#5): hardened owner update.
+      // createdAt and registrationPath are now IMMUTABLE.
+      // diff().affectedKeys() restricts WHICH fields changed, not just
+      // which fields exist. Only admin, status, username, fullName,
+      // approvedAt, approvedBy may change.
+      allow update: if isOwner()
+          && request.resource.data.owner == resource.data.owner
+          && request.resource.data.email == resource.data.email
+          && request.resource.data.username == resource.data.username
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.registrationPath == resource.data.registrationPath
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(
+               ['admin', 'status', 'fullName',
+                'approvedAt', 'approvedBy'])
+          // Owner self-lockout prevention
+          && !(resource.data.owner == true && request.resource.data.admin == false)
+          && !(resource.data.owner == true && request.resource.data.status != 'approved')
+          // Valid status values
+          && request.resource.data.status in ['pending', 'approved', 'rejected', 'revoked']
+          && request.resource.data.admin is bool;
+
+      allow delete: if isOwner() && resource.data.owner != true;
+    }
+
+    // ---------- usernames collection ----------
+    // v4 FIX (Clara v3-#1): two-way atomic validation.
+    // A standalone /usernames create (without matching /users doc in the
+    // same batch) is now DENIED via getAfter check on /users/{uid}.
+    // This prevents username squatting.
+    match /usernames/{username} {
+      allow create: if isSignedIn()
+          && !exists(/databases/$(database)/documents/usernames/$(username))
+          // Username doc ID must match the normalized username pattern
+          && isValidUsername(username)
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.keys().hasOnly(['uid', 'createdAt'])
+          && request.resource.data.createdAt == request.time
+          // v4: the matching /users doc MUST be created in the same batch
+          // with the same username. Standalone reservations → DENY.
+          && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.username == username;
+      allow read: if false;
+      allow update, delete: if false;
+    }
+
+    // ---------- app config ----------
+    match /config/{doc} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ---------- migration config ----------
+    // v4 NOTE (Clara v3-#6): readable by any signed-in user (including
+    // pending). This is INTENTIONAL — the website needs to check the flag.
+    // This doc contains ONLY boolean flags and dates. NEVER store PINs,
+    // passwords, keys, or secrets here. Shape:
+    // { pinRegistrationOpen: boolean, cutoffDate: "2026-11-01" }
+    match /config/migration {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // ---------- vault ----------
+    // v4 NOTE (Clara v3-#6): admin-readable by design. This holds
+    // encryption keys for admin data. Only verified+approved admins
+    // can read. Confirmed intended.
+    match /vault/{doc} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ---------- Favorites pilot · Oct 23 owner-authorized source candidate ----------
+    // IMPORTANT: never deploy from GitHub without comparing CURRENT console-active rules
+    // and independently testing the merge with the Firestore Rules Emulator.
+    function favoritesPilotTeam(uid) {
+      return request.auth != null
+        && request.auth.uid == uid
+        && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/users/$(uid))
+        && get(/databases/$(database)/documents/users/$(uid)).data.status == 'approved'
+        && (get(/databases/$(database)/documents/users/$(uid)).data.admin == true
+            || get(/databases/$(database)/documents/users/$(uid)).data.owner == true);
+    }
+    match /users/{uid}/favorites/{songId} {
+      allow get, list: if favoritesPilotTeam(uid);
+      allow create: if favoritesPilotTeam(uid)
+        && songId.matches('song-[a-f0-9]{64}')
+        && request.resource.data.keys().hasOnly(['title','artist','play_url','savedAt'])
+        && request.resource.data.keys().hasAll(['title','artist','play_url','savedAt'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 500
+        && request.resource.data.artist is string
+        && request.resource.data.artist.size() > 0
+        && request.resource.data.artist.size() <= 200
+        && request.resource.data.play_url is string
+        && request.resource.data.play_url.matches('https://.*')
+        && request.resource.data.play_url.size() <= 1600
+        && request.resource.data.savedAt == request.time;
+      allow update: if false; // snapshot at save time is immutable
+      allow delete: if favoritesPilotTeam(uid);
+    }
+    match /pilotAggregates/favorites {
+      allow get: if request.auth != null && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.owner == true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved';
+      allow list, create, update, delete: if false; // Admin SDK backend only
+    }
+    
+
+    // ---------- default deny ----------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+// ============================================================================
+// v4 CHANGELOG (addressing Clara's v3 audit, Oct 19)
+// ============================================================================
+// v3-#1 USERNAME SQUATTING: /usernames CREATE now requires getAfter on
+//   /users/{uid} — the user doc must be created in the same atomic batch
+//   with matching username. Standalone reservations → DENY. Two-way
+//   validation: /users checks /usernames, /usernames checks /users.
+// v3-#2 CASE NORMALIZATION: isValidUsername() enforces ^[a-z0-9_]{3,30}$
+//   IN THE RULES. "Fudgie" rejected, "fudgie" accepted. Both /users and
+//   /usernames paths enforce it. Client lowercases first, rule is the gate.
+// v3-#3 PIN FLAG WIRING: isPinWindowOpen() now ANDs server time with
+//   /config/migration.pinRegistrationOpen == true. Fail closed if the
+//   config doc is missing. Early manual shutdown works: set flag to false.
+// v3-#4 PIN KNOWLEDGE: documented that registrationPath is client-asserted.
+//   PIN verified by website UI pre-submission. Both paths → pending →
+//   Owner approval required. Forged 'pin' value grants zero privilege.
+// v3-#5 OWNER UPDATE HARDENING: createdAt + registrationPath immutable.
+//   diff().affectedKeys().hasOnly restricts changed fields to:
+//   admin, status, fullName, approvedAt, approvedBy. Type check on admin.
+// v3-#6 ACCESS NOTES: /config/migration intentionally readable by any
+//   signed-in user (flags only, never secrets). /vault admin-only by design.
+//
+// ============================================================================
+// TEST MATRIX v4 (44 total, ZERO executed)
+// ============================================================================
+// Original 10 (#1-10) + v2 additions 19 (#11-29) + v3 additions 7 (#30-36)
+// + v4 additions 8 (#37-44) = 44 total:
+// 37. Standalone /usernames/{x} create (no /users batch) → DENY
+// 38. Batch of 10 standalone username reservations → DENY (all)
+// 39. Username "Fudgie" (uppercase) → DENY (normalization)
+// 40. Username "ab" (too short) → DENY
+// 41. Username "fudgie!" (invalid char) → DENY
+// 42. PIN registration with pinRegistrationOpen=false (before Nov 1) → DENY
+// 43. Owner update changing createdAt → DENY
+// 44. Owner update changing registrationPath → DENY
+//
+// TEST DEFINITIONS (Clara — v4 readback, Oct 19; documentation, not deployment)
+// - #11 (valid own user create → ALLOW) and #27 (direct registration after
+//   cutoff → ALLOW) MUST be written as atomic /users + /usernames PAIRED
+//   batch writes. A standalone /users create is intentionally DENIED in v4.
+//   Race/duplicate tests (#34, #28) also require paired batches.
+// - getAfter() validates the document's POST-WRITE state, not proof the
+//   write happened in this batch: a standalone /usernames write with an
+//   ALREADY-EXISTING matching /users doc can pass. Test the "existing
+//   matching user doc" case separately; decide whether that's acceptable
+//   (e.g. legacy user bootstrap). Do not claim the rule strictly proves a
+//   paired write in every possible state.
+// - Owner update validates admin bool + status enum but does NOT validate
+//   new fullName type/length or approvedAt/approvedBy shape. An owner could
+//   accidentally save malformed values. Test-definition item added; small
+//   pre-release validation improvement to consider — no v5 for numbering.
+// - Tests requiring Nov 1 future request.time are not directly reproducible
+//   on today's emulator clock: any test-only cutoff override must be clearly
+//   documented, and the real-time cutoff behavior verified separately.
+//
+// STATUS: NONE executed. Emulator Suite required before Fudgie approval.
+// ============================================================================
+
+// OCT 21 single targeted retest (isolated TEST Firebase only):
+// Confirm actual deployed TEST rules match reference outside this one function.
+// Past cutoffDate with flag=true: NEW PIN-path /users + /usernames batch DENIED.
+// Restored future cutoffDate with flag=true: NEW PIN-path signup PENDING ONLY.
+// Restore TEST config to original Nov 1 date and clean disposable records.
+// Never publish these rules to production without separate explicit authorization.
