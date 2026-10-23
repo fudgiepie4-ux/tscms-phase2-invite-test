@@ -38,6 +38,9 @@ p{overflow-wrap:anywhere}small{font-size:14px}output{display:block;min-height:24
 <div id="redeem" hidden><p>Email verified. Finish your personal account request:</p>
 <form id="recipient-signup"><label>Real name for test (fictional)<input id="full-name" required maxlength="100"></label>
 <label>Username<input id="user-name" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_]{3,30}"></label>
-<button type="submit">Create PENDING test request</button></form></div>
+<p>Last step: choose a password for your future normal email-and-password sign-in. Your account still starts PENDING.</p>
+<label>New password (at least 12 characters)<input id="new-password" type="password" autocomplete="new-password" required minlength="12"></label>
+<label>Confirm new password<input id="confirm-password" type="password" autocomplete="new-password" required minlength="12"></label>
+<button type="submit">Set password and submit PENDING test request</button></form></div>
 </article>
 </main><script type="module" src="./phase2-app.js"></script></body></html>
