@@ -1,0 +1,41 @@
+/* ===== HALLOWEEN/AUTUMN PLAYLIST ===== */
+/* Seasonal playlist - tap the 🎃 button to view. Uses the same audio element */
+/* and play functions as the day playlists (dayPlay/dayPause/dayStop). */
+const AUTUMN_SONGS = [{"title": "They’re Heeere. The Haunting of Dolly PartHen", "artist": "Vickiejo", "member": "Vickiejo", "stream": "https://cdn1.suno.ai/b6a1b8ab-6a6d-41d3-a601-3f4d0d694ed2.mp4", "suno": "https://suno.com/s/S93fYpZQHbRsPuyR", "fb": "https://facebook.com/groups/1410002804113962/permalink/1647647060349534/"}, {"title": "THE EXORCIST OF EGG COUNTY", "artist": "Bren Sue Studio", "member": "Bren Sue Studio", "stream": "https://cdn1.suno.ai/eb325747-f5a3-4c69-89a5-6d396badc0a4.mp4", "suno": "https://suno.com/s/AR6NcWCLIs3kAtu0", "fb": "https://facebook.com/groups/1410002804113962/permalink/1646948400419400/"}, {"title": "Poultrygeist", "artist": "Zoē Titterton", "member": "Zoē Titterton", "stream": "https://cdn1.suno.ai/af54e3d5-dcdb-4ab5-93e0-465d921200da.mp4", "suno": "https://suno.com/s/QUJfeq6ohhUkczma", "fb": "https://facebook.com/groups/1410002804113962/permalink/1646591377121769/"}, {"title": "Trick Or Treat", "artist": "Bettyxxoxx", "member": "Bettyxxoxx", "stream": "https://cdn1.suno.ai/7896d0c9-91d4-40be-b06a-e2dd650904b6.mp4", "suno": "https://suno.com/s/V30dJxtm94eG2fZg", "fb": "https://facebook.com/groups/1410002804113962/permalink/1642901017490805/"}, {"title": "The Witch Next Door", "artist": "Bettyxxoxx", "member": "Bettyxxoxx", "stream": "https://cdn1.suno.ai/34b407f6-ca32-4e8e-9f3f-a31985591339.mp4", "suno": "https://suno.com/s/0UDKhMSjN6jSACMN", "fb": "https://facebook.com/groups/1410002804113962/permalink/1638565644591009/"}, {"title": "Lovin You is Spooky (Country/Blues)", "artist": "Charles Easterday", "member": "Charles Easterday", "stream": "https://cdn1.suno.ai/e3200419-9967-4ee2-83ef-13b2b2dbb026.mp4", "suno": "https://suno.com/s/kTLQmu3kERp1IVRR", "fb": "https://facebook.com/groups/1410002804113962/permalink/1624475416000032/"}, {"title": "Clucking Hell", "artist": "Austin Scott Ravyn", "member": "Austin Scott Ravyn", "stream": "https://cdn1.suno.ai/9f4c1f27-d02d-4d3e-8d6b-a08c082dd432.mp4", "suno": "https://suno.com/s/ZOyxuq8R0nWMQoKO", "fb": "https://facebook.com/groups/1410002804113962/permalink/1648975953549978/"}, {"title": "Five-Dollar Chicken Apocalypse (Don't Open That Truck!)", "artist": "CowboyBatman", "member": "CowboyBatman", "stream": "https://cdn1.suno.ai/7fa0354b-48c8-4b70-bcbe-4c9228395f18.mp4", "suno": "https://suno.com/s/J1IbyrfrsOO3nfh8", "fb": "https://facebook.com/groups/1410002804113962/permalink/1649068110207429/"}, {"title": "Across The Nine Lives Causeway", "artist": "Zoē Titterton", "member": "Zoē Titterton", "stream": "https://cdn1.suno.ai/2a239582-5c9d-4e87-af66-0e25b25225fd.mp4", "suno": "https://suno.com/s/c7qlWw4E98wFo52J", "fb": "https://facebook.com/groups/1410002804113962/permalink/1646037677177139/"}, {"title": "Across The Nine Lives Causeway", "artist": "Zoē Titterton", "member": "Zoē Titterton", "stream": "https://cdn1.suno.ai/2a239582-5c9d-4e87-af66-0e25b25225fd.mp4", "suno": "https://suno.com/s/KGtbcznUgxT7vQnS", "fb": "https://facebook.com/groups/1410002804113962/permalink/1640325001081740/"}, {"title": "Vacancy", "artist": "Vickiejo", "member": "Vickiejo", "stream": "https://cdn1.suno.ai/b98b2a94-03b2-445a-8eeb-379d62406005.mp4", "suno": "https://suno.com/s/CS7VwxgjszM6DQmE", "fb": "https://facebook.com/groups/1410002804113962/permalink/1639280347852872/"}, {"title": "The Boneyard ", "artist": "Drk113", "member": "Drk113", "stream": "https://cdn1.suno.ai/f5361347-c363-49b0-97dc-cd8a784099f0.mp4", "suno": "https://suno.com/s/joaS3YSIPKOcsoES", "fb": "https://facebook.com/groups/1410002804113962/permalink/1640719347708972/"}, {"title": "They Burned Women", "artist": "Bettyxxoxx", "member": "Bettyxxoxx", "stream": "https://cdn1.suno.ai/4e476df9-bb51-4463-a4d4-7bd6b376c60c.mp4", "suno": "https://suno.com/s/JcTn2W5h481GanlN", "fb": "https://facebook.com/groups/1410002804113962/permalink/1633516598429247/"}, {"title": "Legend of Bloody Mary", "artist": "Mark Gilmore", "member": "Mark Gilmore", "stream": "https://cdn1.suno.ai/e08918e2-5bb2-4489-8304-ec212c04513e.mp4", "suno": "https://suno.com/s/GCcsS0tUHRoUKbfR", "fb": "https://facebook.com/groups/1410002804113962/permalink/1632206651893575/"}, {"title": "The Boys on the Tracks", "artist": "Bettyxxoxx", "member": "Bettyxxoxx", "stream": "https://cdn1.suno.ai/9381b273-d518-4ca6-87cf-b739fa3c2fd2.mp4", "suno": "https://suno.com/s/Bc7AAnQBG4TatfIB", "fb": "https://facebook.com/groups/1410002804113962/permalink/1631123102001930/"}, {"title": "One Good Eye", "artist": "GradeBrigade", "member": "GradeBrigade", "stream": "https://cdn1.suno.ai/3049d286-b5cb-4572-8782-d6e55fb3e8d2.mp4", "suno": "https://suno.com/s/90oAp5c2JQtVsti6", "fb": "https://facebook.com/groups/1410002804113962/permalink/1644150207365886/"}, {"title": "Ghost Child", "artist": "Sounds Of Sound", "member": "Sounds Of Sound", "stream": "https://cdn1.suno.ai/386b916d-ec65-468f-b7ae-3f312068f7b8.mp4", "suno": "https://suno.com/s/YGUtAfHzv93cCZSj", "fb": "https://facebook.com/groups/1410002804113962/permalink/1644118897369017/"}, {"title": "I See Dead People", "artist": "Bettyxxoxx", "member": "Bettyxxoxx", "stream": "https://cdn1.suno.ai/6b6ff229-938c-440b-876f-f8a35ed6bd20.mp4", "suno": "https://suno.com/s/LN27rz5cZVLMC6gH", "fb": "https://facebook.com/groups/1410002804113962/permalink/1639443141169926/"}, {"title": "Come Back to Me", "artist": "Gina Martin", "member": "Gina Martin", "stream": "https://cdn1.suno.ai/641f2a45-4793-4f46-afbb-6a661e36675e.mp4", "suno": "https://suno.com/s/4Fy5dDqRCLnbC0yn", "fb": "https://facebook.com/groups/1410002804113962/permalink/1626808939100013/"}, {"title": "The Best Western ", "artist": "Zaxcee Hyde", "member": "Zaxcee Hyde", "stream": "https://cdn1.suno.ai/99fcc1a7-125e-4793-91d0-8a37c51efe4e.mp4", "suno": "https://suno.com/s/Xd0fP0qPZSMVSFCN", "fb": "https://facebook.com/groups/1410002804113962/permalink/1621566276290946/"}, {"title": "Pumpkin Spice Cult of", "artist": "DjC", "member": "DjC", "stream": "https://cdn1.suno.ai/674cdc79-1416-43bd-81d3-e1116715e92a.mp4", "suno": "https://suno.com/s/Z8X72ch6igXDO1sf", "fb": "https://facebook.com/groups/1410002804113962/permalink/1625038625943711/"}];
+
+function renderAutumn(){
+  const panel = document.getElementById('songList');
+  if(!panel) return;
+  // Clear day tab actives, mark autumn button active
+  document.querySelectorAll('.tabs .tab').forEach(function(tab){
+    tab.classList.remove('active');
+    tab.setAttribute('aria-selected', 'false');
+  });
+  var abtn = document.getElementById('autumnBtn');
+  if(abtn) abtn.classList.add('active');
+  if(!AUTUMN_SONGS.length){
+    panel.innerHTML = '<div class="status-strip">No autumn songs yet — check back soon! 🎃</div>';
+    return;
+  }
+  let h = '<div class="status-strip" id="playlistStatus">🎃 '+AUTUMN_SONGS.length+' spooky songs · tap play to listen</div>';
+  AUTUMN_SONGS.forEach(function(s, i){
+    const init = (s.member||'?').split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase();
+    h += '<div class="song" data-suno="'+escHtml(s.suno)+'">';
+    h += '<span class="avatar">'+escHtml(init)+'</span>';
+    h += '<span class="song-info"><span class="song-title">'+escHtml(s.title)+'</span>';
+    h += '<span class="by">by '+escHtml(s.member)+'</span></span>';
+    h += '<span class="song-actions">';
+    if(s.stream){
+      h += '<button class="tinybtn gold" data-stream="'+escHtml(s.stream)+'" data-suno="'+escHtml(s.suno)+'" onclick="dayPlay(this)">▶ PLAY</button>';
+      h += '<button class="tbtn" onclick="dayPause(this)" aria-label="Pause"><svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg><span>PAUSE</span></button>';
+      h += '<button class="tbtn stop" onclick="dayStop(this)" aria-label="Stop"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></svg><span>STOP</span></button>';
+    } else if(s.suno){
+      h += '<a class="tinybtn gold" href="'+escHtml(s.suno)+'" target="_blank" rel="noopener">▶ PLAY</a>';
+    }
+    if(s.suno){
+      h += '<a class="tinybtn outline" href="'+escHtml(s.suno)+'" target="_blank" rel="noopener">SUNO ↗</a>';
+    }
+    h += '</span></div>';
+  });
+  panel.innerHTML = h;
+}

@@ -1,0 +1,39 @@
+// REVIEW-ONLY FIRESTORE v4 ADDENDUM: DO NOT DEPLOY OR REPLACE WHOLE RULESET.
+// Merge inside existing match /databases/{database}/documents (avoid duplicated
+// /users match). Current live v4 installed rules must be independently fetched.
+// Team-only pilot; member-wide widening requires a later explicit owner decision.
+function favoritesPilotTeam(uid) {
+  return request.auth != null
+    && request.auth.uid == uid
+    && request.auth.token.email_verified == true
+    && exists(/databases/$(database)/documents/users/$(uid))
+    && get(/databases/$(database)/documents/users/$(uid)).data.status == 'approved'
+    && (get(/databases/$(database)/documents/users/$(uid)).data.admin == true
+        || get(/databases/$(database)/documents/users/$(uid)).data.owner == true);
+}
+match /users/{uid}/favorites/{songId} {
+  allow get, list: if favoritesPilotTeam(uid);
+  allow create: if favoritesPilotTeam(uid)
+    && songId.matches('song-[a-f0-9]{64}')
+    && request.resource.data.keys().hasOnly(['title','artist','play_url','savedAt'])
+    && request.resource.data.keys().hasAll(['title','artist','play_url','savedAt'])
+    && request.resource.data.title is string
+    && request.resource.data.title.size() > 0
+    && request.resource.data.title.size() <= 500
+    && request.resource.data.artist is string
+    && request.resource.data.artist.size() > 0
+    && request.resource.data.artist.size() <= 200
+    && request.resource.data.play_url is string
+    && request.resource.data.play_url.matches('https://.*')
+    && request.resource.data.play_url.size() <= 1600
+    && request.resource.data.savedAt == request.time;
+  allow update: if false; // snapshot at save time is immutable
+  allow delete: if favoritesPilotTeam(uid);
+}
+match /pilotAggregates/favorites {
+  allow get: if request.auth != null && request.auth.token.email_verified == true
+    && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+    && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.owner == true
+    && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved';
+  allow list, create, update, delete: if false; // Admin SDK backend only
+}
