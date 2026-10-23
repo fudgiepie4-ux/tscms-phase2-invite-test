@@ -1,6 +1,13 @@
 // Phase 2 invitations — deterministic, isolated test helpers.
 export const TEST_PROJECT = 'tscms-admin-login-test';
 export const TTL_MS = 7*24*60*60*1000;
+ // Conservative issue-time allowance for up to ~1h device clock skew plus network.
+ // Server rules STILL enforce expiry <= (server request.time + 7d); never widen them.
+export const EXPIRY_CLOCK_BUFFER_MS = 75*60*1000;
+export function proposedInviteExpiryMs(clientNowMs){
+  if(!Number.isFinite(clientNowMs))throw Error('Invalid clock');
+  return clientNowMs + TTL_MS - EXPIRY_CLOCK_BUFFER_MS;
+}
 export function assertTestOnly(config,hostname){
   if(config?.projectId!==TEST_PROJECT)throw Error('STOP — wrong Firebase project');
   if(!config.apiKey||config.apiKey.includes('REQUIRED')||!config.appId||config.appId.includes('REQUIRED'))
