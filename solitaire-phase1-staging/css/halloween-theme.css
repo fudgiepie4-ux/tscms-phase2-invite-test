@@ -1,0 +1,129 @@
+/* ============================================================
+   TSCMS Halloween — V5 visual treatment
+   Source: solitaire-halloween-weather-VISUAL-PREVIEW.html @ a531a6a7
+   (Halloween concept v5: original branching blue/violet storm)
+
+   Approved V5 direction: realistic storm atmosphere. Weather is
+   visible THROUGH the saloon windows only. The approved saloon
+   image, cards, menus, and gameplay remain unchanged.
+   NO cartoon emoji/cobweb sticker overlays (disabled in V5).
+   NO AUDIO — storm ambience stays OFF per owner.
+
+   Toggle: document.documentElement[data-theme="halloween"]
+   Set by window.TSCMSHalloween.setTheme().
+   ============================================================ */
+
+/* ---- Purple/blue atmospheric tint + cold window glow ---- */
+[data-theme="halloween"] .stage .haunt-tint {
+  position: absolute;
+  inset: 0 0 60% 0;
+  background: linear-gradient(90deg, #150c2b33 0%, #15264c2a 55%, #0b183322 100%);
+  mix-blend-mode: multiply;
+  z-index: 1;
+  pointer-events: none;
+}
+[data-theme="halloween"] .stage .haunt-glow {
+  position: absolute;
+  inset: 7% 29% 69% 37%;
+  background: radial-gradient(ellipse, #9db6ff24 0%, #9a44d612 56%, transparent 83%);
+  z-index: 2;
+  opacity: .56;
+  pointer-events: none;
+}
+[data-theme="classic"] .stage .haunt-tint,
+[data-theme="classic"] .stage .haunt-glow {
+  display: none;
+}
+
+/* ---- Rain through the windows (SVG, clipped to window cutouts) ---- */
+[data-theme="halloween"] .stage .hw-window-weather {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  overflow: visible;
+  pointer-events: none;
+  user-select: none;
+}
+[data-theme="classic"] .stage .hw-window-weather {
+  display: none;
+}
+[data-theme="halloween"] .stage .hw-window-weather g.hw-rain {
+  clip-path: url(#hwWindowCutouts);
+}
+[data-theme="halloween"] .stage .hw-window-weather line {
+  stroke: #c9e8ff;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  opacity: .78;
+  animation: hw-rainfall 1s linear infinite;
+}
+@keyframes hw-rainfall {
+  from { transform: translateY(-25px); }
+  to   { transform: translateY(43px); }
+}
+
+/* ---- Soft mist over the windows ---- */
+[data-theme="halloween"] .stage .rain-haze {
+  position: absolute;
+  left: 50%;
+  top: 8.5%;
+  width: 16%;
+  height: 8%;
+  z-index: 4;
+  mix-blend-mode: screen;
+  opacity: .5;
+  background: linear-gradient(95deg, #3e6eae24, #8d8cff11, #5171a929);
+  border-radius: 30%;
+  pointer-events: none;
+}
+[data-theme="classic"] .stage .rain-haze {
+  display: none;
+}
+
+/* ---- Lightning: full-scene wash + branching bolt in window ---- */
+[data-theme="halloween"] .stage .storm-light {
+  position: absolute;
+  inset: 0 0 66% 0;
+  opacity: 0;
+  z-index: 6;
+  pointer-events: none;
+  background: linear-gradient(100deg, #e5eaff0b 0%, #deecff55 49%, #c5d9ff22 85%);
+  mix-blend-mode: screen;
+  transition: opacity .17s ease-out;
+}
+[data-theme="halloween"] .stage .storm-light.flash {
+  opacity: 1;
+}
+[data-theme="halloween"] .stage .lightning-bolt {
+  position: absolute;
+  z-index: 7;
+  left: 58.2%;
+  top: 9.9%;
+  width: 5%;
+  height: 5.6%;
+  opacity: 0;
+  filter: drop-shadow(0 0 6px #c0e7ff);
+  pointer-events: none;
+  transition: opacity .17s;
+}
+[data-theme="halloween"] .stage .lightning-bolt.flash {
+  opacity: .82;
+}
+[data-theme="classic"] .stage .storm-light,
+[data-theme="classic"] .stage .lightning-bolt {
+  display: none;
+}
+
+/* ---- Reduced motion: still Halloween dressing, no flashes ---- */
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="halloween"] .stage .hw-window-weather line {
+    animation: none;
+    opacity: .22;
+  }
+  [data-theme="halloween"] .stage .storm-light,
+  [data-theme="halloween"] .stage .lightning-bolt {
+    display: none !important;
+  }
+}

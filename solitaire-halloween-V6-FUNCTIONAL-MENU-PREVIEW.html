@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#150c14">
+<title>TSCMS Gamehouse — Halloween Storm | Visual Preview Only</title>
+<style>
+:root{color-scheme:dark;--gold:#e1ad60;--paper:#f6dfaf;--ink:#361807}
+*{box-sizing:border-box}html,body{margin:0;background:#110a0b;color:#f8e4bf;font-family:Georgia,"Times New Roman",serif}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #a1e4ff;outline-offset:3px}
+[hidden]{display:none!important}
+.mast{padding:11px 12px;text-align:center;background:linear-gradient(90deg,#2a170f,#211024,#2a170f);border-bottom:1px solid #93633e}
+.mast strong{color:#f8d394;letter-spacing:.06em;font-size:clamp(14px,3.6vw,20px)}
+.mast small{display:block;margin-top:3px;color:#dcc4aa;font:12px/1.4 system-ui,sans-serif}
+.preview-controls{max-width:941px;margin:0 auto;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;padding:10px;background:#23150f;border-bottom:1px solid #694729}
+.pill{border:1px solid #ac7942;border-radius:11px;background:linear-gradient(#59321e,#2c160e);color:#ffebc6;padding:9px 15px;font-weight:bold;min-height:44px}
+.pill.active{border-color:#67dbe6;box-shadow:0 0 0 2px #22bfc64d,inset 0 0 17px #154b5b;background:linear-gradient(#28434b,#212b34)}
+.status{min-width:100px;color:#e8ceb2;font:12px system-ui,sans-serif;text-align:center}
+.frame{max-width:941px;margin:0 auto;box-shadow:0 8px 40px #000c}
+.stage{position:relative;width:100%;aspect-ratio:941/1672;overflow:hidden;isolation:isolate;background:#190b09}
+.stage-art{display:block;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none}
+.stage .halloween-only{opacity:0;visibility:hidden;transition:opacity .6s;pointer-events:none}
+.stage.halloween .halloween-only{opacity:1;visibility:visible}
+.haunt-tint{position:absolute;inset:0 0 60% 0;background:linear-gradient(90deg,#1e123a51 0%,#1e21464e 55%,#202b4b29 100%);mix-blend-mode:multiply;z-index:1}
+.haunt-glow{position:absolute;inset:7% 29% 69% 37%;background:radial-gradient(ellipse,#9db6ff24 0%,#9a44d612 56%,transparent 83%);z-index:2}
+.window-weather{position:absolute;inset:0;width:100%;height:100%;z-index:3;overflow:visible}
+.window-weather g.rain{clip-path:url(#windowCutouts)}
+.window-weather line{stroke:#ddf6ff;stroke-width:1.45;stroke-linecap:round;opacity:.68;animation:rainfall 1s linear infinite}
+@keyframes rainfall{from{transform:translateY(-25px)}to{transform:translateY(43px)}}
+.rain-haze{position:absolute;left:50%;top:8.5%;width:16%;height:8%;z-index:4;mix-blend-mode:screen;background:linear-gradient(95deg,#3e6eae24,#8d8cff11,#5171a929);border-radius:30%}
+.bat{position:absolute;z-index:4;color:#130c27;filter:drop-shadow(0 0 4px #552e73);font:clamp(12px,3.2vw,29px)/1 serif;transform-origin:50% 50%;animation:batdrift 6s ease-in-out infinite alternate}
+.bat.one{top:13%;left:42%}.bat.two{top:17%;left:67%;font-size:clamp(10px,2.3vw,20px);animation-delay:-3s}
+@keyframes batdrift{to{transform:translate(13px,-7px) scale(.8)}}
+.web{position:absolute;width:20%;max-width:188px;top:0;left:0;z-index:4;opacity:.55}
+.web.right{left:auto;right:0;transform:scaleX(-1)}
+.pumpkin{position:absolute;z-index:5;font-size:clamp(16px,4.5vw,40px);filter:drop-shadow(0 2px 8px #fd7b277d);animation:pumpkinGlow 6s ease-in-out infinite alternate}
+.pumpkin.p1{left:28%;top:28%}.pumpkin.p2{left:61.5%;top:29.3%;font-size:clamp(13px,3.2vw,28px);animation-delay:-3s}
+@keyframes pumpkinGlow{to{filter:drop-shadow(0 1px 10px #ff8b48dd) brightness(1.13)}}
+.storm-light{position:absolute;inset:0 0 66% 0;opacity:0;z-index:6;pointer-events:none;background:linear-gradient(100deg,#e5eaff0b 0%,#deecff55 49%,#c5d9ff22 85%);mix-blend-mode:screen;transition:opacity .17s ease-out}
+.storm-light.flash{opacity:1}
+.lightning-bolt{position:absolute;z-index:7;left:58.2%;top:9.9%;width:5%;height:5.6%;opacity:0;filter:drop-shadow(0 0 6px #c0e7ff);pointer-events:none;transition:opacity .17s}
+.lightning-bolt.flash{opacity:.82}
+.hit{position:absolute;z-index:10;background:transparent;border:0;color:transparent;padding:0;touch-action:manipulation}
+.menu-hit{top:.66%;right:0;width:10.2%;height:4.55%;min-width:44px;min-height:42px}
+.exit-hit{top:.66%;right:10.1%;width:21.4%;height:4.55%;min-height:42px}
+.bottom-hit{top:82.1%;height:6%;width:21%}
+.bottom-hit.undo{left:4.8%}.bottom-hit.hint{left:28%}.bottom-hit.pause{left:51%}.bottom-hit.new{left:74%}
+.halloween-caption{position:absolute;left:7%;top:30.3%;z-index:6;font:clamp(8px,1.8vw,13px) Georgia,serif;letter-spacing:.15em;color:#cab9e4;text-shadow:0 1px 3px #000a}
+.foot{margin:auto;max-width:941px;padding:10px 16px 18px;background:#21130f;color:#d8b898;font:12px/1.55 system-ui,sans-serif;text-align:center}
+.layer{position:fixed;inset:0;z-index:25;background:#080406da;display:grid;place-items:center;overflow-y:auto;padding:max(12px,env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom));backdrop-filter:blur(4px)}
+.dialog{width:min(96vw,980px);max-height:94dvh;overflow:auto;position:relative;border:4px ridge #b37a3f;border-radius:18px;background:linear-gradient(145deg,#4d2b16,#2c150c 45%,#382017);box-shadow:0 2px 2px #eed7a3 inset,0 22px 65px #000c;padding:15px clamp(12px,2.4vw,26px) 22px;color:#fff0ce}
+.dialog h2{margin:3px 30px 10px;text-align:center;font-size:clamp(22px,4.9vw,41px);color:#ffd78a;text-shadow:1px 3px 1px #170800}
+.dialog h3{margin:0 0 8px;font-size:clamp(17px,2.7vw,24px);color:#5b220d}
+.subtitle{text-align:center;color:#ffe2a7;margin:-6px 0 14px;font-weight:bold;letter-spacing:.12em}
+.close{position:absolute;top:8px;right:10px;background:#371808;border:2px solid #d6a25b;color:#ffdfad;border-radius:100%;width:40px;height:40px;font:25px Arial}
+.columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.parchment{padding:13px 12px;color:#331709;background:linear-gradient(145deg,#fff2d3,#e7bf80);border:4px ridge #bd8a43;border-radius:9px;box-shadow:inset 0 0 14px #965a1f6b}
+.parchment p,.parchment li{font-size:clamp(12px,1.85vw,16px);line-height:1.45}.parchment ul{padding-left:20px;margin:5px 0 0}
+.swiper-face{font-size:42px;text-align:center;margin:8px 0}
+.options{border-top:2px solid #aa783f;margin-top:14px;padding-top:9px}
+.options h3{text-align:center;color:#ffe1a4;font-size:21px}
+.setting-grid{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:10px}
+.setting-grid fieldset{min-width:0;border:1px solid #a97647;padding:8px 10px;margin:0;border-radius:8px}
+.setting-grid legend{font-weight:bold;color:#ffdd9d}.setting-grid label{display:block;padding:4px;cursor:pointer;font-size:clamp(13px,2vw,17px)}
+input{accent-color:#50d7ef}
+.callout{background:#3c1f13;border:1px solid #c38a4e;padding:10px;margin:12px 0;border-radius:10px;font-size:clamp(13px,2vw,16px);line-height:1.5}
+.actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:15px}
+.bigbutton{border:2px solid #d3a25a;color:#ffedc6;border-radius:12px;background:linear-gradient(#75471f,#3d200f);box-shadow:inset 0 2px 2px #f9d58a55,0 3px 3px #0008;padding:12px 5px;min-height:56px;font-size:clamp(12px,2vw,16px);font-weight:bold}
+.bigbutton.green{background:linear-gradient(#347b3b,#10451f)}.bigbutton.blue{background:linear-gradient(#21647c,#14354a)}.bigbutton:disabled{opacity:.48;cursor:not-allowed}
+.menu-panel{max-width:510px}.menu-panel p{color:#ead6b5;font:13px/1.5 system-ui,sans-serif}
+.menu-option{display:flex;align-items:flex-start;gap:11px;background:#25140e;border:1px solid #906038;border-radius:10px;padding:12px;margin:10px 0}
+.menu-option input{height:19px;width:19px;margin-top:2px;flex-shrink:0}
+.menu-option strong{display:block;font-size:18px;margin-bottom:4px}.menu-option small{color:#e9d0b0;font:13px/1.5 system-ui,sans-serif}
+.menu-option.disabled{opacity:.6}
+.warn-dialog{max-width:540px}.warn-dialog h2{color:#ffcf72}
+.kicker{margin:0 0 10px;padding:5px 10px;text-align:center;color:#e0c8a3;font:12px system-ui,sans-serif}
+.toast{position:fixed;z-index:90;left:50%;bottom:20px;transform:translateX(-50%);max-width:min(90vw,460px);background:#2e1a10;border:1px solid #b5834a;border-radius:9px;padding:12px;color:#ffe7bb;text-align:center;box-shadow:0 5px 20px #000d;font:13px system-ui,sans-serif}
+@media(max-width:720px){.columns{grid-template-columns:1fr}.parchment{padding:10px 13px}.parchment ul{display:none}.parchment p{margin:5px}.dialog{max-height:92dvh}.setting-grid{grid-template-columns:1fr 1fr}.setting-grid fieldset:last-child{grid-column:1 / -1}.actions{grid-template-columns:repeat(2,minmax(0,1fr))}.subtitle{margin-top:0}.dialog h2{margin:3px 24px 8px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.window-weather line{opacity:.33}}
+
+
+/* V3 decorative cobweb silk. Thin asymmetric strands, softly faded into wood. */
+.realweb{position:absolute;top:0;left:0;z-index:9;width:clamp(120px,24%,215px);height:auto;max-height:12.6%;opacity:.66;pointer-events:none;filter:drop-shadow(0 1px 2px #121018aa);overflow:visible}
+.realweb.right{left:auto;right:0;transform:scaleX(-1);opacity:.62}
+
+/* V2 mobile/tablet one-screen visual layout. Keep the ORIGINAL art, no cropping. */
+html,body{width:100%;height:100%;height:100dvh;max-height:100dvh;overflow:hidden;overscroll-behavior:none}
+body{display:flex;flex-direction:column;min-height:0;max-width:100%;overflow:hidden}
+.mast,.foot{display:none!important}
+.preview-controls{
+  height:52px;min-height:52px;max-height:52px;flex:0 0 52px;
+  width:100%;max-width:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:5px;padding:5px max(5px,env(safe-area-inset-right)) 5px max(5px,env(safe-area-inset-left));
+  position:relative;z-index:2;overflow:hidden;
+}
+.preview-controls .pill{
+  display:flex;align-items:center;justify-content:center;
+  width:100%;min-width:0;min-height:40px;max-height:42px;
+  font:700 clamp(11px,2.45vw,16px)/1.1 Georgia,"Times New Roman",serif;
+  padding:5px 4px;white-space:normal;text-align:center;border-radius:9px;
+}
+.preview-controls .status{
+  position:absolute;width:1px;height:1px;overflow:hidden;
+  clip-path:inset(50%);white-space:nowrap;
+}
+.frame{
+  flex:1 1 0%;min-height:0;height:auto;width:100%;max-width:none;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;box-shadow:none;background:#140b0a;
+}
+.stage{
+  /* Exact 941:1672 proportions, limited by the available height OR screen width. */
+  display:block;flex:0 0 auto;box-sizing:border-box;
+  height:min(100%,177.683vw);
+  width:auto;max-width:100vw;max-height:100%;
+  aspect-ratio:941 / 1672;
+  overflow:hidden;contain:layout paint;
+}
+.stage-art{display:block;width:100%;height:100%;object-fit:fill}
+.haunt-tint{background:linear-gradient(90deg,#150c2b33 0%,#15264c2a 55%,#0b183322 100%)}
+.haunt-glow{opacity:.56}
+.window-weather line{stroke:#c9e8ff;stroke-width:1.75;opacity:.78}
+.rain-haze{mix-blend-mode:screen;opacity:.5}
+/* Realistic visual direction: no sticker-like cartoon emoji/cobweb overlays. */
+.bat,.pumpkin,.web{display:none!important}
+@media(max-width:510px){
+  .preview-controls{height:46px;min-height:46px;max-height:46px;flex-basis:46px}
+  .preview-controls .pill{min-height:36px;max-height:37px;font-size:clamp(10px,3vw,13px)}
+}
+@media(max-height:490px){
+  .preview-controls{height:43px;min-height:43px;max-height:43px;flex-basis:43px}
+  .preview-controls .pill{min-height:33px;max-height:34px}
+}
+.layer{max-height:100dvh}
+@media(prefers-reduced-motion:reduce){ .window-weather line{animation:none!important} .stage:not(.user-flash-opt-in) .storm-light,.stage:not(.user-flash-opt-in) .lightning-bolt{display:none!important} }
+
+
+/* Halloween V5: branching sky lightning; same approved art and fitted geometry. */
+.window-weather{pointer-events:none}
+.storm-light{
+  position:absolute;inset:0 0 65% 0;
+  background:radial-gradient(ellipse at 59% 41%,#b9d1ff89 0%,#a4bafa48 16%,#5e76bd22 35%,transparent 63%);
+  mix-blend-mode:screen;transition:opacity .12s ease-out;opacity:0;
+}
+.storm-light.violet{
+  background:radial-gradient(ellipse at 59% 41%,#e5c7ff83 0%,#a775e84a 16%,#5c378a21 35%,transparent 63%);
+}
+.lightning-bolt{
+  position:absolute;z-index:7;inset:0;width:100%;height:100%;
+  max-width:none;opacity:0;filter:none;pointer-events:none;transition:opacity .12s ease-out;
+}
+.lightning-bolt.flash{opacity:1}
+.audio-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0}
+.p-test{min-width:0;min-height:44px;padding:8px 6px;color:#ffeac0;
+  background:linear-gradient(#58371e,#2b150e);border:1px solid #a9793e;border-radius:8px;
+  font:bold clamp(12px,2.7vw,15px) Georgia,serif}
+.p-test:active{filter:brightness(1.2)}
+/* Prevent effects from covering the approved controls. */
+.stage .realweb{max-height:12.5%}
+/* Reduced-motion keeps motion/lightning disabled by default, with an explicit opt-in. */
+@media(prefers-reduced-motion:reduce){
+ .stage.user-flash-opt-in .lightning-bolt,.stage.user-flash-opt-in .storm-light{display:block!important}
+}
+/* V6: compact functional menu — NO changes to approved game board or storm. */
+.menu-panel{max-width:550px;padding:15px clamp(12px,3vw,20px) 15px}
+.menu-panel h2{font-size:clamp(22px,4.8vw,30px);margin:2px 40px 8px}
+.menu-compact{display:block}
+.settings-label{font:700 12px/1.2 system-ui,sans-serif;letter-spacing:.12em;color:#dfb977;margin:9px 0 7px}
+.select-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.select-row label{font:bold 13px/1.3 Georgia,serif;color:#ffe1ac}
+.select-row select{width:100%;min-height:42px;display:block;margin-top:4px;padding:4px 9px;
+ border:1px solid #bb8c56;border-radius:8px;background:#341c12;color:#fff0d1;font:15px Georgia,serif}
+.menu-option.compact{margin:0;padding:8px 9px;min-height:43px;align-items:center}
+.menu-option.compact strong{font-size:clamp(12px,2.8vw,16px);margin:0;line-height:1.15}
+.menu-option.compact input{min-width:19px;min-height:19px;margin:0}
+.select-row+.menu-option{margin-top:8px}
+.switch-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.menu-panel .audio-actions{margin:9px 0 0}
+.menu-panel .p-test{min-height:42px}
+.menu-status{font:11px/1.35 system-ui,sans-serif!important;color:#d2b48c!important;margin:9px 2px 0!important}
+.help-panel{max-width:640px}.help-panel .help-body{display:grid;gap:7px;max-height:60dvh;overflow-y:auto;padding:0 4px}
+.help-body h3{margin:8px 0 -3px;color:#f3d09c;font-size:17px}.help-body p{margin:0;color:#ead6b5;font:14px/1.5 system-ui,sans-serif}
+.stage.reduce-effects .window-weather line{animation:none!important;opacity:.34}
+.stage.reduce-effects .bat,.stage.reduce-effects .pumpkin{animation:none!important}
+@media(max-width:360px){.menu-option.compact{gap:5px;padding:6px 4px}.menu-option.compact strong{font-size:11px}.select-row select{font-size:13px}}
+@media(max-height:560px){.menu-panel .settings-label{margin:5px 0 4px}.menu-panel h2{margin-bottom:4px}.menu-option.compact{min-height:37px;padding:5px 8px}.menu-panel .p-test{min-height:37px}.menu-panel .audio-actions{margin-top:6px}}
+
+</style>
+</head>
+<body>
+<div class="mast">
+<strong>TSCMS GAMEHOUSE · HALLOWEEN ATMOSPHERE PREVIEW</strong>
+<small>Unlinked visual staging · approved game board · experimental Halloween weather · no real gameplay</small>
+</div>
+<div class="preview-controls" aria-label="Visual preview controls">
+<button class="pill" id="classicBtn" type="button">Classic Saloon</button>
+<button class="pill active" id="halloweenBtn" type="button">Halloween Storm</button>
+<button class="pill" id="welcomeBtn" type="button">Startup Popup</button>
+<span class="status" id="status" role="status">Halloween · rain + lightning</span>
+</div>
+<main class="frame">
+<section class="stage halloween" id="stage" aria-label="TSCMS approved saloon board with optional Halloween weather overlays">
+<img class="stage-art" src="assets/TSCMS_APPROVED_MASTER_DOWNLOAD.png" alt="The approved TSCMS Solitaire saloon. Game art and card spaces have not been changed." draggable="false">
+<div class="haunt-tint halloween-only" aria-hidden="true"></div>
+<div class="haunt-glow halloween-only" aria-hidden="true"></div>
+<svg class="window-weather halloween-only" viewBox="0 0 941 1672" preserveAspectRatio="none" aria-hidden="true">
+<defs><clipPath id="windowCutouts">
+<path d="M497 160 Q510 147 533 151 L546 153 L546 253 L497 253 Z"/>
+<path d="M560 155 Q581 145 610 161 L615 252 L560 252 Z"/>
+<path d="M8 227 L55 206 L55 283 L8 283 Z"/>
+<path d="M289 129 L336 132 L341 189 L291 191 Z"/>
+</clipPath></defs>
+<g class="rain" id="rainLayer"></g>
+</svg>
+<div class="rain-haze halloween-only" aria-hidden="true"></div>
+<svg class="realweb left halloween-only" viewBox="0 0 230 210" aria-hidden="true" focusable="false">
+  <defs><linearGradient id="webSilk" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#c5c2cd" stop-opacity=".64"/><stop offset=".6" stop-color="#e8dee5" stop-opacity=".36"/><stop offset="1" stop-color="#d9dfed" stop-opacity=".07"/></linearGradient></defs>
+  <g fill="none" stroke="url(#webSilk)" stroke-linecap="round">
+    <g stroke-width=".75"><path d="M0 0L227 21 M0 0L229 64 M0 0L217 116 M0 0L167 168 M0 0L96 207 M0 0L20 209"/>
+    <path d="M0 0L177 0 M0 0L0 192"/></g>
+    <g stroke-width=".72"><path d="M36 3 Q39 17 29 30 Q37 41 32 54 Q25 68 14 72"/>
+    <path d="M81 7 Q78 30 65 46 Q64 66 48 80 Q40 95 30 113"/>
+    <path d="M126 12 Q121 42 99 66 Q94 83 74 98 Q58 112 46 136"/>
+    <path d="M175 16 Q157 58 137 85 Q120 106 103 122 Q86 139 71 159"/>
+    <path d="M221 20 Q198 67 172 103 Q154 131 132 148 Q111 170 95 193"/></g>
+    <g stroke-width=".42" opacity=".8"><path d="M3 24 Q47 28 77 36 Q120 39 157 44 Q188 49 216 53"/>
+    <path d="M9 48 Q52 55 77 65 Q117 76 158 87 Q186 93 214 105"/>
+    <path d="M15 79 Q43 81 61 98 Q99 115 129 134 Q156 152 164 158"/>
+    <path d="M23 111 Q46 120 69 145 Q82 159 96 190"/>
+    <path d="M0 6 Q37 8 70 12"/></g>
+  </g>
+</svg>
+<svg class="realweb right halloween-only" viewBox="0 0 230 210" aria-hidden="true" focusable="false">
+  <g fill="none" stroke="#ded8dc" stroke-linecap="round">
+    <g stroke-width=".7" opacity=".3"><path d="M0 0L223 20 M0 0L220 61 M0 0L213 117 M0 0L162 168 M0 0L86 205 M0 0L14 210"/>
+    <path d="M0 0L171 0 M0 0L0 184"/></g>
+    <g stroke-width=".7" opacity=".27"><path d="M35 3Q32 18 28 29 Q39 41 30 53 Q23 67 14 76"/>
+    <path d="M80 8 Q77 28 66 45 Q60 61 47 79 Q35 102 28 114"/>
+    <path d="M122 12 Q116 38 98 62 Q89 85 71 101 Q55 116 44 138"/>
+    <path d="M175 16 Q153 56 133 82 Q117 103 98 124 Q77 144 65 158"/>
+    <path d="M215 19 Q196 63 169 97 Q150 124 130 146 Q112 169 91 191"/></g>
+    <g stroke-width=".42" opacity=".32"><path d="M4 24 Q46 30 78 34 Q119 40 156 44 Q195 52 210 51"/>
+    <path d="M9 47 Q46 59 77 65 Q120 75 155 85 Q181 96 213 108"/>
+    <path d="M14 77 Q39 90 61 98 Q100 117 128 133 Q154 151 164 159"/>
+    <path d="M21 109 Q48 123 64 147 Q85 163 92 185"/></g>
+  </g>
+</svg>
+
+
+
+<div class="storm-light" id="stormLight" aria-hidden="true"></div>
+<svg class="lightning-bolt" id="bolt" viewBox="0 0 941 1672" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+ <defs>
+  <clipPath id="skyCut"><path d="M497 160 Q510 147 533 151 L546 153 L546 253 L497 253 Z M560 155 Q581 145 610 161 L615 252 L560 252 Z"/></clipPath>
+  <filter id="electricBloom" x="-75%" y="-75%" width="250%" height="250%"><feGaussianBlur stdDeviation="3.6"/></filter>
+ </defs>
+ <g id="electricArcs" clip-path="url(#skyCut)">
+   <g id="electricGlow" filter="url(#electricBloom)"></g>
+   <g id="electricCore"></g>
+ </g>
+</svg>
+<button class="hit exit-hit" type="button" id="exitHit" aria-label="Exit, preview only">Exit</button>
+<button class="hit menu-hit" type="button" id="menuHit" aria-label="Open Saloon Settings">Menu</button>
+<button class="hit bottom-hit undo" type="button" data-demo="Undo is not active in this visual preview." aria-label="Undo, preview only">Undo</button>
+<button class="hit bottom-hit hint" type="button" data-demo="Hints require the real game engine. This is only a visual preview." aria-label="Hint, preview only">Hint</button>
+<button class="hit bottom-hit pause" type="button" id="pauseHit" aria-label="Pause storm preview">Pause</button>
+<button class="hit bottom-hit new" type="button" id="newHit" aria-label="Open startup preview">New game</button>
+</section>
+</main>
+<div class="foot">The base saloon picture is Fudgie's exact approved TSCMS master. Halloween weather/decorations are proposed overlays only. This page does not load or change Solitaire game state. No sound is played. The menu's lightning setting works independently from the rain.</div>
+
+<div class="layer" id="menuLayer" hidden>
+<section class="dialog menu-panel" role="dialog" aria-modal="true" aria-labelledby="menuTitle">
+<button class="close" type="button" data-close="menuLayer" aria-label="Close settings">×</button>
+<h2 id="menuTitle">SALOON SETTINGS</h2>
+<div class="menu-compact">
+  <div class="settings-label">GAME OPTIONS</div>
+  <div class="select-row">
+    <label for="menuThemeChoice">Theme
+      <select id="menuThemeChoice"><option value="classic">Classic Saloon</option><option value="halloween">Halloween</option></select>
+    </label>
+    <label for="menuDrawChoice">Draw
+      <select id="menuDrawChoice"><option value="1">Draw 1</option><option value="3">Draw 3</option></select>
+    </label>
+  </div>
+  <label class="menu-option compact"><input id="menuSwiperToggle" type="checkbox" checked><span><strong>Swiper Events</strong></span></label>
+  <div class="settings-label">EFFECTS</div>
+  <div class="switch-grid">
+    <label class="menu-option compact"><input id="lightningToggle" type="checkbox" checked><span><strong>Lightning Flashes</strong></span></label>
+    <label class="menu-option compact"><input id="reduceMotionToggle" type="checkbox"><span><strong>Reduce Motion</strong></span></label>
+    <label class="menu-option compact"><input id="gameAudioToggle" type="checkbox" checked><span><strong>Game Sound Effects</strong></span></label>
+    <label class="menu-option compact"><input id="ambientAudioToggle" type="checkbox"><span><strong>Halloween Ambience</strong></span></label>
+  </div>
+  <div class="audio-actions"><button class="p-test" id="testStorm" type="button">TEST STORM</button><button class="p-test" id="testCards" type="button">HEAR CARD DEAL</button></div>
+  <div class="audio-actions"><button class="p-test" id="menuHelp" type="button">HOW TO PLAY</button><button class="p-test" id="menuBack" type="button" data-close="menuLayer">BACK TO SALOON</button></div>
+  <p class="menu-status">Preview settings save on this device. Draw and Swiper are not yet connected to the actual game engine.</p>
+</div>
+</section>
+</div>
+
+<div class="layer" id="welcomeLayer" hidden>
+<section class="dialog" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+<button class="close" type="button" data-close="welcomeLayer" aria-label="Close startup preview">×</button>
+<h2 id="welcomeTitle">WELCOME TO SOLITAIRE</h2><div class="subtitle">JOKER EDITION</div>
+<div class="columns">
+<article class="parchment"><h3>HOW TO PLAY</h3><p>Build each foundation from Ace to King by suit. Build tableau piles downward, alternating red and black. Only Kings may move into empty tableau spaces.</p><ul><li>Choose Draw 1 or Draw 3.</li><li>Pause or Exit to preserve progress in the real game.</li></ul></article>
+<article class="parchment"><h3>JOKER RULES</h3><p>🃏 Two Jokers are shuffled into this game. They work on <b>foundations only</b>—not tableau piles. A Joker fills the next needed foundation card.</p><p>Find the real card later? Replace the Joker and reuse it from the waste pile.</p></article>
+<article class="parchment"><h3>MEET SWIPER</h3><p>Swiper may appear during play. He can take an exposed top card and hide it beneath another tableau pile. The card is not destroyed, but the theft cannot be Undone.</p><p>An exposed Joker scares Swiper away.</p></article>
+</div>
+<div class="options"><h3>START OPTIONS</h3>
+<div class="setting-grid">
+<fieldset><legend>Draw choice</legend><label><input name="draw" type="radio" checked value="1"> Draw 1</label><label><input name="draw" type="radio" value="3"> Draw 3</label></fieldset>
+<fieldset><legend>Swiper events</legend><label><input id="swiperPref" type="checkbox" checked> Enable Swiper</label></fieldset>
+<fieldset><legend>Choose your theme</legend><label><input name="theme" type="radio" value="classic"> Classic Saloon</label><label><input name="theme" type="radio" value="halloween" checked> Halloween Storm</label></fieldset>
+</div></div>
+<div class="callout" id="helloWarning"><strong>⚠️ Halloween preview:</strong> Rain and optional lightning change the atmosphere. With Swiper enabled, the Halloween encounter setting is 35% rather than 25%. The full “A Deal With the Spirits” notice appears when you choose this combination.</div>
+<label style="display:block;margin:10px 3px"><input type="checkbox" id="dismissPref"> Don't show this introduction again</label>
+<div class="actions">
+<button class="bigbutton blue" type="button" disabled title="No saved game is present in this visual-only preview">CONTINUE SAVED GAME</button>
+<button class="bigbutton green" type="button" id="previewStart">START PREVIEW</button>
+<button class="bigbutton" type="button" id="moreHelp">HOW TO PLAY</button>
+<button class="bigbutton" type="button" data-close="welcomeLayer">BACK TO GAMEHOUSE</button>
+</div>
+</section>
+</div>
+
+<div class="layer" id="spiritLayer" hidden>
+<section class="dialog warn-dialog" role="alertdialog" aria-modal="true" aria-labelledby="spiritTitle">
+<h2 id="spiritTitle">⚡ A DEAL WITH THE SPIRITS ⚡</h2>
+<p style="line-height:1.55">In Halloween mode with Swiper events enabled, the encounter setting rises from <strong>25% to 35%</strong>. Swiper may relocate an exposed card beneath another tableau pile, and a successful theft cannot be Undone. An exposed Joker may scare him off.</p>
+<p style="font-size:13px;color:#f7d7aa">These percentages and rules are descriptions of the existing planned engine—not a simulation on this visual preview page.</p>
+<div class="actions" style="grid-template-columns:1fr 1fr">
+<button class="bigbutton" id="spiritClassic" type="button">USE CLASSIC INSTEAD</button>
+<button class="bigbutton green" id="spiritAccept" type="button">SHOW HALLOWEEN</button>
+</div>
+</section>
+</div>
+<div class="layer" id="helpLayer" hidden>
+<section class="dialog help-panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+<button class="close" type="button" data-close="helpLayer" aria-label="Close instructions">×</button>
+<h2 id="helpTitle">HOW TO PLAY</h2>
+<div class="help-body">
+<h3>Klondike Solitaire</h3>
+<p>Move cards to the four foundations, building each suit from Ace through King. In the tableau, stack cards in descending order, alternating red and black. Only Kings may begin an empty tableau column.</p>
+<h3>Two Jokers</h3>
+<p>Jokers can fill the next missing foundation rank, but cannot build tableau sequences. When you later find the natural card, it can replace a Joker; the Joker returns to the waste pile.</p>
+<h3>Meet Swiper</h3>
+<p>If Swiper is enabled, he may relocate one exposed tableau card beneath another tableau pile. A successful theft cannot be undone. A reachable exposed Joker can scare him away.</p>
+<h3>Choose your mode</h3>
+<p>Draw 1 or Draw 3 changes how the stock is drawn. Halloween with Swiper enabled uses the planned 35% encounter setting rather than the usual 25%.</p>
+</div>
+<p class="menu-status">This is a rules preview. Only Cherish's integrated engine will apply these choices to actual gameplay.</p>
+<button class="bigbutton blue" type="button" data-close="helpLayer" style="width:100%">RETURN TO SALOON</button>
+</section>
+</div>
+<div class="toast" id="toast" hidden role="status"></div>
+<script>
+(function(){
+"use strict";
+var stage=document.getElementById("stage"),status=document.getElementById("status"),rain=document.getElementById("rainLayer");
+var classicBtn=document.getElementById("classicBtn"),halloweenBtn=document.getElementById("halloweenBtn"),lighting=document.getElementById("stormLight"),bolt=document.getElementById("bolt"),toggle=document.getElementById("lightningToggle");
+var gameSoundToggle=document.getElementById("gameAudioToggle"),ambientSoundToggle=document.getElementById("ambientAudioToggle");
+var arcGlow=document.getElementById("electricGlow"),arcCore=document.getElementById("electricCore");
+var strikeOff=null,thunderDelay=null;
+
+var reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var canStore=true;function get(k){try{return localStorage.getItem(k)}catch(e){canStore=false;return null}}function put(k,v){if(!canStore)return;try{localStorage.setItem(k,v)}catch(e){}}
+var stored=get("tscms_visual_demo_lightning_v1");var lightningOn=stored===null?!reduced:stored==="on";
+var gameSoundOn=get("tscms_storm_v5_game_sound")!=="off";
+var ambienceOn=get("tscms_storm_v5_ambience")==="on";
+toggle.checked=lightningOn;gameSoundToggle.checked=gameSoundOn;ambientSoundToggle.checked=ambienceOn;
+var theme="halloween",timer=null,paused=false,vis=document.visibilityState==="visible",toastTimer=null;
+function say(msg){var t=document.getElementById("toast");t.textContent=msg;t.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.hidden=true},3600)}
+function updateStatus(){status.textContent=theme==="classic"?"Classic saloon · no storm":(paused?"Halloween · paused":(lightningOn?"Halloween · rain + lightning":"Halloween · rain only"))}
+/* Original browser-side lightning geometry: no third-party shader code or copied assets. */
+function clearFlash(){
+  clearTimeout(strikeOff);clearTimeout(thunderDelay);
+  lighting.classList.remove("flash","violet");bolt.classList.remove("flash");
+}
+function makeLightning(violet){
+  var NS="http://www.w3.org/2000/svg", minX=502,maxX=608;
+  var baseX=535+Math.random()*46,points=[[baseX,149]],x=baseX,y=149;
+  for(var i=0;i<13;i++){
+    y=Math.min(255,y+8+Math.random()*4);
+    x=Math.max(minX,Math.min(maxX,x+(Math.random()-.5)*21));
+    points.push([x,y]);
+  }
+  var paths=[points];
+  for(var k=0;k<7;k++){
+    var ix=2+Math.floor(Math.random()*(points.length-5));
+    var p=points[ix],way=Math.random()<.5?-1:1,branch=[p],bx=p[0],by=p[1];
+    for(var t=0;t<3;t++){
+      bx=Math.max(minX,Math.min(maxX,bx+way*(6+Math.random()*12)));
+      by+=5+Math.random()*7;branch.push([bx,by]);
+    }
+    paths.push(branch);
+  }
+  arcCore.textContent="";arcGlow.textContent="";
+  var coreColor=violet?"#f2deff":"#edfaff",aura=violet?"#b46cff":"#5fa8ff";
+  paths.forEach(function(arr,index){
+    var d=arr.map(function(p,j){return (j?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1)}).join(" ");
+    var glow=document.createElementNS(NS,"path");
+    glow.setAttribute("d",d);glow.setAttribute("fill","none");
+    glow.setAttribute("stroke",aura);glow.setAttribute("stroke-width",index?4.5:8);
+    glow.setAttribute("stroke-linecap","round");arcGlow.appendChild(glow);
+    var core=document.createElementNS(NS,"path");
+    core.setAttribute("d",d);core.setAttribute("fill","none");
+    core.setAttribute("stroke",index?aura:coreColor);
+    core.setAttribute("stroke-width",index?0.8:1.9);
+    core.setAttribute("stroke-linecap","round");arcCore.appendChild(core);
+  });
+}
+function stormAllowed(){return theme==="halloween"&&!paused&&vis}
+function strikeStorm(fromTest){
+  clearTimeout(timer);clearFlash();
+  if(!stormAllowed())return;
+  var violet=Math.random()<.38;
+  if(lightningOn){
+    makeLightning(violet);
+    if(violet)lighting.classList.add("violet");
+    lighting.classList.add("flash");bolt.classList.add("flash");
+    strikeOff=setTimeout(function(){lighting.classList.remove("flash","violet");bolt.classList.remove("flash");stormTick()},310);
+  }else{stormTick()}
+  if(ambienceOn){
+    thunderDelay=setTimeout(function(){if(ambienceOn&&stormAllowed())playThunder()},360);
+  }
+  if(fromTest && !lightningOn && !ambienceOn)say("Enable Lightning Flashes or Halloween Ambience to preview the storm.");
+}
+function stormTick(){
+  clearTimeout(timer);
+  if(!stormAllowed()){clearFlash();return;}
+  timer=setTimeout(function(){strikeStorm(false)},7000+Math.random()*9000);
+}
+function setTheme(value){theme=value;stage.classList.toggle("halloween",theme==="halloween");classicBtn.classList.toggle("active",theme==="classic");halloweenBtn.classList.toggle("active",theme==="halloween");updateStatus();stormTick();syncRain();document.querySelectorAll('input[name="theme"]').forEach(function(r){r.checked=r.value===value});if(typeof menuThemeChoice!=="undefined"&&menuThemeChoice)menuThemeChoice.value=value;put("tscms_v6_theme",value);}
+function setLightning(v){lightningOn=!!v;if(lightningOn&&typeof reduceMotion!=="undefined"&&reduceMotion){reduceMotion=false;put("tscms_v6_reduce_motion","off");stage.classList.remove("reduce-effects");if(typeof reduceMotionToggle!=="undefined"&&reduceMotionToggle)reduceMotionToggle.checked=false;}toggle.checked=lightningOn;stage.classList.toggle("user-flash-opt-in",lightningOn);put("tscms_visual_demo_lightning_v1",lightningOn?"on":"off");clearFlash();updateStatus();stormTick();}
+toggle.addEventListener("change",function(){setLightning(toggle.checked)});
+classicBtn.addEventListener("click",function(){setTheme("classic")});halloweenBtn.addEventListener("click",function(){setTheme("halloween")});
+
+/* V6 preview preference bindings — not a live Solitaire/Swiper integration. */
+var menuThemeChoice=document.getElementById("menuThemeChoice");
+var menuDrawChoice=document.getElementById("menuDrawChoice");
+var menuSwiperToggle=document.getElementById("menuSwiperToggle");
+var reduceMotionToggle=document.getElementById("reduceMotionToggle");
+var drawMode=get("tscms_v6_draw")==="3"?"3":"1";
+var swiperEnabled=get("tscms_v6_swiper")!=="off";
+var savedReduce=get("tscms_v6_reduce_motion");
+var reduceMotion=savedReduce===null?reduced:savedReduce==="on";
+var introDismissed=get("tscms_v6_intro_dismissed")==="on";
+function syncMenu(){
+ menuThemeChoice.value=theme;
+ menuDrawChoice.value=drawMode;
+ menuSwiperToggle.checked=swiperEnabled;
+ reduceMotionToggle.checked=reduceMotion;
+ var drawRadio=document.querySelector('input[name="draw"][value="'+drawMode+'"]');
+ if(drawRadio)drawRadio.checked=true;
+ document.getElementById("swiperPref").checked=swiperEnabled;
+ document.getElementById("dismissPref").checked=introDismissed;
+}
+function setDrawMode(value){
+ drawMode=value==="3"?"3":"1";
+ put("tscms_v6_draw",drawMode);
+ syncMenu();
+}
+function setSwiper(value){
+ swiperEnabled=!!value;
+ put("tscms_v6_swiper",swiperEnabled?"on":"off");
+ syncMenu();
+}
+function setReducedMotion(value){
+ reduceMotion=!!value;
+ put("tscms_v6_reduce_motion",reduceMotion?"on":"off");
+ stage.classList.toggle("reduce-effects",reduceMotion);
+ if(reduceMotion && lightningOn)setLightning(false);
+ syncMenu();
+}
+menuThemeChoice.addEventListener("change",function(){setTheme(menuThemeChoice.value)});
+menuDrawChoice.addEventListener("change",function(){setDrawMode(menuDrawChoice.value)});
+menuSwiperToggle.addEventListener("change",function(){setSwiper(menuSwiperToggle.checked)});
+reduceMotionToggle.addEventListener("change",function(){setReducedMotion(reduceMotionToggle.checked)});
+document.querySelectorAll('input[name="draw"]').forEach(function(r){r.addEventListener("change",function(){if(r.checked)setDrawMode(r.value)})});
+document.getElementById("swiperPref").addEventListener("change",function(){setSwiper(this.checked)});
+document.getElementById("dismissPref").addEventListener("change",function(){
+ introDismissed=this.checked;put("tscms_v6_intro_dismissed",introDismissed?"on":"off")
+});
+document.querySelectorAll('input[name="theme"]').forEach(function(r){
+ r.addEventListener("change",function(){if(r.checked){menuThemeChoice.value=r.value;}})
+});
+document.getElementById("menuHelp").addEventListener("click",function(){hide("menuLayer");show("helpLayer")});
+
+document.getElementById("welcomeBtn").addEventListener("click",function(){show("welcomeLayer")});
+document.getElementById("newHit").addEventListener("click",function(){playCardNoise("tap",0);show("welcomeLayer")});
+document.getElementById("menuHit").addEventListener("click",function(){syncMenu();show("menuLayer")});
+document.getElementById("exitHit").addEventListener("click",function(){say("Preview only: nothing to save or exit. No actual game has been started.")});
+document.querySelectorAll("[data-demo]").forEach(function(b){b.addEventListener("click",function(){playCardNoise("tap",0);say(b.getAttribute("data-demo"))})});
+document.getElementById("pauseHit").addEventListener("click",function(){paused=!paused;stage.querySelector(".window-weather").style.animationPlayState=paused?"paused":"running";document.querySelectorAll(".window-weather line").forEach(function(n){n.style.animationPlayState=paused?"paused":"running"});updateStatus();stormTick();syncRain();say(paused?"Weather preview paused. Tap Pause again to resume.":"Weather preview resumed.")});
+function show(id){document.getElementById(id).hidden=false;var f=document.getElementById(id).querySelector("button");if(f)f.focus()}
+function hide(id){document.getElementById(id).hidden=true}
+document.querySelectorAll("[data-close]").forEach(function(b){b.addEventListener("click",function(){hide(b.dataset.close)})});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")["menuLayer","welcomeLayer","helpLayer","spiritLayer"].forEach(hide)});
+document.getElementById("previewStart").addEventListener("click",function(){var checked=document.querySelector('input[name="theme"]:checked');var selected=checked?checked.value:"classic";setDrawMode(document.querySelector('input[name="draw"]:checked').value);setSwiper(document.getElementById("swiperPref").checked);hide("welcomeLayer");if(selected==="halloween"&&swiperEnabled){show("spiritLayer")}else{setTheme(selected);say("Preview settings saved. Real Solitaire and Swiper are not running here.")}});
+document.getElementById("spiritClassic").addEventListener("click",function(){hide("spiritLayer");setTheme("classic");say("Classic Saloon preview selected.")});
+document.getElementById("spiritAccept").addEventListener("click",function(){hide("spiritLayer");setTheme("halloween");playDeal();say("Halloween preview selected. Audio and lightning options are under Menu.")});
+document.getElementById("moreHelp").addEventListener("click",function(){hide("welcomeLayer");show("helpLayer")});
+document.addEventListener("visibilitychange",function(){vis=document.visibilityState==="visible";stormTick();syncRain()});window.addEventListener("pagehide",function(){stopRain();clearTimeout(timer);clearFlash()});
+
+/* Self-contained AUDIO PROTOTYPE. These are generated samples; final production
+   may replace them with properly licensed recorded sounds after review. */
+var audioCtx=null,master=null,rainSource=null,rainGain=null,rainBuf=null;
+function soundReady(){
+  try{
+    var C=window.AudioContext||window.webkitAudioContext;if(!C)return false;
+    if(!audioCtx){audioCtx=new C();master=audioCtx.createGain();master.gain.value=.5;master.connect(audioCtx.destination);}
+    if(audioCtx.state==="suspended")audioCtx.resume().catch(function(){});
+    return audioCtx.state!=="closed";
+  }catch(e){return false}
+}
+function noiseData(seconds){
+  var rate=audioCtx.sampleRate,buf=audioCtx.createBuffer(1,Math.ceil(rate*seconds),rate),d=buf.getChannelData(0),last=0;
+  for(var i=0;i<d.length;i++){var w=Math.random()*2-1;last=(last+.04*w)/1.04;d[i]=w*.45+last*.55}
+  return buf;
+}
+function stopRain(){
+  if(!rainSource)return;
+  try{rainGain.gain.cancelScheduledValues(audioCtx.currentTime);rainGain.gain.setTargetAtTime(0,audioCtx.currentTime,.10);
+    rainSource.stop(audioCtx.currentTime+.5);}catch(e){}
+  rainSource=null;rainGain=null;
+}
+function syncRain(){
+  if(!ambienceOn||theme!=="halloween"||paused||!vis){stopRain();return}
+  if(!soundReady()||rainSource)return;
+  if(!rainBuf)rainBuf=noiseData(3);
+  var src=audioCtx.createBufferSource(),high=audioCtx.createBiquadFilter(),low=audioCtx.createBiquadFilter(),gain=audioCtx.createGain();
+  src.buffer=rainBuf;src.loop=true;
+  high.type="highpass";high.frequency.value=360;
+  low.type="lowpass";low.frequency.value=4000;
+  gain.gain.value=0;gain.gain.setTargetAtTime(.13,audioCtx.currentTime,.7);
+  src.connect(high);high.connect(low);low.connect(gain);gain.connect(master);src.start();
+  rainSource=src;rainGain=gain;
+}
+function oneNoise(dur,freq,amp,t){
+  if(!audioCtx||audioCtx.state==="closed")return;
+  var now=audioCtx.currentTime+(t||0);
+  var src=audioCtx.createBufferSource(),flt=audioCtx.createBiquadFilter(),vol=audioCtx.createGain();
+  src.buffer=noiseData(dur+.15);flt.type="lowpass";flt.frequency.value=freq;
+  vol.gain.setValueAtTime(.0001,now);
+  vol.gain.exponentialRampToValueAtTime(Math.max(.001,amp),now+.075);
+  vol.gain.exponentialRampToValueAtTime(.0001,now+dur);
+  src.connect(flt);flt.connect(vol);vol.connect(master);src.start(now);src.stop(now+dur+.05);
+}
+function playThunder(){
+  if(!ambienceOn||!soundReady())return;
+  oneNoise(2.7,210,.27,0);
+  oneNoise(2.2,140,.22,.23);
+  oneNoise(1.6,450,.11,.5);
+}
+function playCardNoise(flavour,offset){
+  if(!gameSoundOn||!soundReady())return;
+  var now=audioCtx.currentTime+(offset||0);
+  var src=audioCtx.createBufferSource(),flt=audioCtx.createBiquadFilter(),gain=audioCtx.createGain();
+  src.buffer=noiseData(.17);
+  flt.type="bandpass";flt.frequency.value=flavour==="deal"?1000:1500;flt.Q.value=.8;
+  gain.gain.setValueAtTime(.0001,now);
+  gain.gain.linearRampToValueAtTime(flavour==="deal" ? 0.28 : 0.17,now+.009);
+  gain.gain.exponentialRampToValueAtTime(.0001,now+(flavour==="deal" ? 0.10 : 0.055));
+  src.connect(flt);flt.connect(gain);gain.connect(master);src.start(now);src.stop(now+.15);
+}
+function playDeal(){
+  if(!gameSoundOn)return;
+  for(var n=0;n<7;n++)playCardNoise("deal",n*.085);
+}
+function playSwipe(){
+  if(!gameSoundOn||!soundReady())return;
+  var now=audioCtx.currentTime,src=audioCtx.createBufferSource(),f=audioCtx.createBiquadFilter(),g=audioCtx.createGain();
+  src.buffer=noiseData(.75);f.type="bandpass";f.frequency.setValueAtTime(280,now);
+  f.frequency.exponentialRampToValueAtTime(2200,now+.42);
+  g.gain.setValueAtTime(.0001,now);g.gain.linearRampToValueAtTime(.13,now+.16);
+  g.gain.exponentialRampToValueAtTime(.0001,now+.66);
+  src.connect(f);f.connect(g);g.connect(master);src.start(now);src.stop(now+.7);
+}
+gameSoundToggle.addEventListener("change",function(){
+  gameSoundOn=gameSoundToggle.checked;put("tscms_storm_v5_game_sound",gameSoundOn?"on":"off");
+  if(gameSoundOn)playCardNoise("tap",0);
+});
+ambientSoundToggle.addEventListener("change",function(){
+  ambienceOn=ambientSoundToggle.checked;put("tscms_storm_v5_ambience",ambienceOn?"on":"off");
+  if(ambienceOn)soundReady();
+  syncRain();
+});
+document.getElementById("testStorm").addEventListener("click",function(){
+  hide("menuLayer");if(theme!=="halloween")setTheme("halloween");
+  if(ambienceOn)soundReady();strikeStorm(true);
+});
+document.getElementById("testCards").addEventListener("click",function(){
+  if(!gameSoundOn){say("Turn on Game Sound Effects to hear the cards.");return}
+  playDeal();setTimeout(playSwipe,700);
+});
+
+var NS="http://www.w3.org/2000/svg";
+var rand=function(a,b){return a+Math.random()*(b-a)};
+for(var i=0;i<115;i++){var line=document.createElementNS(NS,"line");var x=rand(0,941),y=rand(100,310);line.setAttribute("x1",x.toFixed(1));line.setAttribute("x2",(x-3).toFixed(1));line.setAttribute("y1",y.toFixed(1));line.setAttribute("y2",(y+rand(9,22)).toFixed(1));line.style.animationDuration=rand(.65,1.22).toFixed(2)+"s";line.style.animationDelay=(-rand(0,2)).toFixed(2)+"s";line.style.opacity=rand(.20,.64).toFixed(2);rain.appendChild(line)}
+stage.classList.toggle("user-flash-opt-in",lightningOn);
+stage.classList.toggle("reduce-effects",reduceMotion);
+if(reduceMotion&&lightningOn){lightningOn=false;toggle.checked=false;stage.classList.remove("user-flash-opt-in");}
+setTheme(get("tscms_v6_theme")==="classic"?"classic":"halloween");
+syncMenu();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+/* Dicey Discovery — approved carved-wood / hunter-green autumn saloon.
+   Isolated visual skin: the public site's other cards, radio and games are untouched. */
+#diceSection.dicey-autumn-v3 {
+  --dicey-gold:#dfb36a; --dicey-ink:#1d120a; --dicey-felt:#0b3026;
+  position:relative; isolation:isolate; max-width:860px;
+  margin:48px auto; padding:36px clamp(12px,3.4vw,38px) 30px;
+  text-align:center; color:#f6e4c4; overflow:visible;
+  background:
+    radial-gradient(ellipse at 50% 42%,rgba(161,91,31,.14),transparent 73%),
+    linear-gradient(180deg,rgba(30,18,12,.12),rgba(29,16,8,.22));
+}
+#diceSection.dicey-autumn-v3:before {
+  content:""; pointer-events:none; position:absolute; inset:-20px -8px -10px;
+  z-index:-1; opacity:.55;
+  background:radial-gradient(ellipse at 6% 34%,rgba(201,99,25,.17),transparent 34%),
+             radial-gradient(ellipse at 96% 70%,rgba(175,92,25,.16),transparent 29%);
+}
+#diceSection.dicey-autumn-v3 .dice-kicker {
+  color:#d4a861; font-size:10px; letter-spacing:.29em; text-shadow:0 2px 5px #000;
+}
+#diceSection.dicey-autumn-v3 .dice-title {
+  display:inline-block; max-width:100%; margin:13px auto 5px;
+  padding:12px clamp(16px,5vw,50px); font:700 clamp(29px,5.1vw,49px)/1.12 Georgia,serif;
+  color:#f0cb88; letter-spacing:.012em;
+  background:
+    repeating-linear-gradient(174deg,transparent 0 8px,rgba(0,0,0,.15) 9px 11px,transparent 12px 20px),
+    linear-gradient(180deg,#684322,#382014 35%,#4b2b18 80%,#27150d);
+  border:2px solid #af7d43; border-radius:48% 48% 16px 16px / 28% 28% 13px 13px;
+  text-shadow:0 2px 0 #321b0c,0 4px 10px #000;
+  box-shadow:inset 0 0 0 3px #29180e,inset 0 2px 13px #9c673a,0 13px 22px #0007;
+}
+#diceSection.dicey-autumn-v3 .dice-tagline {
+  margin:12px auto 22px; color:#e3caa0; font:italic clamp(14px,2.5vw,18px)/1.5 Georgia,serif;
+  text-shadow:0 2px 5px #000a;
+}
+#diceSection.dicey-autumn-v3 .dice-table {
+  position:relative; display:flex; justify-content:center; align-items:center;
+  flex-wrap:nowrap; gap:clamp(14px,8%,65px);
+  width:100%; min-height:clamp(212px,35vw,300px);
+  padding:36px clamp(20px,7%,70px) 44px; overflow:visible;
+  border:clamp(10px,2.3vw,19px) solid #643b20;
+  border-radius:48% 48% 38% 38% / 28% 28% 27% 27%;
+  background:
+    radial-gradient(ellipse at 50% 48%,transparent 6%,rgba(0,0,0,.3) 110%),
+    repeating-linear-gradient(27deg,transparent 0 2px,rgba(233,250,215,.025) 2px 3px,transparent 3px 6px),
+    repeating-linear-gradient(117deg,transparent 0 3px,rgba(0,0,0,.045) 3px 4px,transparent 4px 8px),
+    radial-gradient(ellipse at 46% 38%,#1b5941,#0b3329 64%,#092218);
+  box-shadow:
+    inset 0 0 0 3px #b18a55,inset 0 0 0 6px #261608,
+    inset 0 15px 35px #0009,0 8px 0 #321c0f,
+    0 18px 24px #0009,0 0 0 1px #bd8950;
+  perspective:900px;
+}
+#diceSection.dicey-autumn-v3 .dice-table:before {
+  content:""; pointer-events:none; position:absolute; inset:-12px; z-index:0;
+  border:2px solid rgba(222,172,92,.47);
+  border-radius:inherit;
+}
+#diceSection.dicey-autumn-v3 .dice-table:after {
+  content:"🍁"; font-size:clamp(20px,4vw,33px); position:absolute; right:9%; bottom:3%;
+  opacity:.83; transform:rotate(18deg); pointer-events:none;
+  filter:drop-shadow(0 2px 3px #0008);
+}
+#diceSection.dicey-autumn-v3 .die-col { flex:0 0 auto; position:relative; z-index:1; }
+#diceSection.dicey-autumn-v3 .die-wrap,
+#diceSection.dicey-autumn-v3 .die {
+  --dice-size:clamp(78px,12vw,104px);
+  width:var(--dice-size); height:var(--dice-size);
+}
+#diceSection.dicey-autumn-v3 .die { transition:none; transform-style:preserve-3d; }
+#diceSection.dicey-autumn-v3 .dface {
+  width:var(--dice-size); height:var(--dice-size);
+  padding:clamp(11px,2vw,17px); border-radius:15px;
+  border:4px solid #75451e;
+  background:
+    repeating-linear-gradient(177deg,transparent 0 7px,rgba(28,12,3,.14) 8px 9px,transparent 10px 16px),
+    repeating-linear-gradient(85deg,rgba(255,218,153,.035) 0 2px,transparent 2px 7px),
+    radial-gradient(ellipse at 28% 14%,#a36c36,#80471f 47%,#4c2815 100%);
+  box-shadow:inset 0 0 0 2px #d2a15a,inset 0 0 0 5px #533015,
+             inset 0 0 14px #180b07aa,0 0 0 1px #2b1609;
+}
+#diceSection.dicey-autumn-v3 .dface:before {
+  content:""; position:absolute; inset:7px; border:1.5px solid #e2b871;
+  border-radius:10px; pointer-events:none; opacity:.8;
+}
+#diceSection.dicey-autumn-v3 .dface:after {
+  content:""; position:absolute; inset:4px; pointer-events:none;
+  background:
+    radial-gradient(circle at 8px 8px,#edc57e 0 2px,transparent 2.8px),
+    radial-gradient(circle at calc(100% - 8px) 8px,#edc57e 0 2px,transparent 2.8px),
+    radial-gradient(circle at 8px calc(100% - 8px),#edc57e 0 2px,transparent 2.8px),
+    radial-gradient(circle at calc(100% - 8px) calc(100% - 8px),#edc57e 0 2px,transparent 2.8px);
+  opacity:.75;
+}
+#diceSection.dicey-autumn-v3 .df1 {transform:translateZ(calc(var(--dice-size) / 2))}
+#diceSection.dicey-autumn-v3 .df2 {transform:rotateY(180deg) translateZ(calc(var(--dice-size) / 2))}
+#diceSection.dicey-autumn-v3 .df3 {transform:rotateY(90deg) translateZ(calc(var(--dice-size) / 2))}
+#diceSection.dicey-autumn-v3 .df4 {transform:rotateY(-90deg) translateZ(calc(var(--dice-size) / 2))}
+#diceSection.dicey-autumn-v3 .df5 {transform:rotateX(90deg) translateZ(calc(var(--dice-size) / 2))}
+#diceSection.dicey-autumn-v3 .df6 {transform:rotateX(-90deg) translateZ(calc(var(--dice-size) / 2))}
+#diceSection.dicey-autumn-v3 .dface .pip {
+  width:clamp(11px,2vw,17px); height:clamp(11px,2vw,17px); z-index:1;
+  background:radial-gradient(circle at 30% 28%,#ffe7a4 0%,#ddad57 43%,#9a622b 72%,#4c2a10 100%);
+  border:1px solid #4f270b;
+  box-shadow:0 0 6px #efbf5a55,inset 0 2px 3px #ffebbeaa,0 2px 2px #261208;
+}
+#diceSection.dicey-autumn-v3 .die-shadow {
+  width:100%; margin:18px auto 0; background:radial-gradient(ellipse,#0009,transparent 72%);
+}
+#diceSection.dicey-autumn-v3 .dice-roll-btn {
+  display:inline-block; max-width:96%; margin:27px auto 0;
+  padding:15px clamp(20px,7vw,66px);
+  font:bold clamp(15px,3vw,20px)/1.25 Georgia,serif;
+  letter-spacing:.09em; color:#fce2a9;
+  background:repeating-linear-gradient(177deg,transparent 0 8px,#0002 9px 10px,transparent 11px 18px),
+             linear-gradient(180deg,#704324,#351c0d 55%,#4c2714);
+  border:3px solid #c69c5b; border-radius:45px;
+  text-shadow:0 2px 4px #000;
+  box-shadow:inset 0 0 0 3px #38200e,inset 0 1px 4px #ffdc9466,
+             0 7px 0 #281408,0 12px 20px #0009;
+  cursor:pointer; transition:transform .12s,filter .12s;
+}
+#diceSection.dicey-autumn-v3 .dice-roll-btn:hover {filter:brightness(1.14)}
+#diceSection.dicey-autumn-v3 .dice-roll-btn:active {transform:translateY(3px)}
+#diceSection.dicey-autumn-v3 .dice-roll-btn:focus-visible {outline:3px solid #fff4c7;outline-offset:4px}
+#diceSection.dicey-autumn-v3 .dice-lucky {margin:18px auto;color:#dac39c;line-height:1.5}
+#diceSection.dicey-autumn-v3 .dice-result {
+  display:none; width:100%; margin:24px auto 0; text-align:center;
+  padding:18px 12px 12px;
+  border-top:1px solid #936b3d;
+}
+#diceSection.dicey-autumn-v3 .dice-result.show {display:block}
+#diceSection.dicey-autumn-v3 .dice-now,
+#diceSection.dicey-autumn-v3 #diceMember,
+#diceSection.dicey-autumn-v3 #diceSong,
+#diceSection.dicey-autumn-v3 #diceActions {display:none}
+#diceSection.dicey-autumn-v3 .dicey-v3-headline {
+  color:#e6bd78; margin:2px 0 15px; font:700 clamp(18px,3vw,25px)/1.25 Georgia,serif;
+  text-shadow:0 2px 3px #000;
+}
+#diceSection.dicey-autumn-v3 .dicey-v3-cards {
+  display:grid; grid-template-columns:minmax(0,1fr); gap:16px;
+  max-width:740px; margin:auto;
+}
+#diceSection.dicey-autumn-v3 .dicey-v3-cards.double {
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+#diceSection.dicey-autumn-v3 .dicey-v3-card {
+  min-width:0; position:relative; padding:17px 15px 15px;
+  background:
+    radial-gradient(ellipse at 20% 9%,#f5deb0,#e3c498 65%,#ccaa7c),
+    repeating-linear-gradient(0deg,#0002 0 1px,transparent 1px 5px);
+  border:7px solid #57351e; border-radius:17px; color:#30200f;
+  box-shadow:inset 0 0 0 2px #bd8e52,inset 0 0 0 4px #79502a,
+             0 6px 0 #311b10,0 12px 18px #0008;
+  animation:dicey-v3-deal .36s ease-out both;
+}
+#diceSection.dicey-autumn-v3 .dicey-v3-card:nth-child(2){animation-delay:.09s}
+#diceSection.dicey-autumn-v3 .dicey-v3-member {
+  font:bold clamp(18px,2.6vw,25px)/1.24 Georgia,serif;
+  color:#254630; overflow-wrap:anywhere;
+}
+#diceSection.dicey-autumn-v3 .dicey-v3-song {
+  margin:10px 0 17px; font:italic 16px/1.5 Georgia,serif;
+  color:#452c16; overflow-wrap:anywhere; white-space:normal;
+}
+#diceSection.dicey-autumn-v3 .dicey-v3-visit {
+  display:inline-block; width:100%; padding:11px 10px;
+  border:2px solid #a67b42; border-radius:24px;
+  background:linear-gradient(180deg,#713321,#431c16); color:#fff0d2;
+  font:700 clamp(12px,2.1vw,14px)/1.3 Georgia,serif;
+  text-align:center; text-decoration:none;
+  box-shadow:inset 0 0 0 2px #3a140f,0 3px 6px #0004;
+}
+#diceSection.dicey-autumn-v3 .dicey-v3-visit:hover {background:#7f3c24}
+#diceSection.dicey-autumn-v3 .dicey-v3-visit:focus-visible {outline:3px solid #184e8e;outline-offset:2px}
+#diceSection.dicey-autumn-v3 .dicey-v3-banner {
+  position:absolute; z-index:5; left:50%; top:8px; transform:translateX(-50%);
+  padding:7px 14px; max-width:90%;
+  border:2px solid #d9ad68; border-radius:28px;
+  background:linear-gradient(#603919,#331b0e); color:#ffe7b0;
+  text-shadow:0 1px 4px #000; font:700 14px/1.3 Georgia,serif;
+  box-shadow:0 5px 13px #0009;
+}
+#diceSection.dicey-autumn-v3 .dice-count {
+  margin:19px auto 7px; font-size:12px; line-height:1.4;
+}
+@keyframes dicey-v3-deal {from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:510px) {
+  #diceSection.dicey-autumn-v3 {margin:35px auto;padding:18px 8px 25px}
+  #diceSection.dicey-autumn-v3 .dice-title {font-size:clamp(27px,8.3vw,38px)}
+  #diceSection.dicey-autumn-v3 .dice-table {
+    min-height:217px; gap:clamp(15px,5vw,26px);
+    padding:39px 20px 35px;
+    border-width:10px; border-radius:44% 44% 35% 35% / 22% 22% 24% 24%;
+  }
+  #diceSection.dicey-autumn-v3 .die-wrap,
+  #diceSection.dicey-autumn-v3 .die {--dice-size:clamp(74px,23vw,91px)}
+  #diceSection.dicey-autumn-v3 .dicey-v3-cards.double {grid-template-columns:minmax(0,1fr)}
+}
+@media(prefers-reduced-motion:reduce) {
+  #diceSection.dicey-autumn-v3 .dicey-v3-card{animation:none!important}
+  #diceSection.dicey-autumn-v3 .dice-roll-btn{transition:none}
+}
