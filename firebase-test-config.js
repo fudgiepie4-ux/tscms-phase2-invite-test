@@ -10,4 +10,4 @@ export const firebaseConfig = Object.freeze({
 });
 
 // Disposable allowlisted test inboxes (Fudgie's samples account + plus-variants).
-export const approvedTestRecipients = Object.freeze(["cfudge.samples@gmail.com", "cfudge.samples+wrong@gmail.com", "cfudge.samples+two@gmail.com"]);
+export const approvedTestRecipients = Object.freeze(["cfudge.samples@gmail.com", "cfudge.samples+wrong@gmail.com", "cfudge.samples+two@gmail.com", "cfudge.samples+retest@gmail.com"]);
