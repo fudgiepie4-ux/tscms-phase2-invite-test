@@ -12,7 +12,10 @@
   let schedulePending=false;
   let toggle=null;
   function directWords(el){
-    if(skipTags.has(el.tagName)||el.closest('.tscms-legibility-controls,[aria-hidden="true"],[hidden],.tscms-decorative'))return false;
+    // The Gamehouse stage overlays HUD counters, radio labels, and remote text on
+    // fixed photographic coordinates. Even the OFF-mode 12px floor clips them.
+    // Never override font size or text-shadow inside owner-locked game artwork.
+    if(skipTags.has(el.tagName)||el.closest('.tscms-legibility-controls,[aria-hidden="true"],[hidden],.tscms-decorative,[data-tscms-legibility-fixed]'))return false;
     if(el.id==='tscms-text-toggle-btn')return false;
     for(const n of el.childNodes){
       if(n.nodeType===3 && /[\p{L}\p{N}]/u.test(n.nodeValue||''))return true;
