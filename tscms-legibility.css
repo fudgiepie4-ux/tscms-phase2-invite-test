@@ -1,0 +1,7 @@
+/* TSCMS Public Legibility — scoping avoids Control Room, game interactions and audio changes. */
+.tscms-legibility-controls{box-sizing:border-box;margin:8px auto 16px;padding:5px 10px;text-align:center;max-width:920px;clear:both}
+.tscms-legibility-button,#tscms-text-toggle-btn{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px;border-radius:22px;border:2px solid #bc8b40;background:#2d1e12;color:#ffe6b2;font:700 14px/1.3 system-ui,sans-serif;cursor:pointer;white-space:normal;text-align:center}
+.tscms-legibility-button[aria-pressed="true"],#tscms-text-toggle-btn[aria-pressed="true"]{background:#4b3017;border-color:#ffe09b}
+.tscms-legibility-button:focus-visible,#tscms-text-toggle-btn:focus-visible{outline:3px solid #ffe19f;outline-offset:3px}
+/* Never stretch images, zoom the document, scale game hit boxes, or change graphics. */
+@media(max-width:380px){.tscms-legibility-controls{padding:4px 6px;margin:6px auto 12px}}
