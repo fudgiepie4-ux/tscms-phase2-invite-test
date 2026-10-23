@@ -1,22 +1,23 @@
-/* TSCMS site-wide radio — isolated staging visual; no Gamehouse art changes. */
-#tscms-sitewide-radio{position:fixed;z-index:10020;left:50%;bottom:max(72px,calc(env(safe-area-inset-bottom) + 68px));transform:translateX(-50%);width:min(620px,calc(100vw - 24px));box-sizing:border-box;padding:10px 14px;background:linear-gradient(155deg,#503016,#24150c);color:#ffeaca;border:2px solid #d9a959;border-radius:13px;box-shadow:0 4px 24px #000b;font:14px/1.35 system-ui,sans-serif}
+/* Oct 23 staging: left-edge tab, slim wood-and-gold task bar; no transformed fixed dock. */
+#tscms-sitewide-radio{position:fixed;left:0;bottom:max(82px,calc(env(safe-area-inset-bottom) + 78px));z-index:10020;width:48px;height:56px;isolation:isolate;font:13px/1.3 system-ui,sans-serif;color:#fff1d4;transform:none}
 #tscms-sitewide-radio *{box-sizing:border-box}
-#tscms-sitewide-radio .tc-radio-head{display:flex;gap:8px;align-items:center;justify-content:space-between;min-width:0}
-#tscms-sitewide-radio .tc-radio-head strong{font:700 13px Georgia,serif;color:#ffdb94;white-space:nowrap}
-#tscms-sitewide-radio .tc-radio-title{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-#tscms-sitewide-radio .tc-radio-controls{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin-top:6px}
-#tscms-sitewide-radio button{min-height:44px;min-width:44px;padding:7px 9px;border:1px solid #f0c276;border-radius:8px;background:#27190e;color:#fff1d4;font:700 14px system-ui;cursor:pointer}
-#tscms-sitewide-radio button.tc-radio-play{min-width:132px;background:#70421b}
+#tscms-sitewide-radio .tc-radio-tab{position:relative;z-index:2;width:48px;height:56px;min-width:44px;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:3px;background:linear-gradient(135deg,#503018,#24150c);color:#ffdfa0;border:2px solid #d6a85e;border-left:0;border-radius:0 10px 10px 0;box-shadow:2px 3px 9px #0008;cursor:pointer;touch-action:manipulation}
+#tscms-sitewide-radio .tc-radio-tab-icon{font:700 23px Georgia,serif;line-height:1}
+#tscms-sitewide-radio .tc-radio-indicator{width:8px;height:8px;background:#796753;border:1px solid #f4d29a;border-radius:50%}
+#tscms-sitewide-radio[data-playback="playing"] .tc-radio-indicator{background:#93ea90;box-shadow:0 0 7px #84ec7e}
+#tscms-sitewide-radio[data-playback="needs-tap"] .tc-radio-indicator{background:#ffd26b;box-shadow:0 0 7px #ffd26b}
+#tscms-sitewide-radio .tc-radio-panel{position:absolute;left:48px;bottom:0;width:min(504px,calc(100vw - 52px));max-width:calc(100vw - 52px);padding:8px 10px;border:2px solid #d6a85e;border-radius:0 10px 10px 0;background:linear-gradient(155deg,#483019,#24160c);color:#fff1d4;box-shadow:2px 4px 15px #0009;visibility:hidden;opacity:0;pointer-events:none;transform:translateX(-10px);transition:opacity .18s ease,transform .18s ease,visibility .18s}
+#tscms-sitewide-radio[data-open="true"] .tc-radio-panel{visibility:visible;opacity:1;pointer-events:auto;transform:translateX(0)}
+#tscms-sitewide-radio .tc-radio-head{display:flex;align-items:center;gap:8px;min-width:0}
+#tscms-sitewide-radio .tc-radio-head strong{flex:0 0 auto;color:#ffdb94;font:700 12px Georgia,serif;white-space:nowrap}
+#tscms-sitewide-radio .tc-radio-title{display:block;min-width:0;flex:1;font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tscms-sitewide-radio .tc-radio-controls{display:flex;align-items:center;justify-content:space-between;gap:4px;flex-wrap:nowrap;margin-top:4px}
+#tscms-sitewide-radio .tc-radio-controls button{flex:0 0 44px;width:44px;height:44px;min-height:44px;min-width:44px;padding:4px 3px;border:1px solid #ecc07a;border-radius:6px;background:#25180f;color:#fff1d4;font:700 16px system-ui;cursor:pointer;touch-action:manipulation}
+#tscms-sitewide-radio .tc-radio-controls button.tc-radio-play{flex-basis:60px;width:60px;background:#70451f;font-size:12px;white-space:nowrap}
 #tscms-sitewide-radio button:disabled{opacity:.55;cursor:wait}
 #tscms-sitewide-radio button:focus-visible,#tscms-sitewide-radio input:focus-visible{outline:3px solid #ffdc88;outline-offset:2px}
-#tscms-sitewide-radio label{display:inline-flex;gap:4px;align-items:center;font:700 12px system-ui;color:#ffe5b1}
-#tscms-sitewide-radio input[type=range]{width:73px;accent-color:#ffd087;min-height:28px}
-#tscms-sitewide-radio .tc-radio-status{font-size:12px;margin:5px 0 0;line-height:1.4;text-align:center;color:#ffdb9e}
-@media(max-width:410px){
- #tscms-sitewide-radio{padding:8px 9px;bottom:max(70px,calc(env(safe-area-inset-bottom) + 68px))}
- #tscms-sitewide-radio .tc-radio-head{display:block;text-align:center}
- #tscms-sitewide-radio .tc-radio-title{display:block;margin-top:2px}
- #tscms-sitewide-radio .tc-radio-controls{gap:4px}
- #tscms-sitewide-radio button{min-width:40px;padding:6px}
- #tscms-sitewide-radio button.tc-radio-play{min-width:116px}
-}
+#tscms-sitewide-radio .tc-radio-controls label{min-height:44px;display:inline-flex;gap:3px;align-items:center;font:700 11px system-ui;color:#ffe5b1;white-space:nowrap}
+#tscms-sitewide-radio input[type=range]{width:78px;height:44px;min-height:44px;accent-color:#ffd087;cursor:pointer;touch-action:pan-x}
+#tscms-sitewide-radio .tc-radio-status{font-size:12px;line-height:1.35;margin:3px 0 0;color:#ffe2a8;overflow-wrap:anywhere}
+@media(max-width:440px){#tscms-sitewide-radio .tc-radio-panel{padding:7px 8px}#tscms-sitewide-radio .tc-radio-controls{gap:3px}#tscms-sitewide-radio .tc-radio-controls button.tc-radio-play{flex-basis:57px;width:57px}#tscms-sitewide-radio input[type=range]{width:62px}#tscms-sitewide-radio .tc-radio-head{display:block}#tscms-sitewide-radio .tc-radio-title{margin-top:2px}}
+@media(prefers-reduced-motion:reduce){#tscms-sitewide-radio .tc-radio-panel{transition:none}}

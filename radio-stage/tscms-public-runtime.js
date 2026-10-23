@@ -427,11 +427,11 @@
     if(/(?:^|\/)admin\.html$/i.test(location.pathname))return;
     if(document.querySelector('script[data-tscms-preserved="sitewide-radio"]'))return;
     var css=document.createElement('link');css.rel='stylesheet';
-    css.href='./tscms-sitewide-radio.css?v=20261023-stage1';
+    css.href='./tscms-sitewide-radio.css?v=20261023-lefttab2';
     css.setAttribute('data-tscms-preserved','sitewide-radio-style');
     document.head.appendChild(css);
     var js=document.createElement('script');
-    js.src='./tscms-sitewide-radio.js?v=20261023-stage1';js.async=true;
+    js.src='./tscms-sitewide-radio.js?v=20261023-lefttab2';js.async=true;
     js.setAttribute('data-tscms-preserved','sitewide-radio');
     js.onerror=function(){console.warn('Site-wide radio staging module unavailable.');};
     document.head.appendChild(js);

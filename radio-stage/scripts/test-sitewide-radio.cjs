@@ -3,6 +3,7 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const {parseHTML}=require('linkedom');
 const shared=fs.readFileSync('tscms-sitewide-radio.js','utf8');
 const engine=fs.readFileSync('solitaire-phase1-staging/js/gamehouse-jukebox.js','utf8');
+const playerCss=fs.readFileSync('tscms-sitewide-radio.css','utf8');
 const runtime=fs.readFileSync('tscms-public-runtime.js','utf8');
 let passed=0;
 function test(name,fn){fn();console.log('PASS '+(++passed)+' '+name);}
@@ -155,6 +156,14 @@ function harness(savedState=null,opts={}){
       assert.equal(h.inspect().playCalls,0);
       assert.equal(h.document.querySelectorAll('#tscms-sitewide-radio').length,1);
       assert.match(h.document.querySelector('.tc-radio-status').textContent,/Press Play/);
+      assert.equal(h.document.querySelector('.tc-radio-play').disabled,false,'Play enabled on normal load');
+      assert.equal(h.document.querySelector('input[aria-label="TSCMS Radio volume"]').disabled,false,'Volume enabled on normal load');
+      const root=h.document.querySelector('#tscms-sitewide-radio');
+      assert.equal(root.getAttribute('data-open'),'false');
+      assert.equal(root.querySelector('.tc-radio-panel').getAttribute('aria-hidden'),'true');
+      root.querySelector('.tc-radio-tab').click();
+      assert.equal(root.getAttribute('data-open'),'true');
+      assert.equal(root.querySelector('.tc-radio-panel').getAttribute('aria-hidden'),'false');
     });
     h.document.querySelector('.tc-radio-play').click();
     test('First explicit tap starts station, persists actual playing mode',()=>{
@@ -192,7 +201,9 @@ function harness(savedState=null,opts={}){
     const h=harness(snapshot('playing',91.25),opts);await h.flush();
     test('Autoplay-blocked browser shows named Tap prompt, not fake Playing',()=>{
       assert.equal(h.inspect().playing,false);
-      assert.match(h.document.querySelector('.tc-radio-play').textContent,/Tap to keep listening/);
+      assert.match(h.document.querySelector('.tc-radio-play').getAttribute('aria-label'),/Tap to keep listening/);
+      assert.match(h.document.querySelector('.tc-radio-status').textContent,/Tap to keep listening/);
+      assert.equal(h.document.querySelector('#tscms-sitewide-radio').getAttribute('data-playback'),'needs-tap');
       assert.match(h.document.querySelector('.tc-radio-title').textContent,/Saved Verified Song/);
       assert.equal(h.store().at,91.25);
     });
@@ -210,6 +221,7 @@ function harness(savedState=null,opts={}){
     test('Unseekable track NEVER restarts at zero or auto plays',()=>{
       assert.equal(h.inspect().playCalls,0);
       assert.match(h.document.querySelector('.tc-radio-status').textContent,/never restart at zero/i);
+      assert.equal(h.document.querySelector('.tc-radio-play').disabled,false);
     });
   }
   {
@@ -221,6 +233,13 @@ function harness(savedState=null,opts={}){
       assert.equal(h.inspect().stops,1);
     });
   }
+  test('Left-edge tab stays slim, closed panel invisible, all tap targets at least 44px',()=>{
+    assert.match(playerCss,/position:fixed;left:0/);
+    assert.match(playerCss,/visibility:hidden;opacity:0;pointer-events:none/);
+    assert.match(playerCss,/min-height:44px/);
+    assert.doesNotMatch(playerCss,/translateX\(-50%\)|position:sticky|100vh/);
+    assert.match(shared,/aria-expanded/);
+  });
   test('No Drive-In secondary audio in shared module',()=>{
     assert.doesNotMatch(shared,/new Audio\(/);
     assert.match(shared,/silenceOtherMedia/);

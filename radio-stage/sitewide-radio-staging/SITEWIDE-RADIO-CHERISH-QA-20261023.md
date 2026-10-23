@@ -7,7 +7,7 @@ Owner Fudgie: one site-wide TSCMS Radio component on Home/Today, Town Journal, S
 **Spec gap:** `TSCMS_Sitewide_Radio_Spec_20261023.md` is referenced in the handoff but could not be retrieved from Clara-accessible goal files, Drive, Library or GitHub. The following is a provisional test matrix based on the explicit conversation, **NOT** an assertion that the missing 8-point document has been read. Cherish MUST compare point-by-point with the original before claiming complete coverage.
 
 ## Preview and test lane
-This code exists only on branch `clara/sitewide-radio-staging-20261023` (PR #33 is draft). There is **no live preview URL** from the main-branch GitHub Pages deployment. Cherish: check out this branch in a separate workspace and serve repository root using an HTTP server, e.g.:
+This code exists only on branch `clara/sitewide-radio-staging-20261023` (PR #33 is draft). A separate **test-only** full-copy preview exists at `https://fudgiepie4-ux.github.io/tscms-phase2-invite-test/radio-stage/`, never production. Cherish: check out this branch in a separate workspace and serve repository root using an HTTP server, e.g.:
 
 ```bash
 git fetch origin clara/sitewide-radio-staging-20261023
@@ -37,3 +37,7 @@ Visit `http://localhost:8765/` **on the same origin** for all page transitions. 
 
 ## Do not mark complete until
 **Cherish** posts TEST result in PIPELINE BUILDS with browser/width, navigation path, saved song/seconds before-after, volume, autoplay outcome, audio overlap, exact Protected Features checks, and the original spec comparison. **Fudgie** approves visual and behavior. **Only then** request merge/deploy. Afterwards Cherish verifies on production and the official Change Log gets a factual completion entry. Until then status = **STAGING — NOT SHIPPED**.
+
+
+## Oct 23 revised phone gate — DRAFT ONLY
+The recorded disabled Play/Volume bug was confirmed: display now enables all five controls after a normal load, never while restoring; retry guards all five. First Cherish test must be a real Play tap immediately after ordinary load. The owner requested a collapsible left-edge tab replacing the large centered dock. The 48x56 tab is the only visible element while tucked; the panel uses dark wood/gold/cream, accessible 44px controls, visible song title/status, no fullscreen mode, and a playing/needs-tap indicator. Existing track/position/play-pause-stop/volume, silence on first visit, one-tap continuation and Favorites privacy are preserved. Removed the transformed fixed-root positioning suspected of scroll ghosting; S24 Brave scroll verification is STILL REQUIRED before calling the issue fixed. Recopy JS/CSS to the test repo /radio-stage/ and reconfirm CI, then Cherish retests and Fudgie approves separately. No merge or tscmsradio.com changes.

@@ -49,10 +49,20 @@
     text(title,t?(t.title+(t.artist?' — '+t.artist:'')):'Station unavailable');
     if(volume)volume.value=String(J.getVolume());
     var playing=J.isPlaying();
-    text(play,needTap?'▶ Tap to keep listening':playing?'❚❚ Pause':'▶ Play');
+    text(play,needTap?'▶ Tap':playing?'❚❚ Pause':'▶ Play');
     play.setAttribute('aria-label',needTap?'Tap to keep listening to '+(t?t.title:'the station'):playing?'Pause TSCMS Radio':'Play TSCMS Radio');
     play.setAttribute('aria-pressed',playing?'true':'false');
-    previous.disabled=next.disabled=stop.disabled=false;
+    // Normal load previously forgot to enable Play and Volume.
+    [previous,play,next,stop,volume].forEach(function(control){control.disabled=!!restoring;});
+    if(ui){
+      ui.setAttribute('data-playback',playing?'playing':needTap?'needs-tap':chosen);
+      var tab=ui.querySelector('.tc-radio-tab');
+      if(tab){
+        tab.setAttribute('aria-label',(ui.getAttribute('data-open')==='true'?'Close':'Open')+
+          ' TSCMS Radio player — '+(playing?'music playing':needTap?'tap to keep listening':chosen)+(t?' — '+t.title:''));
+        tab.title=playing?'TSCMS Radio is playing':needTap?'Tap to keep listening':'TSCMS Radio '+chosen;
+      }
+    }
   }
   function silenceOtherMedia(){
     document.querySelectorAll('audio,video').forEach(function(media){
@@ -63,8 +73,19 @@
     if(document.getElementById('tscms-sitewide-radio'))return null;
     var root=document.createElement('section');root.id='tscms-sitewide-radio';
     root.setAttribute('aria-label','TSCMS Radio — follows you around the site');
+    root.setAttribute('data-open','false');root.setAttribute('data-playback','stopped');
+    var tab=document.createElement('button');tab.type='button';tab.className='tc-radio-tab';
+    tab.setAttribute('aria-label','Open TSCMS Radio player');
+    tab.setAttribute('aria-controls','tc-radio-panel');tab.setAttribute('aria-expanded','false');
+    var tabIcon=document.createElement('span');tabIcon.className='tc-radio-tab-icon';
+    tabIcon.setAttribute('aria-hidden','true');tabIcon.textContent='♫';
+    var indicator=document.createElement('span');indicator.className='tc-radio-indicator';
+    indicator.setAttribute('aria-hidden','true');
+    tab.append(tabIcon,indicator);
+    var panel=document.createElement('div');panel.id='tc-radio-panel';panel.className='tc-radio-panel';
+    panel.setAttribute('aria-hidden','true');
     var head=document.createElement('div');head.className='tc-radio-head';
-    var heading=document.createElement('strong');heading.textContent='♫ TSCMS RADIO';
+    var heading=document.createElement('strong');heading.textContent='TSCMS RADIO';
     title=document.createElement('span');title.className='tc-radio-title';title.textContent='Loading station…';
     head.append(heading,title);
     var row=document.createElement('div');row.className='tc-radio-controls';
@@ -72,17 +93,29 @@
     previous=button('⏮','Previous TSCMS Radio song');
     play=button('▶ Play','Play TSCMS Radio','tc-radio-play');
     next=button('⏭','Next TSCMS Radio song');
-    stop=button('■ Stop','Stop TSCMS Radio');
+    stop=button('■','Stop TSCMS Radio');
     var volLabel=document.createElement('label');volLabel.textContent='Vol ';
     volume=document.createElement('input');volume.type='range';volume.min='0';volume.max='1';volume.step='0.05';volume.value='1';volume.setAttribute('aria-label','TSCMS Radio volume');
     volLabel.append(volume);row.append(previous,play,next,stop,volLabel);
     status=document.createElement('p');status.className='tc-radio-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
     status.textContent='Station loading. No autoplay on first visit.';
-    root.append(head,row,status);
-    // Drive-In ambient music uses document-wide pointerdown/keydown listeners.
-    // A radio control tap must not unintentionally restart that ambience.
+    panel.append(head,row,status);root.append(tab,panel);
+    function setOpen(open){
+      root.setAttribute('data-open',open?'true':'false');
+      panel.setAttribute('aria-hidden',open?'false':'true');
+      tab.setAttribute('aria-expanded',open?'true':'false');
+      tab.setAttribute('aria-label',(open?'Close':'Open')+' TSCMS Radio player');
+      if(loaded)display();
+    }
+    tab.addEventListener('click',function(){setOpen(root.getAttribute('data-open')!=='true');});
+    // Do not wake the separate Drive-In ambient audio on a radio tap.
     root.addEventListener('pointerdown',function(e){e.stopPropagation();});
-    root.addEventListener('keydown',function(e){e.stopPropagation();});
+    root.addEventListener('keydown',function(e){
+      if(e.key==='Escape' && root.getAttribute('data-open')==='true'){
+        setOpen(false);tab.focus();e.preventDefault();
+      }
+      e.stopPropagation();
+    });
     document.body.append(root);ui=root;
     [previous,play,next,stop,volume].forEach(function(x){x.disabled=true;});
     return root;
@@ -92,15 +125,15 @@
     take();silenceOtherMedia();
     chosen='playing';needTap=false;seekFailed=false;
     var started=J.toggle();
-    if(!started){needTap=true;announce('Tap to keep listening; the browser did not start sound.');}
+    if(!started || needTap){needTap=true;announce('Tap to keep listening to '+(J.currentTrack()?J.currentTrack().title:'the saved song')+' — your browser did not start sound.');}
     else announce('Starting the saved station track…');
     display();
   }
   async function retry(){
     if(!wanted || !J || restoring)return;
-    restoring=true;play.disabled=true;announce('Finding your saved position…');
+    restoring=true;[previous,play,next,stop,volume].forEach(function(x){x.disabled=true;});announce('Finding your saved position…');
     var ok=await J.restoreStationPosition(wanted.stream,wanted.at);
-    restoring=false;play.disabled=false;
+    restoring=false;[previous,play,next,stop,volume].forEach(function(x){x.disabled=false;});
     if(!ok){
       needTap=true;seekFailed=true;
       announce('Saved position unavailable for this track. Tap to retry; the song will not restart at zero.');
