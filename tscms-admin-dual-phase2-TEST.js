@@ -321,6 +321,18 @@ async function showOwnerApprovals(ownerUid){
   // Two deliberate taps on this SAME button are required before Firestore changes.
   // Leave the owner approval and Firebase permission checks untouched.
   let armedRevoke=null;
+  let armedReject=null;
+  function disarmReject(){
+    if(!armedReject)return;
+    const previous=armedReject;
+    armedReject=null;
+    clearTimeout(previous.timer);
+    if(previous.button.isConnected){
+      previous.button.classList.remove("tc-revoke-armed");
+      previous.button.textContent="Reject";
+      previous.button.setAttribute("aria-label",previous.button.dataset.idleAriaLabel||"Reject application");
+    }
+  }
   function disarmRevoke(){
     if(!armedRevoke)return;
     const previous=armedRevoke;
@@ -345,9 +357,24 @@ async function showOwnerApprovals(ownerUid){
   },true);
   window.addEventListener("blur",disarmRevoke);
   document.addEventListener("visibilitychange",()=>{if(document.hidden)disarmRevoke();});
+  // Mirror the destructive-action safety used for Revoke: any other action,
+  // scroll, keyboard navigation, tab switching or re-render cancels an armed Reject.
+  document.addEventListener("pointerdown",ev=>{
+    if(armedReject && !armedReject.button.contains(ev.target))disarmReject();
+  },true);
+  document.addEventListener("click",ev=>{
+    if(armedReject && !armedReject.button.contains(ev.target))disarmReject();
+  },true);
+  document.addEventListener("scroll",disarmReject,true);
+  document.addEventListener("keydown",ev=>{
+    if(armedReject && (ev.key==="Escape" || ev.key==="Tab"))disarmReject();
+  },true);
+  window.addEventListener("blur",disarmReject);
+  document.addEventListener("visibilitychange",()=>{if(document.hidden)disarmReject();});
   let approvedExpanded=false;
   async function refresh(){
     disarmRevoke();
+    disarmReject();
     panel.querySelectorAll(".tc-owner-entry-list").forEach(n=>n.remove());
     const profiles=arguments.length?arguments[0]:await getDocs(collection(db,"users")); // TEST live snapshots, original fallback preserved
     const others=profiles.docs.filter(d=>d.id!==ownerUid);
@@ -406,13 +433,36 @@ async function showOwnerApprovals(ownerUid){
           const button=document.createElement("button");button.textContent=text;
           button.type="button";
           button.setAttribute("aria-label",text+" "+(data.fullName||data.username||"this person"));
-          button.addEventListener("click",()=>{
-            const identityConfirmed=text!=="Approve" || window.confirm(
-              "Have you personally contacted and verified "+(data.fullName||data.username||"this person")+
-              " and confirmed their email? Approve only after your own identity check."
-            );
-            if(identityConfirmed)update(changes);
-          });row.appendChild(button);
+          if(text==="Reject"){
+            const identity=data.fullName||data.username||"this person";
+            button.dataset.idleAriaLabel="Reject application for "+identity;
+            button.setAttribute("aria-label",button.dataset.idleAriaLabel);
+            button.addEventListener("click",()=>{
+              if(armedReject && armedReject.button===button &&
+                  armedReject.profileId===profile.id && Date.now()<=armedReject.expiresAt){
+                disarmReject();
+                button.disabled=true;
+                void update(changes);
+                return;
+              }
+              disarmReject();disarmRevoke();
+              button.textContent="Tap again to REJECT "+identity;
+              button.setAttribute("aria-label","Tap again to reject application for "+identity);
+              button.classList.add("tc-revoke-armed");
+              const expiresAt=Date.now()+5000;
+              const timer=setTimeout(disarmReject,5000);
+              armedReject={button,profileId:profile.id,expiresAt,timer};
+            });
+          }else{
+            button.addEventListener("click",()=>{
+              disarmReject();
+              if(window.confirm(
+                "Have you personally contacted and verified "+(data.fullName||data.username||"this person")+
+                " and confirmed their email? Approve only after your own identity check."
+              ))void update(changes);
+            });
+          }
+          row.appendChild(button);
         }
       }else if(data.status==="approved"){
         const revoke=document.createElement("button");
