@@ -2,13 +2,13 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
 import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged,
   sendSignInLinkToEmail,isSignInWithEmailLink,signInWithEmailLink,
-  browserLocalPersistence,inMemoryPersistence,setPersistence,reload,getIdToken} from
+  browserLocalPersistence,inMemoryPersistence,setPersistence,reload,getIdToken,updatePassword} from
   'https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js';
 import {getFirestore,doc,collection,getDocFromServer,writeBatch,setDoc,updateDoc,
   getDocs,onSnapshot,serverTimestamp,Timestamp} from
   'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
 import {firebaseConfig,approvedTestRecipients} from './firebase-test-config.js';
-import {assertTestOnly,normalizeEmail,inviteToken,recipientCanClaim,pendingProfile,safeInviteUrl,TTL_MS} from './phase2-core.mjs';
+import {assertTestOnly,normalizeEmail,inviteToken,recipientCanClaim,pendingProfile,safeInviteUrl,proposedInviteExpiryMs} from './phase2-core.mjs';
 const $=id=>document.getElementById(id);
 const status=(s)=>{$('status').textContent=s;};
 try{assertTestOnly(firebaseConfig,location.hostname);}
@@ -17,6 +17,8 @@ const app=initializeApp(firebaseConfig,'tcms-phase2-owner-test');
 const ownerAuth=getAuth(app),db=getFirestore(app);
 const recipientApp=initializeApp(firebaseConfig,'tcms-phase2-recipient-test');
 const recipientAuth=getAuth(recipientApp);
+// All invitee read/writes MUST use invitee-authenticated Firestore, never the Owner's.
+const recipientDb=getFirestore(recipientApp);
 await setPersistence(ownerAuth,browserLocalPersistence);
 await setPersistence(recipientAuth,inMemoryPersistence);
 const token=(new URLSearchParams(location.hash.slice(1))).get('invite')||'';
@@ -117,7 +119,7 @@ $('invite-form').addEventListener('submit',async ev=>{
     const id=inviteToken(crypto);
     await setDoc(doc(db,'invitations',id),{email,createdBy:user.uid,status:'issued',
       createdAt:serverTimestamp(),lastSentAt:serverTimestamp(),resendCount:0,
-      expiresAt:Timestamp.fromMillis(Date.now()+TTL_MS)});
+      expiresAt:Timestamp.fromMillis(proposedInviteExpiryMs(Date.now()))});
     $('invite-email').value='';
     status('Single-use TEST invitation issued. No recipient signed up or approved. Copy/send link from list.');
   }catch(_){status('TEST invite creation blocked; check project, Owner identity, or rules.');}
@@ -137,7 +139,7 @@ $('request-email').addEventListener('submit',async ev=>{
       const user=(await signInWithEmailLink(recipientAuth,email,location.href)).user;
       await reload(user);await getIdToken(user,true);
       if(!user.emailVerified||normalizeEmail(user.email)!==email)throw Error('Verified email mismatch');
-      const snap=await getDocFromServer(doc(db,'invitations',token));
+      const snap=await getDocFromServer(doc(recipientDb,'invitations',token));
       if(!snap.exists()||!recipientCanClaim(snap.data(),email,Date.now()))throw Error('Invalid/expired invite');
       $('request-email').hidden=true;$('redeem').hidden=false;
       // Wipe Firebase one-time authorization code from location after use.
@@ -159,17 +161,27 @@ $('recipient-signup').addEventListener('submit',async ev=>{
   try{
     if(!user?.emailVerified)throw Error('Verified recipient required');
     await reload(user);await getIdToken(user,true);
-    const invitation=await getDocFromServer(doc(db,'invitations',token));
+    const invitation=await getDocFromServer(doc(recipientDb,'invitations',token));
     if(!invitation.exists()||!recipientCanClaim(invitation.data(),user.email,Date.now()))throw Error('Invite expired');
+    // Claim is for a NEW, verified TEST account. Never change an approved user's password.
+    const existing=await getDocFromServer(doc(recipientDb,'users',user.uid));
+    if(existing.exists())throw Error('This account has already registered');
+    const password=$('new-password').value;
+    const confirmation=$('confirm-password').value;
+    if(password.length<12 || password!==confirmation)throw Error('Password requirements failed');
+    // V3: one-time link proves recipient identity. Before claiming, set their
+    // normal email+password credential; no password stored in Firestore or browser.
+    await updatePassword(user,password);
+    $('new-password').value='';$('confirm-password').value='';
     const createdAt=serverTimestamp();
     const profile=pendingProfile({authUser:user,fullName:$('full-name').value,
       username:$('user-name').value,inviteId:token,createdAt});
-    const batch=writeBatch(db);
-    batch.set(doc(db,'users',user.uid),profile);
-    batch.set(doc(db,'usernames',profile.username),{uid:user.uid,createdAt});
-    batch.update(doc(db,'invitations',token),{status:'used',claimUid:user.uid,usedAt:serverTimestamp()});
+    const batch=writeBatch(recipientDb);
+    batch.set(doc(recipientDb,'users',user.uid),profile);
+    batch.set(doc(recipientDb,'usernames',profile.username),{uid:user.uid,createdAt});
+    batch.update(doc(recipientDb,'invitations',token),{status:'used',claimUid:user.uid,usedAt:serverTimestamp()});
     await batch.commit();
     $('redeem').hidden=true;
     status('TEST request submitted and PENDING. You do not have Admin access until Fudgie approves.');
-  }catch(_){status('TEST invitation submission denied. No access granted. Contact Fudgie.');}
+  }catch(_){status('TEST invitation request incomplete or denied. No access granted. Check details or contact Fudgie.');}
 });
