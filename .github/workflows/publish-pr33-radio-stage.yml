@@ -1,0 +1,65 @@
+name: Publish PR33 radio phone preview (test repository ONLY)
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/publish-pr33-radio-stage.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: pr33-radio-preview-copy
+  cancel-in-progress: false
+jobs:
+  isolated-radio-stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout existing Phase 2 test repository (preserve root app)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: true
+      - name: Checkout PINNED PR 33 source commit (never main)
+        uses: actions/checkout@v4
+        with:
+          repository: fudgiepie4-ux/tscms-today
+          ref: b7cd759ba5ea9aaf26e6d927abb42dc5afbc5bd1
+          path: _radio_checkout
+          persist-credentials: false
+      - name: Copy full source tree only into isolated radio-stage subfolder
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _radio_checkout rev-parse HEAD)" = b7cd759ba5ea9aaf26e6d927abb42dc5afbc5bd1
+          mkdir -p radio-stage
+          rsync -a --delete --exclude='/.git' _radio_checkout/ radio-stage/
+          # GitHub's internal repository metadata must never be served.
+          test ! -e radio-stage/.git
+          for f in index.html town-journal.html tscms-search.html videos.html gamehouse.html my-playlist.html radio-data.json tscms-sitewide-radio.js tscms-sitewide-radio.css tscms-public-runtime.js solitaire-phase1-staging/js/gamehouse-jukebox.js; do
+            test -s "radio-stage/$f" || { echo "::error::Missing $f in radio-stage"; exit 1; }
+            cmp -s "_radio_checkout/$f" "radio-stage/$f" || { echo "::error::Mismatch $f"; exit 1; }
+            echo "VERIFIED: radio-stage/$f"
+          done
+          # Every source file must exist under radio-stage. Source CNAME is
+          # nested only; test root CNAME and custom-domain settings untouched.
+          find _radio_checkout -type f ! -path '_radio_checkout/.git/*' -printf '%P\n' | sort > /tmp/radio-source-files
+          find radio-stage -type f -printf '%P\n' | sort > /tmp/radio-stage-files
+          diff -u /tmp/radio-source-files /tmp/radio-stage-files
+          echo "Complete site: $(wc -l </tmp/radio-stage-files) files copied"
+          echo "Source files: $(du -sh _radio_checkout | cut -f1)"
+          # Guard: only radio-stage subtree may be committed.
+          git add --all -- radio-stage
+          other="$(git diff --cached --name-only | grep -v '^radio-stage/' || true)"
+          if [ -n "$other" ]; then echo "::error::Unexpected staged paths: $other"; exit 1; fi
+          if git diff --cached --quiet; then
+            echo "Existing preview is already identical to pinned source"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "test-only: isolate complete pinned PR33 radio snapshot under radio-stage"
+          git push origin HEAD:main
+      - name: Confirm stage files committed
+        shell: bash
+        run: |
+          git ls-files radio-stage/ | wc -l
+          echo "NOTE: phone test URL must be verified after subsequent GitHub Pages publication."
