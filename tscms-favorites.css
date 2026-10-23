@@ -4,9 +4,14 @@
 .tc-fav-heart:focus-visible,.tc-fav-door:focus-visible,.tc-fav-mode:focus-visible,.tc-fav-remove:focus-visible{outline:3px solid #f8cc65;outline-offset:3px}
 .tc-fav-door{margin:6px;white-space:normal}
 .tc-fav-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:7px auto;max-width:100%;justify-content:center}
-.tc-fav-toast{position:fixed;bottom:1rem;right:1rem;max-width:min(90vw,360px);z-index:10050;border:2px solid #eac47f;background:#241609;color:#fff0cc;padding:12px;border-radius:10px;font:14px/1.5 system-ui,sans-serif;box-shadow:0 4px 16px #000a}
-.tc-fav-toast a{color:#ffdfa3;text-decoration:underline}
-.tc-fav-toast button{color:#fff;background:transparent;border:1px solid #cca669;margin-left:10px;cursor:pointer;min-height:44px}
+/* A temporary save notice lives ABOVE the independent, floating Feedback pill.
+   It is not a modal; do not move/disable Feedback or shrink the user's song names.
+   JS measures the actual Feedback top edge, including browser text scaling. */
+.tc-fav-toast{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:var(--tc-fav-toast-bottom,max(96px,calc(env(safe-area-inset-bottom) + 92px)));width:min(360px,calc(100vw - 24px));max-width:calc(100vw - 24px);box-sizing:border-box;z-index:10050;border:2px solid #eac47f;background:#241609;color:#fff0cc;padding:12px;border-radius:10px;font:14px/1.5 system-ui,sans-serif;box-shadow:0 4px 16px #000a;display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:8px 10px;overflow-wrap:anywhere;max-height:min(56dvh,calc(100dvh - var(--tc-fav-toast-bottom,96px) - 12px));overflow-y:auto}
+.tc-fav-toast>span{grid-column:1;grid-row:1;min-width:0;align-self:center}
+.tc-fav-toast>.tc-fav-toast-link{grid-column:1;grid-row:2;box-sizing:border-box;min-width:0;max-width:100%;width:100%;justify-self:stretch;white-space:normal;overflow-wrap:anywhere;color:#ffdfa3;text-decoration:underline;font:700 14px/1.4 system-ui,sans-serif}
+.tc-fav-toast>button{grid-column:2;grid-row:1;justify-self:end;align-self:start;width:44px;min-width:44px;height:44px;min-height:44px;margin:0;padding:0;color:#fff;background:transparent;border:1px solid #cca669;border-radius:8px;cursor:pointer;font:700 20px/1 system-ui,sans-serif}
+.tc-fav-toast>.tc-fav-toast-link:focus-visible,.tc-fav-toast>button:focus-visible{outline:3px solid #f8cc65;outline-offset:2px}
 .tc-fav-playlist{margin:22px auto;max-width:870px;padding:18px;background:#251709;color:#ffeac0;border:2px solid #ac7b3e;border-radius:12px;font:16px/1.55 system-ui,sans-serif}
 .tc-fav-row{border-top:1px solid #6e512f;padding:12px 0;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .tc-fav-row strong{overflow-wrap:anywhere}

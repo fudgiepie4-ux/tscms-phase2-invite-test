@@ -101,11 +101,34 @@ async function toggle(song,button){
   }catch(_){announce('Could not update your playlist. Please try again.');}
   finally{pending=false;if(button)button.disabled=false;}
 }
+// Feedback is separately fixed to the bottom-right with a higher z-index.
+// The save action must remain visibly above that button, including enlarged
+// font settings, Chrome/Brave viewport changes, and floating safe-area insets.
+function positionToastAboveFeedback(box){
+  if(!box || !box.isConnected)return;
+  box.style.removeProperty('--tc-fav-toast-bottom');
+  const feedback=byId('tscms-fb-btn');
+  if(!feedback || typeof feedback.getBoundingClientRect!=='function')return;
+  const rect=feedback.getBoundingClientRect();
+  const height=window.innerHeight || document.documentElement.clientHeight;
+  // Only reserve space when Feedback is a visible, lower-screen control.
+  if(rect.width>0 && rect.height>0 && rect.top>height*.45 && rect.top<height && rect.bottom>height*.55){
+    const bottom=Math.ceil(height-rect.top+14);
+    box.style.setProperty('--tc-fav-toast-bottom',bottom+'px');
+  }
+}
+function repositionActiveToast(){
+  const box=document.querySelector('.tc-fav-toast');if(box)positionToastAboveFeedback(box);
+}
+window.addEventListener('resize',repositionActiveToast,{passive:true});
+window.visualViewport?.addEventListener('resize',repositionActiveToast,{passive:true});
 function announce(msg,withLink=false){
   document.querySelector('.tc-fav-toast')?.remove();const box=document.createElement('div');box.className='tc-fav-toast';box.setAttribute('role','status');box.setAttribute('aria-live','polite');
   const t=document.createElement('span');t.textContent=msg;box.append(t);
-  if(withLink){const a=document.createElement('a');a.href='./my-playlist.html';a.target='_self';a.textContent='View my playlist';a.className='tc-fav-toast-link';box.append(' ',a);}
+  if(withLink){const a=document.createElement('a');a.href='./my-playlist.html';a.target='_self';a.textContent='View my playlist';a.className='tc-fav-toast-link';box.append(a);}
   const close=document.createElement('button');close.type='button';close.setAttribute('aria-label','Dismiss playlist notification');close.textContent='×';close.addEventListener('click',()=>box.remove());box.append(close);document.body.append(box);
+  positionToastAboveFeedback(box);
+  requestAnimationFrame(()=>positionToastAboveFeedback(box));
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>box.remove(),6500);
 }
 function addDoor(){
