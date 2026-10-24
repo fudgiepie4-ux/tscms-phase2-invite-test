@@ -1,13 +1,11 @@
 /* TSCMS Listening Room — Oct 23 approved phone reference.
    All lettering, count, songs, labels, and controls are real accessible HTML.
-   Artwork: textured, slatted SVG crate — NOT a flat walnut panel.
+   Artwork: exact Fudgie-approved 941×1672 phone PNG (sha256 03f3e35a16e36abb8927b5d199b7017c58efffecb455cd68c37ae3ce9e927b8a). No regenerated or stretched SVG.
    No radio, playback, security or shared-site styles altered.
 */
 body.tc-listening-room {
   margin:0;min-width:0;color:#f8e9ce;font:16px/1.45 system-ui,-apple-system,sans-serif;
-  background:
-    radial-gradient(ellipse at 50% 5%,#7543227d,transparent 60%),
-    repeating-linear-gradient(90deg,#26150e 0 4px,#3b2115 7px 92px,#24140e 102px 110px);
+  background:radial-gradient(ellipse at 50% 3%,#6b3823 0%,#25120e 54%,#140c0a 100%);
 }
 .tc-listening-room *{box-sizing:border-box}
 .tc-listening-room a{color:#fce0a1}
@@ -20,19 +18,36 @@ body.tc-listening-room {
 .tc-room-disc:after{content:"";position:absolute;inset:32%;border-radius:50%;background:radial-gradient(circle,#2c1b12 0 19%,#cda467 21% 72%,#653022 75%);box-shadow:0 0 0 1px #100a06}
 .tc-room-title{margin:0;font:700 clamp(2rem,7vw,4.6rem)/1.05 Georgia,'Times New Roman',serif;letter-spacing:.012em;color:#ffefc8;text-shadow:0 3px #160e09}
 .tc-room-kicker{margin:6px 0 0;color:#f8deae;font:700 clamp(.64rem,1.75vw,.95rem)/1.2 Georgia,serif;letter-spacing:.23em}
-.tc-room-scene{position:relative;overflow:hidden;width:100%;aspect-ratio:1200/690;margin:0;border-inline:3px solid #4a2915;border-bottom:0;background:#24140d;box-shadow:inset 0 0 12px #130804}
-.tc-room-art{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:fill;user-select:none;pointer-events:none}
+/* Fixed crop coordinates in original 941×1672 approved PHONE mockup:
+   x=90..885, y=150..705. Width/height ratio 795:555 at every
+   viewport; image is scaled UNIFORMLY, never object-fit:fill or sliced.
+   Photo includes the decorative radio/wall signs; don't redraw them.
+   Only the count plate is masked and replaced by real LIVE page text. */
+.tc-room-scene{position:relative;overflow:hidden;isolation:isolate;
+  width:100%;aspect-ratio:795/555;margin:0;border:1px solid #542c19;
+  background:#1d100b;box-shadow:0 5px 10px #090403}
+.tc-room-art{position:absolute;top:0;left:-11.32%;display:block;
+  width:118.365%;max-width:none;height:auto;aspect-ratio:941/1672;
+  object-fit:contain;object-position:center top;
+  transform:translateY(-8.9713%);pointer-events:none;user-select:none}
 .tc-room-art[hidden]{display:none}
-.tc-room-sign{position:absolute;left:8.5%;top:15.5%;width:17.5%;display:flex;align-items:center;justify-content:center;text-align:center;min-height:12%;color:#ffd480;font:800 clamp(.68rem,2vw,1.35rem)/1.2 Georgia,serif;text-shadow:0 0 5px #ffae3e,0 0 8px #ef9239;pointer-events:none}
-.tc-room-wall-note{position:absolute;top:13%;right:7%;margin:0;width:17%;text-align:center;font:800 clamp(.6rem,1.5vw,1.15rem)/1.15 Georgia,serif;color:#190b06;transform:rotate(-2deg);pointer-events:none}
-.tc-room-plaque{position:absolute;z-index:2;top:71%;left:50%;transform:translateX(-50%);
-  margin:0;padding:8px clamp(15px,4vw,35px);width:max-content;max-width:78%;
-  border:3px ridge #f5d793;border-radius:9px;
-  background:linear-gradient(155deg,#fff0af 0%,#ac722f 32%,#f7d78d 53%,#b77b32 80%,#eccb7e);
-  box-shadow:inset 0 2px 2px #fff7cb,inset 0 -3px 2px #8b561f,0 5px 10px #080403;
-  color:#261409;text-align:center;font:800 clamp(.93rem,2.5vw,1.8rem)/1.25 Georgia,serif;
-  white-space:normal;overflow-wrap:anywhere}
-.tc-room-plaque:before,.tc-room-plaque:after{content:"★";color:#842535;margin:0 .45em}
+/* Signs live within approved photo. A second overlay would double-print. */
+.tc-room-sign,.tc-room-wall-note{display:none}
+.tc-room-plaque-mask,.tc-room-plaque{
+  position:absolute;top:72.5%;left:18%;width:59%;height:21.5%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0;padding:2px 27px;transform:none;box-sizing:border-box;
+  border:3px ridge #f1d38d;border-radius:11px;
+  background:linear-gradient(163deg,#ba7b35 0%,#ffedb5 30%,#bd8b45 57%,#efd08d 89%,#9b6126);
+  box-shadow:inset 0 2px 4px #fff6c2,inset 0 -4px 4px #77501f,0 3px 8px #160700;
+}
+.tc-room-plaque-mask{z-index:2;pointer-events:none}
+.tc-room-plaque{z-index:3;color:#241609;text-align:center;
+  font:800 clamp(.81rem,3.5vw,1.75rem)/1.1 Georgia,serif;
+  white-space:normal;overflow-wrap:normal;pointer-events:none}
+.tc-room-plaque:before,.tc-room-plaque:after{content:"★";position:absolute;top:45%;
+  color:#8e2532;font-size:.75em}
+.tc-room-plaque:before{left:7px}.tc-room-plaque:after{right:7px}
 .tc-room-plaque[hidden]{display:none}
 .tc-room-action-holder{display:flex;align-items:stretch;justify-content:center;gap:10px;min-width:0;margin:0;padding:9px 12px 14px;
   background:linear-gradient(#452615,#2b150e);border:3px solid #75411e;border-top:0;border-radius:0 0 10px 10px}
@@ -118,10 +133,10 @@ body.tc-listening-room {
  .tc-room-masthead{gap:9px;border-width:3px;padding:9px 4px}
  .tc-room-kicker{letter-spacing:.12em}
  .tc-room-scene{border-inline-width:1px}
- .tc-room-sign{font-size:clamp(7px,1.65vw,10px)}
- .tc-room-wall-note{font-size:clamp(6px,1.3vw,9px)}
- .tc-room-plaque{font-size:clamp(.77rem,3.1vw,1.05rem);padding:5px 12px;border-width:2px;max-width:83%}
- .tc-room-plaque:before,.tc-room-plaque:after{margin:0 .2em}
+ .tc-room-plaque,.tc-room-plaque-mask{border-width:2px;padding:1px 22px}
+ .tc-room-plaque{font-size:clamp(.75rem,3.5vw,1.05rem)}
+ .tc-room-plaque:before{left:5px}
+ .tc-room-plaque:after{right:5px}
  .tc-room-action-holder{gap:6px;padding:7px 5px 10px;border-width:2px}
  .tc-room-action-holder button{font-size:clamp(.84rem,3.35vw,1rem);min-height:46px;padding:6px 5px;border-width:2px}
  .tc-room-library{margin-top:9px;padding:8px;border-width:3px}
