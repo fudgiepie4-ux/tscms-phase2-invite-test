@@ -1,10 +1,11 @@
-// Firebase Web App configuration — public client identifiers, NOT credentials.
-// Security MUST be enforced by Firebase Authentication + Firestore Security Rules.
+/* TEST SITE ONLY — points at the throwaway tscms-admin-login-test project.
+   Radio-stage uses the same TEST identifiers as the Listening Room stage.
+   NEVER ship this file to the live site. */
 export const tscmsFirebaseConfig = Object.freeze({
-  apiKey: "AIzaSyB6m_Oj_b3c2cZtwfd4xfpsyg9Qjcks2hY",
-  authDomain: "tscms-admin.firebaseapp.com",
-  projectId: "tscms-admin",
-  storageBucket: "tscms-admin.firebasestorage.app",
-  messagingSenderId: "1026184954656",
-  appId: "1:1026184954656:web:76d907d77a96cffdf2cd45"
+  apiKey: "AIzaSyDHKa7_wmD6fOiwv9mNKk0hmVXRlNkMJC0",
+  authDomain: "tscms-admin-login-test.firebaseapp.com",
+  projectId: "tscms-admin-login-test",
+  storageBucket: "tscms-admin-login-test.firebasestorage.app",
+  messagingSenderId: "723244835526",
+  appId: "1:723244835526:web:5c0562d7e5d4887b04edc7"
 });
