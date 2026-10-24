@@ -1,0 +1,28 @@
+/* Pathway Pack: additive only; never restructure Quick Jump, group art or Dubby. */
+.tscms-pathway,.tscms-group-signpost,.tscms-pathway *, .tscms-group-signpost *{box-sizing:border-box}
+.tscms-pathway{margin:10px auto 20px;max-width:1140px;padding:13px;background:linear-gradient(160deg,#25180f,#3b2616 55%,#24150c);border:2px solid #c59446;border-radius:15px;box-shadow:0 5px 24px #0008;color:#ffebc6}
+.tscms-pathway-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.tscms-pathway-door{min-height:84px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:7px;padding:13px 10px;text-align:center;text-decoration:none!important;border:2px solid #d3a652;border-radius:11px;background:linear-gradient(180deg,#6c401d,#38200f);color:#fff3d4!important;box-shadow:inset 0 1px #ffe8af55;overflow-wrap:anywhere}
+.tscms-pathway-door:hover{background:linear-gradient(180deg,#855321,#482914);border-color:#f5c871}
+.tscms-pathway-door:focus-visible,.tscms-group-signpost-link:focus-visible{outline:3px solid #fff6c9;outline-offset:3px}
+.tscms-pathway-label{font:700 clamp(15px,1.8vw,20px)/1.25 Georgia,serif;display:block}
+.tscms-pathway-helper{font:500 14px/1.4 system-ui,-apple-system,sans-serif;display:block}
+.tscms-pathway-video{background:linear-gradient(180deg,#704714,#31210e);border-color:#ebbb59}
+.tscms-pathway-tip{font:400 13px/1.5 system-ui,-apple-system,sans-serif;text-align:center;color:#e9cb92;margin:11px 7px 0}
+.tscms-group-signpost{max-width:1140px;margin:17px auto 25px;padding:21px clamp(16px,4vw,30px);text-align:center;color:#fff1cd;background:linear-gradient(160deg,#392410,#1f120a);border:2px solid #c99c56;border-radius:14px;box-shadow:0 7px 23px #0008}
+.tscms-group-signpost-title{font:700 clamp(23px,3.4vw,31px)/1.25 Georgia,serif!important;color:#ffe4a0!important;margin:0 auto 11px!important}
+.tscms-group-signpost-copy{font:400 16px/1.6 Georgia,serif;max-width:740px;margin:0 auto 17px;color:#fff0d2}
+.tscms-group-signpost-link{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 22px;border:2px solid #f6c66c;border-radius:999px;background:linear-gradient(#80501f,#42250e);color:#fff4d5!important;text-decoration:none!important;font:700 17px/1.25 Georgia,serif}
+.tscms-group-signpost-link:hover{background:#80501f}
+@media(max-width:660px){
+ .tscms-pathway{margin:9px auto 15px;padding:10px}
+ .tscms-pathway-grid{grid-template-columns:minmax(0,1fr);gap:8px}
+ .tscms-pathway-door{min-height:62px;padding:10px 12px;gap:4px}
+ .tscms-pathway-label{font-size:18px}
+ .tscms-pathway-helper{font-size:13px}
+ .tscms-pathway-tip{font-size:12px;margin:10px 7px 2px}
+ .tscms-group-signpost{padding:19px 15px;margin:13px auto 21px}
+ .tscms-group-signpost-copy{font-size:16px}
+ .tscms-group-signpost-link{width:100%;max-width:350px}
+}
+@media(prefers-reduced-motion:reduce){.tscms-pathway *, .tscms-group-signpost *{scroll-behavior:auto!important}}

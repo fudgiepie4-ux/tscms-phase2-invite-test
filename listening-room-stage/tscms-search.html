@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Search Verified Songs — The Suno Country Music Spot</title>
+<link rel="stylesheet" href="./tscms-search.css">
+<link rel="stylesheet" href="./tscms-legibility.css?v=wave-20261022">
+</head>
+<body style="margin:0;background:linear-gradient(#17120d,#0f0b08);min-height:100vh">
+<main class="tscms-search-wrap">
+<a class="tscms-search-back" href="./" target="_self">← Back to TSCMS Radio</a>
+<h1>🔎 Search TSCMS Songs</h1>
+<p class="tscms-search-intro">Explore the verified song archive. Search by artist or song title; every matching song in the available station weeks can appear.</p>
+<form id="tscms-search-form" role="search">
+<label for="tscms-search-input">Artist or song title</label>
+<input id="tscms-search-input" type="search" autocomplete="off" placeholder="Start typing an artist or song…" maxlength="120">
+</form>
+<p id="tscms-search-coverage">Checking the verified archive…</p>
+<p id="tscms-search-status" role="status" aria-live="polite">Checking songs…</p>
+<ul id="tscms-search-results" aria-label="Verified song search results"></ul>
+</main>
+<script src="./tscms-public-runtime.js" defer></script>
+<script src="./tscms-search.js" defer></script>
+<script src="./tscms-legibility.js?v=wave-20261022" defer></script>
+<link rel="stylesheet" href="./tscms-favorites.css">
+<script type="module" src="./tscms-favorites.js"></script>
+</body>
+</html>

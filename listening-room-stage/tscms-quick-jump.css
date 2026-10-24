@@ -1,0 +1,140 @@
+/* TSCMS Quick Jump — isolated site navigation, 2026-10-20 */
+#tscms-qj-bar,#tscms-qj-drawer,#tscms-qj-overlay{box-sizing:border-box}
+#tscms-qj-bar *,#tscms-qj-drawer *{box-sizing:border-box}
+.tscms-qj-bar{position:sticky;top:0;z-index:120;background:linear-gradient(180deg,#56351a 0%,#28190f 46%,#1b130c 100%);border:2px solid #bd8b3f;border-radius:14px;box-shadow:0 5px 20px rgba(0,0,0,.75),inset 0 1px 0 #ffe0a066;margin:10px 0 14px;padding:7px}
+.tscms-qj-bar [hidden],.tscms-qj-drawer [hidden],.tscms-qj-overlay[hidden],.tscms-qj-drawer[hidden]{display:none!important}
+.tscms-qj-desktop{display:flex;align-items:center;gap:3px;justify-content:space-around;flex-wrap:wrap}
+.tscms-qj-link{display:inline-flex;align-items:center;gap:6px;border:1px solid transparent;border-radius:8px;text-decoration:none;color:#ffe0a4;font:700 12px/1.3 system-ui,-apple-system,sans-serif;padding:10px 8px;min-height:44px;cursor:pointer;white-space:nowrap}
+.tscms-qj-link:hover,.tscms-qj-link:focus-visible{background:#71481f;border-color:#e9b456;color:#fff8df;outline-offset:2px}
+.tscms-qj-icon{font-size:17px;line-height:1}
+.tscms-qj-trigger{display:none;align-items:center;justify-content:center;gap:15px;width:100%;min-height:46px;padding:8px 15px;font:800 17px/1.3 Georgia,serif;letter-spacing:1px;color:#ffde96;border:0;border-radius:9px;background:transparent;cursor:pointer}
+.tscms-qj-trigger span:first-child{font:700 28px/1 system-ui}
+.tscms-qj-trigger:focus-visible{outline:3px solid #fff0ac;outline-offset:2px}
+.tscms-qj-overlay{position:fixed;inset:0;z-index:10010;background:rgba(0,0,0,.74)}
+.tscms-qj-drawer{position:fixed;z-index:10011;inset:0 auto 0 0;width:min(88vw,370px);max-height:100dvh;overflow-y:auto;overscroll-behavior:contain;background:radial-gradient(circle at 50% 100%,#5c3315 0%,transparent 46%),repeating-linear-gradient(0deg,#29170e 0px,#24150d 9px,#1b100b 13px,#301b10 21px);border-right:3px solid #d9a54c;box-shadow:10px 0 35px #000b;padding:28px 15px 23px;color:#f5dfb1;animation:tscms-qj-slide .2s ease-out}
+.tscms-qj-drawer::before{content:'🍁';position:absolute;top:10px;left:15px;font-size:30px;pointer-events:none}
+@keyframes tscms-qj-slide{from{transform:translateX(-20px);opacity:.7}to{transform:translateX(0);opacity:1}}
+.tscms-qj-close{position:absolute;right:13px;top:9px;font:38px/1 sans-serif;color:#ffdb8c;background:transparent;border:0;cursor:pointer;min-width:44px;min-height:44px}
+.tscms-qj-close:focus-visible{outline:3px solid #fff0ac}
+.tscms-qj-brand{font:700 11px/1.5 Georgia,serif;text-align:center;letter-spacing:1.2px;color:#e0b86a;margin:39px 0 20px}
+#tscms-qj-title{font:700 28px/1.2 Georgia,serif!important;margin:8px 0;text-align:center;letter-spacing:.3px;color:#ffe3a4;text-shadow:0 2px 8px #000}
+.tscms-qj-tagline{text-align:center;font:italic 13px/1.6 Georgia,serif;color:#d5af73;padding-bottom:20px;border-bottom:1px solid #bc8b48;margin-bottom:12px}
+.tscms-qj-drawer-links{display:grid;gap:5px}
+.tscms-qj-drawer-links .tscms-qj-link{display:flex;gap:16px;white-space:normal;padding:13px 12px;font-size:16px;font-weight:700;border-bottom:1px solid #674425;border-radius:8px;min-height:59px}
+.tscms-qj-drawer-links .tscms-qj-icon{width:27px;text-align:center;font-size:23px;color:#ffd180}
+.tscms-qj-chevron{font-size:26px;margin-left:auto;color:#f9bf6a}
+.tscms-qj-footer{text-align:center;margin:25px 0 0;padding:21px 4px 6px;border-top:1px solid #9d723d;color:#e4bd78;font:700 12px/1.5 Georgia,serif;letter-spacing:.4px}
+@media(max-width:760px){.tscms-qj-trigger{display:flex}.tscms-qj-desktop{display:none}.tscms-qj-bar{padding:5px;border-radius:12px}}
+@media(prefers-reduced-motion:reduce){.tscms-qj-drawer{animation:none}}
+/* Ensure native scrolling clears the sticky Quick Jump bar. */
+.tscms-qj-bar~.tabs,.most-loved-autumn,#tscms-september-spotlight-2026,#diceSection{scroll-margin-top:85px}
+
+
+/* Approved autumn art refresh: solid wood, Swiper hero and attraction scenes. */
+.tscms-qj-drawer{
+ z-index:100101;
+ width:min(91vw,385px); padding:0 15px 20px;
+ background:linear-gradient(145deg,#2d1a0e 0%,#1e120b 48%,#302012 100%);
+ border-right:3px solid #e0b365;
+ box-shadow:10px 0 35px #000e;
+}
+.tscms-qj-overlay{z-index:100100;background:rgba(0,0,0,.8)}
+.tscms-qj-drawer::before{display:none}
+.tscms-qj-close{z-index:2;top:9px;right:12px;text-shadow:0 2px 6px #000}
+.tscms-qj-hero{
+ position:relative;
+ display:flex;align-items:center;flex-direction:column;
+ height:170px;
+ margin:0 -15px 7px;
+ padding:0;
+ background:
+  linear-gradient(180deg,rgba(15,8,5,.1),rgba(15,8,5,.18)),
+  url("assets/tscms-quick-jump-hero.jpg") center 52%/cover no-repeat;
+ border-bottom:1px solid #dfa953;
+ overflow:hidden;
+}
+.tscms-qj-brand{
+ position:absolute;
+ top:21px;left:12px;right:57px;
+ font:700 10.5px/1.4 Georgia,serif;
+ letter-spacing:.55px;
+ text-align:center;
+ margin:0;
+ text-shadow:0 2px 5px #080403,0 0 7px #160b04;
+ color:#ffe0a6;
+}
+#tscms-qj-title{
+ color:#ffdea0;
+ position:absolute;
+ top:67px;right:13px;
+ font:700 28px/1.15 Georgia,serif!important;
+ margin:0;
+ text-align:right;
+ letter-spacing:0;
+ text-shadow:2px 3px 4px #160906,0 0 14px #1b0b06,0 0 22px #090403;
+}
+.tscms-qj-tagline{
+ position:absolute;
+ right:11px;top:118px;
+ max-width:205px;
+ font:italic 12.5px/1.3 Georgia,serif;
+ color:#ffe4b0;
+ margin:0;
+ padding:6px 9px;
+ border:1px solid rgba(226,175,93,.24);
+ border-radius:10px;
+ background:rgba(20,9,5,.76);
+ box-shadow:0 2px 9px rgba(0,0,0,.33);
+ text-shadow:0 2px 7px #120804,0 0 8px #0b0603;
+}
+.tscms-qj-drawer-links{display:grid;gap:0;margin:0}
+.tscms-qj-drawer-links .tscms-qj-link{
+ display:flex;position:relative;
+ margin:0 -15px;padding:9px 13px 9px 18px;
+ min-height:66px;
+ border:0;border-bottom:1px solid rgba(223,170,82,.7);
+ border-radius:0;
+ font:700 17px/1.25 Georgia,serif;
+ color:#ffe3ab;
+ gap:13px;white-space:normal;
+ background-image:
+  linear-gradient(90deg,rgba(27,14,7,.97) 0%,rgba(30,16,8,.95) 39%,rgba(22,12,8,.48) 72%,rgba(20,12,9,.02) 100%),
+  url("assets/tscms-quick-jump-rows.jpg");
+ background-repeat:no-repeat,no-repeat;
+ background-size:100% 100%,100% 700%;
+ text-shadow:0 1px 3px #000;
+}
+.tscms-qj-drawer-links .tscms-qj-link[data-target="home"]{background-position:center,center 0%}
+.tscms-qj-drawer-links .tscms-qj-link[data-target="gamehouse"]{background-position:center,center 16.66667%}
+.tscms-qj-drawer-links .tscms-qj-link[data-target="dicey"]{background-position:center,center 33.33333%}
+.tscms-qj-drawer-links .tscms-qj-link[data-target="daily"]{background-position:center,center 50%}
+.tscms-qj-drawer-links .tscms-qj-link[data-target="weekly"]{background-position:center,center 66.66667%}
+.tscms-qj-drawer-links .tscms-qj-link[data-target="loved"]{background-position:center,center 83.33333%}
+.tscms-qj-drawer-links .tscms-qj-link[data-target="spotlight"]{background-position:center,center 100%}
+.tscms-qj-drawer-links .tscms-qj-link:hover,
+.tscms-qj-drawer-links .tscms-qj-link:focus-visible{background-color:#58351a;outline:2px solid #f1c576;outline-offset:-3px;color:#fff2cf}
+.tscms-qj-drawer-links .tscms-qj-icon{width:30px;flex:0 0 30px;font-size:23px;color:#ffcf82}
+.tscms-qj-drawer-links .tscms-qj-chevron{display:none}
+.tscms-qj-footer{font:700 11px/1.35 Georgia,serif;margin:15px 0 0;padding:16px 0 2px;border-color:#ab824e;text-align:center;color:#e8b972}
+@media(max-width:350px){
+ #tscms-qj-title{font-size:25px!important;right:9px}
+ .tscms-qj-brand{font-size:9px;left:8px;right:55px}
+ .tscms-qj-tagline{right:8px;font-size:11.5px;max-width:184px}
+ .tscms-qj-drawer-links .tscms-qj-link{font-size:15px}
+}
+@media(prefers-reduced-motion:reduce){.tscms-qj-drawer{animation:none}}
+
+
+/* Seasonal Halloween shortcut: visible above every daily date tab, 2026-10-20 */
+.tscms-halloween-jump{display:flex;align-items:center;justify-content:center;gap:12px;box-sizing:border-box;width:100%;min-height:65px;margin:6px 0 16px;padding:12px 16px;border:2px solid #da933b;border-radius:15px;background:linear-gradient(145deg,#5e2c0e 0%,#32190e 58%,#24130d 100%);box-shadow:inset 0 1px 0 #ffd69b55,0 5px 15px #0007;color:#ffe7bb;cursor:pointer;text-align:left;font-family:system-ui,-apple-system,sans-serif}
+.tscms-halloween-jump .halloween-pumpkin{font-size:28px;line-height:1;flex:none}
+.tscms-halloween-jump .halloween-words{display:flex;flex-direction:column;gap:3px;min-width:0}
+.tscms-halloween-jump strong{font:800 17px/1.25 system-ui,-apple-system,sans-serif;letter-spacing:.4px;color:#ffd39b}
+.tscms-halloween-jump small{font:500 12px/1.35 system-ui,-apple-system,sans-serif;color:#ead5b9}
+.tscms-halloween-jump .halloween-arrow{font:700 32px/1 Georgia,serif;margin-left:auto;color:#ffc875}
+.tscms-halloween-jump:hover,.tscms-halloween-jump:focus-visible{border-color:#ffd88c;background:linear-gradient(145deg,#713914,#3a200f);color:#fff1d9}
+.tscms-halloween-jump:focus-visible{outline:3px solid #fff0b2;outline-offset:3px}
+.tscms-qj-drawer-links .tscms-qj-link[data-target="halloween"]{background-image:linear-gradient(90deg,rgba(45,18,7,.95) 0%,rgba(44,20,10,.87) 39%,rgba(22,12,8,.48) 72%,rgba(20,12,9,.03) 100%),url("assets/tscms-quick-jump-rows.jpg");background-repeat:no-repeat,no-repeat;background-size:100% 100%,100% 700%;background-position:center,center 0%;border-bottom-color:rgba(223,170,82,.7)}
+.tscms-qj-drawer-links .tscms-qj-link[data-target="halloween"] .tscms-qj-icon{color:#ffb767}
+.halloween-pin-head{scroll-margin-top:100px}
+@media(max-width:400px){.tscms-halloween-jump{gap:9px;padding:11px}.tscms-halloween-jump strong{font-size:15px}.tscms-halloween-jump small{font-size:11px}}

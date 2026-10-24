@@ -1,0 +1,17 @@
+/* TSCMS Phase 1 staging-only jukebox — approved saloon master is untouched.
+   Hit area measured on 941x1672 image: x=673..932, y=281..552. */
+.stage #btn-jukebox {
+  position:absolute; left:71.5%; top:16.8%; width:27.5%; height:16.2%;
+  z-index:10; display:block; margin:0; padding:0; border:0; border-radius:12px;
+  color:transparent; background:transparent; opacity:1; cursor:pointer;
+  touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+}
+.stage #btn-jukebox:focus-visible {outline:3px solid #ffe0a0;outline-offset:-3px;}
+#gamehouse-radio-status {
+  position:fixed;z-index:60;left:50%;bottom:max(78px,env(safe-area-inset-bottom));
+  transform:translateX(-50%);width:max-content;max-width:min(90vw,480px);
+  padding:10px 14px;border:2px solid #c7924d;border-radius:9px;
+  color:#ffeed1;background:#321a10f5;box-shadow:0 5px 20px #000a;
+  text-align:center;font:600 14px/1.4 system-ui,sans-serif;pointer-events:none;
+}
+#gamehouse-radio-status[hidden] {display:none!important;}

@@ -1,0 +1,195 @@
+/* ============================================================
+   Live Card Styles v3 (Cherish)
+   Fixed per Clara's v2 review:
+   - Do NOT override scaffold's absolute positioning
+   - Enable pointer events (scaffold sets pointer-events:none)
+   - Cards positioned relative to their pile wrappers
+   ============================================================ */
+
+/* Pile wrappers: enable interaction (scaffold disables it) */
+#stock-pile, #waste-pile,
+#foundation-0, #foundation-1, #foundation-2, #foundation-3,
+#tableau-0, #tableau-1, #tableau-2, #tableau-3,
+#tableau-4, #tableau-5, #tableau-6 {
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+/* Do NOT set position, min-height, or other layout props here —
+   the scaffold's .engine-slot-placeholder handles positioning */
+
+/* Live cards: positioned within their pile wrapper */
+.live-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  aspect-ratio: 5 / 7;
+  border-radius: 6px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  pointer-events: auto;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Face-down (card back) */
+.live-card.face-down {
+  background: linear-gradient(135deg, #5a1a1a 0%, #8b0000 50%, #5a1a1a 100%);
+  border: 2px solid #d4a574;
+}
+
+/* Face-up: text fallback is primary, art is enhancement */
+.live-card.face-up {
+  background-color: #faf8f0;
+  border: 1px solid #999;
+}
+
+/* Selected state */
+.live-card.selected {
+  transform: translateY(-8px);
+  box-shadow: 0 0 0 3px #ffd700, 0 4px 12px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+/* Card text: ALWAYS in DOM (not just as background fallback) */
+.live-card .card-text {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4px;
+  font-family: Georgia, serif;
+  box-sizing: border-box;
+  pointer-events: none; /* Let clicks pass to card element */
+}
+
+.live-card .card-text.red { color: #c0392b; }
+.live-card .card-text.black { color: #2c3e50; }
+
+.live-card .card-text .corner {
+  font-size: clamp(10px, 2.5vw, 16px);
+  font-weight: bold;
+  line-height: 1;
+}
+
+.live-card .card-text .center {
+  font-size: clamp(20px, 6vw, 36px);
+  text-align: center;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.live-card .joker-label {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: clamp(12px, 3vw, 18px);
+  color: #8b6914;
+  font-family: Georgia, serif;
+  pointer-events: none;
+}
+
+/* When card art loads successfully, it covers the text */
+.live-card.has-art .card-text {
+  display: none;
+}
+
+/* Bug 2 fix (Fudgie S24 report 2026-10-18): Joker text uses .joker-label,
+   not .card-text — hide it too when art loads, so the emoji doesn't sit
+   on top of the Joker PNG. */
+.live-card.has-art .joker-label {
+  display: none;
+}
+
+/* Empty pile: keep scaffold's dashed border, add click target */
+.engine-slot-placeholder.empty-pile {
+  pointer-events: auto !important;
+}
+
+/* HUD: fixed overlay at top, always visible (Clara's v3 review) */
+#timer-display.engine-value-pending,
+#move-counter.engine-value-pending {
+  left: auto !important;
+}
+#timer-display, #move-counter {
+  position: fixed !important;
+  top: 8px;
+  z-index: 99998;
+  color: #f9e5bc;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  font-weight: bold;
+  background: rgba(20, 10, 0, 0.75);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #8b6914;
+  pointer-events: none;
+  white-space: nowrap;
+}
+#timer-display {
+  right: 8px;
+}
+#move-counter {
+  right: 90px;
+}
+/* Menu button: align with visible hamburger art (upper-right) */
+/* Clara's v3 review: art shows hamburger upper-right, touch zone was top-left */
+#btn-menu {
+  position: fixed !important;
+  top: 8px;
+  right: 8px;
+  left: auto !important;
+  z-index: 99998;
+  /* Make the button itself transparent to let art show through,
+     but keep a generous touch target */
+  background: transparent !important;
+  border: none !important;
+  min-width: 44px;
+  min-height: 44px;
+  opacity: 0; /* Invisible - the art underneath is the visual */
+}
+/* Adjust HUD to not overlap the menu button */
+#timer-display {
+  right: 60px !important;
+}
+#move-counter {
+  right: 142px !important;
+}
+
+/* P1-2: Tableau clipping fix - allow stage to show deep piles */
+/* On small screens, compress fan overlap to fit */
+@media (max-width: 480px) {
+  .live-card {
+    /* Cards scale with pile width, fan overlap handled in JS */
+  }
+}
+/* Ensure stage doesn't clip interactive cards */
+#game-stage, .game-stage, [id*="stage"] {
+  overflow: visible !important;
+}
+/* If scaffold uses overflow:hidden, at least allow the tableau area */
+.tableau-area, #tableau-area {
+  overflow: visible !important;
+  min-height: 50vh;
+}
+
+/* Draw mode selection visual (P1-4) */
+#draw1.selected, #draw3.selected {
+  background: #8b6914 !important;
+  color: #fff !important;
+  border-color: #f9e5bc !important;
+  font-weight: bold;
+}
+#draw1, #draw3 {
+  transition: all 0.2s ease;
+}

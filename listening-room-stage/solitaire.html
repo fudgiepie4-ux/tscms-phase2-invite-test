@@ -1,0 +1,2411 @@
+<!doctype html>
+<!-- ============================================================
+  TSCMS SOLITAIRE SALOON — Integrated Staging Build
+  Built: 2026-10-15 | STAGING ONLY — not for live deployment
+
+  VISUAL SHELL: Clara (ChatGPT) — approved western saloon layout.
+    Preserved exactly; only foundation IDs added + game settings
+    wired into the existing settings dialog. Do not restyle.
+
+  GAME ENGINE: Cherish (Muse) — SaloonEngine pure-logic Klondike
+    with 54-card 2-Joker rules per v5 mechanics (v4 clarifications).
+    Includes: Draw 1/Draw 3, Stopwatch/Relaxed timer, Undo,
+    double-tap to foundation, move counter, Hint (findHints),
+    Dicey Victory Reward (danger-zone-public.json bridge).
+
+  PENDING FUDGIE'S FINAL SIGN-OFF (working but not yet approved):
+    - Undo button, double-tap-to-foundation, move counter display.
+  APPROVED FOR V1: Hint feature (visual highlight only, never
+    auto-moves). Auto-move (automatic card movement) is NOT approved
+    and is NOT implemented.
+
+  CARD ART: 14 illustrated cards not yet delivered. CARD_ART config
+    in the script below provides clean loading + CSS fallback.
+    Deck concept collage is NOT approved production art.
+
+  FOUNDATION ID MAP (engine SUITS order):
+    #foundation-0 = spades (♠), #foundation-1 = hearts (♥),
+    #foundation-2 = diamonds (♦), #foundation-3 = clubs (♣).
+    Visual order in shell is ♠♥♣♦; IDs follow engine indices.
+
+  TESTS: 93 passing (56 unit + 15 integration + 22 hint).
+  ============================================================ -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#1b100c"><title>TSCMS Gamehouse · Approved Contrast + Improved Vinyl · Preview</title><style>
+:root{color-scheme:dark;--wood:url('');--saloon:;--card-gap:clamp(4px,1.5vw,13px);--paper:#fff7e8;--gold:#ecd098}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#130b08;color:#efddba;font-family:Georgia,'Times New Roman',serif;overflow-x:hidden}button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}button:focus-visible{outline:3px solid #ffdc92;outline-offset:4px}
+.world{min-height:100svh;position:relative;isolation:isolate;background:linear-gradient(#1a0c07,#190d08 65%,#100804);overflow:hidden;padding-bottom:clamp(20px,3vw,40px)}
+.room{height:clamp(370px,48vw,600px);width:100%;position:relative;z-index:0;background-color:#21110b;background-image:linear-gradient(0deg,#170b07 1%,#170b0718 27%,#05030309 75%),url('');background-size:cover,cover;background-position:center,center 45%;box-shadow:inset 0 0 80px #11080683}
+.room:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,#ffcd8a0c 0%,transparent 52%,#10070596 100%);pointer-events:none}
+.welcome{position:absolute;left:clamp(12px,4vw,48px);top:clamp(12px,2.8vw,34px);z-index:2;color:#f5d9a9;font-weight:800;letter-spacing:.12em;font-size:clamp(11px,1.4vw,17px);text-shadow:0 2px 10px #000;opacity:.82;display:flex;gap:9px;align-items:center}
+.welcome span{display:inline-grid;place-items:center;border:1px solid #ddbc8077;width:26px;height:26px;border-radius:50%;font-size:14px}
+.jukebox-access{position:absolute;z-index:3;right:clamp(12px,4vw,44px);top:clamp(15px,3vw,32px);border:1px solid #c79b59b5;border-radius:50%;height:clamp(52px,6vw,74px);width:clamp(52px,6vw,74px);display:grid;place-content:center;background:radial-gradient(circle at 45% 20%,#7e492d,#28140dcc 70%);color:#ffe0a7;box-shadow:0 4px 13px #0009,inset 0 1px 0 #f7c88980;text-align:center;gap:1px}
+.jukebox-access .note{font-size:24px;line-height:1}.jukebox-access .j-label{font:700 9px Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+.room-glow{position:absolute;left:49%;top:16%;width:17%;height:35%;background:#e8a25418;filter:blur(30px);pointer-events:none;animation:glow 4.5s ease-in-out infinite alternate}@keyframes glow{to{opacity:.65;transform:scale(1.07)}}
+/* The table is furniture emerging from the scene: no containing UI card, panel, box or full border. */
+.table-space{position:relative;z-index:2;width:calc(100% + 72px);margin:-106px -36px 0}
+.table-space:before{content:"";position:absolute;z-index:-1;left:-3%;right:-3%;top:-27px;height:80px;border-radius:50% 50% 0 0 / 90% 90% 0 0;background:linear-gradient(180deg,#e1a866 0%,#8d5029 11%,#35180e 36%,#482318 53%,#21100c 95%);box-shadow:0 -7px 12px #05020172,0 4px 15px #0008,inset 0 2px 1px #ffe2a06b}
+.table{position:relative;min-height:550px;padding:clamp(22px,3vw,46px) clamp(24px,3.5vw,45px) 26px;background:radial-gradient(ellipse 105% 78% at 45% 22%,#ffce8030 0%,transparent 60%,#0a050253 100%),var(--wood);background-size:100% 100%,100% 100%;box-shadow:inset 0 18px 23px #200e0947,inset 0 -20px 24px #11070388,0 20px 30px #0006}
+.table:after{content:"";position:absolute;left:0;right:0;bottom:-17px;height:19px;background:linear-gradient(180deg,#7c4727,#32190e 60%,#190d09);box-shadow:0 11px 26px #0008;pointer-events:none}
+.table-layout{position:relative;z-index:2;width:min(100%,1120px);margin:0 auto}
+.game-head{display:flex;justify-content:space-between;align-items:start;gap:14px;margin-bottom:clamp(20px,2.5vw,30px)}
+.game-title{font:900 clamp(17px,2.2vw,27px)/1 Georgia,serif;letter-spacing:.12em;color:#ffe3af;text-shadow:0 2px 5px #100603,0 1px #361609}
+.game-kind{font:600 clamp(9px,1vw,12px)/1.2 Arial,sans-serif;letter-spacing:.13em;text-transform:uppercase;color:#ecd5ad;margin-top:6px;text-shadow:0 1px 2px #241006}
+.stats{display:flex;gap:clamp(9px,1.8vw,25px);background:none;padding:0;box-shadow:none}
+.stat{text-align:center;font:700 clamp(8px,.9vw,11px) Arial,sans-serif;letter-spacing:.12em;color:#ebc997;text-shadow:0 2px 3px #170603}
+.stat strong{display:block;margin-top:3px;font:900 clamp(16px,2vw,23px) Georgia,serif;color:#fff1d0}
+.top-row,.tableau{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:var(--card-gap)}
+.top-row{margin-bottom:18px}.gapcell{pointer-events:none}
+.pile{position:relative;aspect-ratio:.72}.outline-pile{display:grid;place-items:center;border:2px dashed #f7dba655;border-radius:7px;color:#f9e5bc72;font-size:clamp(16px,3vw,30px);background:#1c0a0529;box-shadow:inset 0 2px 8px #0b060322}
+.playcard{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;aspect-ratio:.72;width:100%;border:1px solid #b8ad9c;border-radius:6px;background:linear-gradient(150deg,#fff8eb 0%,#f5e9d6 100%);color:#16110c;box-shadow:0 3px 6px #0009,0 1px 1px #f9eccc inset;transition:filter .2s,transform .15s;padding:0;touch-action:none}
+.playcard .rank{font:bold clamp(12px,2.2vw,28px)/1 Georgia,serif}.playcard .suit{font:900 clamp(19px,3.8vw,40px)/1 Georgia,serif}.playcard.red{color:#c62234}
+.playcard.back{border:3px double #d7ae6e;background:linear-gradient(135deg,#913f48,#6a182d);box-shadow:inset 0 0 0 3px #6a1730,inset 0 0 0 5px #d4a85d,0 3px 7px #000a}
+.playcard.back:before{content:'✦';position:absolute;inset:12%;border:1px solid #d4a65baa;color:#e2bb7d;display:grid;place-content:center;font-size:clamp(17px,3vw,31px);background:repeating-linear-gradient(45deg,#f9d59c0a 0 2px,transparent 2px 9px)}
+body.darkback .playcard.back{background:linear-gradient(140deg,#433c39,#11100f);box-shadow:inset 0 0 0 3px #191512,inset 0 0 0 5px #d4a85d,0 3px 7px #000a}
+.playcard.selected{outline:3px solid #ffe5a2;transform:translateY(-4px);filter:brightness(1.04)}.hint-pulse{animation:hint 1s 3}@keyframes hint{50%{filter:brightness(1.35);box-shadow:0 0 25px #ffd888c2}}
+.tableau-column{position:relative;min-height:clamp(170px,23vw,320px)}.tableau-column .playcard{position:absolute;top:var(--y);left:0}
+/* Carving is cut into the central playing boards, not put on a plaque or UI banner. */
+.carving{height:clamp(88px,10vw,142px);display:flex;justify-content:center;align-items:center;text-align:center;pointer-events:none;user-select:none}
+.carving-text{font:900 clamp(25px,3.8vw,50px)/1.03 Georgia,'Times New Roman',serif;letter-spacing:.09em;color:#341707;text-shadow:0 -2px 1px #190903f0,0 2px 1px #efb8799e,1px 0 #241108;transform:perspective(800px) rotateX(8deg)}
+.carving-text span{display:block}
+.carving-under{display:none}
+.controls{max-width:730px;display:flex;justify-content:center;align-items:center;gap:clamp(10px,2vw,20px);margin:12px auto 0;padding:0 10px;position:relative;z-index:5}
+.wood-button{flex:0 1 156px;display:flex;align-items:center;justify-content:center;gap:9px;min-height:52px;border:1px solid #c7965caa;border-radius:25px;background:linear-gradient(#6e442a,#2f1c13);color:#ffdfaa;box-shadow:inset 0 1px #f7d3a888,0 6px 12px #0009;font:700 clamp(11px,1.4vw,15px)/1.1 Georgia,serif;text-shadow:0 2px 2px #0007}
+.wood-button .glyph{font-size:22px}.wood-button:hover{filter:brightness(1.17)}
+.setting-backdrop{position:fixed;inset:0;background:#070403d6;z-index:80;display:grid;place-items:center;padding:18px}.setting-backdrop[hidden]{display:none!important}
+.setting-panel{width:min(95vw,460px);border:1px solid #b78c58;border-radius:17px;padding:28px;background:linear-gradient(140deg,#392518,#1b100c);box-shadow:0 10px 45px #000c;position:relative}.setting-panel h2{color:#f3d6a7;margin:0 0 10px;font-size:25px}.setting-panel p{font:14px/1.5 Arial,sans-serif;color:#dcc29c}.setting-panel label{display:block;font:700 11px Arial,sans-serif;letter-spacing:.12em;color:#f4d39b;margin-top:16px}.choice-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}.choice-row button,.setting-panel [data-close]{border:1px solid #ae8555;color:#f4d39b;background:#29170f;padding:10px 13px;border-radius:9px;font:700 12px Arial,sans-serif}.choice-row button.active-option{background:#8a592b;color:#fff5e1}.setting-panel .close{position:absolute;right:13px;top:10px;font-size:23px;border:0;background:none;color:#f8dcb0}
+.toast{position:fixed;bottom:15px;left:50%;transform:translate(-50%,20px);background:#27170fee;color:#f9deba;font:600 13px Arial,sans-serif;padding:11px 18px;border:1px solid #d9a66e77;border-radius:15px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:90;width:max-content;max-width:85vw;text-align:center}.toast.visible{opacity:1;transform:translate(-50%,0)}
+/* v10: replaced by Clara v4 photographic theme system */body.darkwood .table{background-image:radial-gradient(ellipse 100% 100% at 45% 34%,transparent,#000000a1),var(--wood)}
+@media(max-width:600px){:root{--saloon:;--card-gap:clamp(3px,1.4vw,7px)}.world{padding-bottom:22px}.room{height:clamp(335px,42svh,435px);background-image:linear-gradient(0deg,#180b06 0%,#180b061e 28%,transparent 80%),url('');background-position:center,center 52%;background-size:cover,cover}.welcome{font-size:10px;top:14px;left:13px;letter-spacing:.06em}.welcome span{width:21px;height:21px;font-size:12px}.jukebox-access{height:52px;width:52px;right:13px;top:13px}.jukebox-access .note{font-size:20px}.jukebox-access .j-label{font-size:7px}.table-space{width:calc(100% + 28px);margin:-75px -14px 0}.table-space:before{top:-20px;height:53px;left:-1%;right:-1%}.table{padding:22px 25px 26px;min-height:0;box-shadow:inset 0 14px 21px #1309033e,inset 0 -13px 22px #13090388}.game-head{gap:8px;margin-bottom:17px}.game-title{font-size:16px}.game-kind{font-size:8px;letter-spacing:.055em;margin-top:3px}.stats{gap:9px}.stat{font-size:7px;letter-spacing:0}.stat strong{font-size:12px}.pile{aspect-ratio:.71}.outline-pile{border-width:1px;border-radius:4px}.top-row{margin-bottom:13px}.carving{height:68px}.carving-text{font-size:clamp(21px,5.6vw,28px);line-height:.96;letter-spacing:.042em}.tableau-column{min-height:clamp(145px,43vw,172px)}.tableau-column .playcard{top:calc(var(--y)*.76)}.playcard{border-radius:4px}.playcard .rank{font-size:clamp(14px,3.8vw,19px)}.playcard .suit{font-size:clamp(16px,4.6vw,23px)}.controls{padding:0 18px;gap:7px;margin:13px auto 0}.wood-button{flex:1;min-width:0;min-height:49px;gap:3px;flex-direction:column;border-radius:13px;font-size:10px}.wood-button .glyph{font-size:18px}}
+@media(max-width:370px){.table{padding-left:23px;padding-right:23px}.game-title{font-size:14px}.game-kind{font-size:7px}.stats{gap:6px}.stat strong{font-size:11px}.tableau-column{min-height:137px}.carving-text{font-size:20px}}
+@media(orientation:landscape) and (max-height:600px){.room{height:270px;background-image:linear-gradient(0deg,#180b06 0%,transparent 70%),url('');background-size:cover}.table-space{width:calc(100% + 36px);margin:-86px -18px 0}.table{padding:22px 28px 24px}.top-row{margin-bottom:12px}.tableau-column{min-height:160px}.carving{height:66px}.carving-text{font-size:27px}.controls{max-width:660px}}
+@media(prefers-reduced-motion:reduce){*,*::after,*::before{animation:none!important;transition:none!important}}
+
+/* === Saloon furniture: jewel-colored jukebox, not a large sidebar or template panel === */
+.retro-juke{position:absolute;z-index:3;right:clamp(12px,4vw,60px);bottom:clamp(35px,6vw,82px);width:clamp(122px,15vw,172px);padding:clamp(8px,1vw,12px);background:linear-gradient(96deg,#140b0e 0%,#3e2020 16%,#26151b 80%,#100c0e 100%);border:2px solid #b77a42;border-radius:45% 45% 13px 13px/21% 21% 9px 9px;box-shadow:inset 0 2px 1px #f4c5828a,inset 0 0 0 3px #231113,0 9px 20px #000b;isolation:isolate;transform-origin:center bottom}
+.retro-juke:before{content:'';position:absolute;inset:5px 5px 8px;border:2px solid #d3a35a75;border-radius:45% 45% 9px 9px/20% 20% 7px 7px;pointer-events:none}
+.retro-juke:after{content:'';position:absolute;z-index:-1;bottom:-6px;left:-8px;right:-8px;height:12px;border-radius:4px;background:linear-gradient(#51311c,#170e0d);box-shadow:0 5px 12px #0008}
+.juke-neon{height:48px;position:relative;margin:0 5px 1px;filter:drop-shadow(0 0 6px #ff57c66b)}
+.juke-neon-stripe{position:absolute;left:50%;transform:translateX(-50%);display:block;border-style:solid;border-color:transparent;border-top-left-radius:120px;border-top-right-radius:120px;border-bottom:0}
+.juke-cyan{width:100%;height:47px;top:1px;border-width:4px;border-color:#3aeaff;box-shadow:0 -1px 8px #3aeaff99,inset 0 3px 8px #3aeaff66}
+.juke-magenta{width:84%;height:39px;top:8px;border-width:4px;border-color:#ff5cac;box-shadow:0 -2px 7px #ff5cac99,inset 0 4px 8px #ff5cac55}
+.juke-amber{width:66%;height:31px;top:15px;border-width:3px;border-color:#ffc85f;box-shadow:0 -1px 7px #ffd26ca2,inset 0 4px 6px #ffc85f55}
+.juke-brand{position:relative;font:900 clamp(12px,1.4vw,17px)/1 Georgia,serif;color:#ffe1a8;text-align:center;letter-spacing:.09em;margin:-6px 0 5px;text-shadow:0 0 8px #ffe58b65}
+.juke-brand span{color:#b9eaff}
+.juke-glass{position:relative;padding:6px 7px 5px;border:1px solid #54dfff8a;border-radius:8px;background:linear-gradient(165deg,#0e2832,#070912 65%,#190d24);box-shadow:inset 0 0 13px #000b,0 0 8px #3ce8ff2a}
+.juke-vinyl-wrap{position:relative;width:clamp(56px,6.4vw,82px);height:clamp(56px,6.4vw,82px);margin:0 auto 6px;perspective:180px}
+.juke-vinyl-wrap::before,.full-mechanism::before{content:'';position:absolute;inset:auto 8% 10% 8%;height:16%;border-radius:999px;background:radial-gradient(ellipse at center,#000000a8 0%,#00000038 52%,transparent 78%);filter:blur(1px);pointer-events:none}
+.juke-vinyl,.full-record{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 50%,#0b0b0d 0 10%,#1a1a1d 10.4%,#0b0b0d 11.2% 13.2%,#19191c 13.8% 49%,#0b0b0d 49.5% 52%,#202024 52.5% 100%),repeating-radial-gradient(circle at center,#17171a 0 1.7px,#0b0b0d 1.7px 3.4px,#1d1d21 3.4px 4.2px,#0b0b0d 4.2px 5.2px);box-shadow:0 0 0 2px #050506,0 2px 10px #000a,0 0 14px #e653db2e,inset 0 0 0 1px #5a5a5d22;animation:jukeSpin 2.8s linear infinite;animation-play-state:paused;overflow:hidden}
+.juke-vinyl::before,.full-record::before{content:'';position:absolute;inset:8% 12% 24% 12%;border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.28),rgba(255,255,255,0) 38%,rgba(255,255,255,.09) 45%,rgba(255,255,255,0) 58%);transform:rotate(-20deg);mix-blend-mode:screen;opacity:.72;pointer-events:none}
+.juke-vinyl::after,.full-record::after{content:'';position:absolute;inset:4.5%;border-radius:50%;box-shadow:inset 0 0 0 1px #ffffff12,inset 0 0 0 8px #00000010,inset 0 0 16px #00000088;pointer-events:none}
+.juke-vinyl i,.full-record i{position:absolute;inset:30%;border:2px solid #f0c56f;border-radius:50%;background:radial-gradient(circle,#241510 0 18%,#ffefb7 18% 24%,#f0468e 24% 54%,#6120a2 54% 67%,#161012 67% 100%);box-shadow:inset 0 1px 0 #fff6,0 0 8px #ff7aca33;overflow:hidden}
+.juke-vinyl i::before,.full-record i::before{content:'TSCMS';position:absolute;left:50%;top:32%;transform:translateX(-50%);font:900 15%/1 Arial,sans-serif;letter-spacing:.18em;color:#fff3cf;text-shadow:0 1px 0 #4a2611;white-space:nowrap}
+.juke-vinyl i::after,.full-record i::after{content:'RADIO';position:absolute;left:50%;bottom:24%;transform:translateX(-50%);font:800 12%/1 Arial,sans-serif;letter-spacing:.16em;color:#8feeff;white-space:nowrap;text-shadow:0 0 5px #3ce8ff66}
+.juke-spindle,.full-spindle{position:absolute;left:50%;top:50%;width:7px;height:7px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff8eb,#d9b37a 48%,#6f4d2d 100%);box-shadow:0 0 6px #ffeac3}
+.juke-needle,.full-tonearm{position:absolute;z-index:2;right:-8px;top:-5px;width:40px;height:4px;border-radius:5px;background:linear-gradient(#f7d79c,#9a6d42);transform:rotate(-45deg);transform-origin:right center;box-shadow:0 1px 3px #000;transition:transform .3s}
+.juke-needle:after,.full-tonearm:after{content:'';position:absolute;left:0;top:-1px;width:8px;height:7px;background:#d8d4c4;border-radius:2px}
+.juke-track{font:700 clamp(9px,1vw,12px)/1.2 Georgia,serif;color:#fff0cf;text-align:center;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}
+.juke-mini-label{font:700 6px/1.4 Arial,sans-serif;letter-spacing:.11em;color:#8adbe8;text-align:center;margin-top:2px}
+.juke-mini-controls{display:flex;justify-content:center;gap:5px;margin:7px 0 5px}
+.juke-mini-controls button{min-width:0;flex:1;height:27px;padding:0 2px;color:#ffe2b1;background:linear-gradient(#643747,#221a2a);border:1px solid #ba987a;border-radius:6px;font:900 9px Arial,sans-serif;box-shadow:inset 0 1px 0 #fff3,0 0 8px #d64aab2b}
+.juke-mini-controls button:nth-child(2){background:linear-gradient(#176d77,#133344);border-color:#79e5f0;box-shadow:0 0 9px #4eeafa44}
+.juke-detail{width:100%;padding:7px 3px;background:linear-gradient(#462b1d,#1c1314);border:1px solid #cda05b;border-radius:5px;color:#f4d7a9;font:800 8px/1 Arial,sans-serif;letter-spacing:.07em}
+.juke-detail span{margin-left:4px;color:#6beaff}
+.juke-grille{display:flex;justify-content:center;gap:5px;margin-top:7px;height:7px}
+.juke-grille i{height:7px;width:8px;border-radius:2px;background:linear-gradient(#e9be79,#735334);box-shadow:0 0 5px #efac6a44}
+.retro-juke.is-playing .juke-vinyl,.full-juke.is-playing .full-record{animation-play-state:running}
+.retro-juke.is-playing .juke-needle,.full-juke.is-playing .full-tonearm{transform:rotate(-17deg)}
+.retro-juke.is-changing .juke-vinyl,.full-juke.is-changing .full-record{animation:jukeLoad .85s ease-in-out both}
+.retro-juke.is-changing .juke-needle,.full-juke.is-changing .full-tonearm{transform:rotate(-60deg)}
+@keyframes jukeSpin{to{transform:rotate(360deg)}}
+@keyframes jukeLoad{0%{transform:translateY(-22px) scale(.55);opacity:.1}55%{transform:translateY(4px) scale(1.06);opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}
+/* Spacious, tappable player opens on demand; doesn't occupy the room until requested. */
+.full-juke{width:min(92vw,388px);max-height:calc(100dvh - 32px);overflow-y:auto;position:relative;padding:27px 26px 24px;border-radius:42% 42% 20px 20px/11% 11% 4% 4%;background:linear-gradient(110deg,#291417,#5d3224 8%,#1a1420 24%,#140f19 76%,#633521 93%,#291412);border:3px solid #bb824b;box-shadow:inset 0 0 0 3px #261317,inset 0 0 0 6px #edbd7770,0 24px 80px #000e;color:#fbe2bb}
+.full-juke .juke-close{position:absolute;right:13px;top:13px;z-index:3;border-radius:50%;height:38px;width:38px;border:1px solid #e6b06b;background:#27181b;color:white;font:30px/1 Arial,sans-serif}
+.full-neon{position:relative;height:61px;margin:-6px 16px 0}
+.full-neon i{position:absolute;display:block;border-top-left-radius:150px;border-top-right-radius:150px;border-bottom:0;border-style:solid;left:50%;transform:translateX(-50%)}
+.full-neon i:first-child{width:100%;height:62px;border-width:5px;border-color:#42eafd;box-shadow:0 -1px 12px #42eafd88}
+.full-neon i:nth-child(2){width:82%;height:49px;top:13px;border-width:5px;border-color:#ff5dbe;box-shadow:0 -1px 12px #ff5dbe88}
+.full-neon i:nth-child(3){width:61%;height:36px;top:26px;border-width:5px;border-color:#ffd274;box-shadow:0 -1px 10px #ffd27488}
+.full-title{text-align:center;margin:0 0 11px}
+.full-title span{font-size:22px;color:#ffe9bc;text-shadow:0 0 9px #ffc775}
+.full-title h2{font:900 25px Georgia,serif;margin:1px 0;color:#ffe9bc;letter-spacing:.08em;text-shadow:0 0 9px #ffb76b66}
+.full-title p{font:800 10px Arial,sans-serif;letter-spacing:.25em;color:#8eecff;margin:0}
+.full-mechanism{width:168px;height:146px;position:relative;margin:0 auto 12px;border:1px solid #61d9f36b;border-radius:15px;background:radial-gradient(circle at 50% 44%,#6a27a24d,#0b0b13 62%),linear-gradient(180deg,#06070d,#0c0c14 100%);box-shadow:inset 0 0 24px #000c,0 0 15px #2ddeff3d;display:grid;place-items:center;overflow:hidden}
+.full-record{inset:auto;width:112px;height:112px}
+.full-tonearm{right:-2px;top:19px;width:78px;height:7px}
+.full-spindle{width:8px;height:8px}
+.full-record-meta{text-align:center;display:flex;flex-direction:column;gap:2px}
+.full-record-meta strong{font:800 19px Georgia,serif;color:#ffedce}
+.full-record-meta span{font:700 11px Arial,sans-serif;color:#9be8f2}
+.full-progress{display:flex;gap:9px;align-items:center;margin:16px 0 13px}
+.full-progress time{font:800 11px Arial,sans-serif;color:#e9c89e;min-width:29px;text-align:center}
+.full-progress input{flex:1;min-width:0;accent-color:#51eaff;cursor:pointer;height:27px}
+.full-controls{display:flex;justify-content:center;gap:20px;align-items:center}
+.full-controls button{min-height:48px;min-width:60px;border-radius:14px;border:1px solid #d6a166;background:#3a1c28;color:#ffe9c1;font:900 21px Arial,sans-serif}
+.full-controls button.main-play{height:60px;min-width:72px;background:linear-gradient(#137789,#164352);border-color:#6deafa;box-shadow:0 0 12px #5ef1fb88}
+.juke-demo-warning{text-align:center;margin:15px 0 0;font:900 9px Arial,sans-serif;letter-spacing:.14em;color:#a5f0fb}
+.full-caption{font:12px/1.45 Arial,sans-serif;color:#dcc3ad;text-align:center;margin:10px 0 0}
+@media(max-width:600px){.retro-juke{right:clamp(10px,2.6vw,14px);bottom:clamp(24px,8vw,46px);width:clamp(117px,31vw,133px);padding:8px;transform:none}.juke-neon{height:39px}.juke-cyan{height:38px}.juke-magenta{height:31px;top:7px}.juke-amber{height:24px;top:14px}.juke-brand{font-size:12px;margin:-4px 0 3px}.juke-vinyl-wrap{width:48px;height:48px}.juke-glass{padding:5px 5px 3px}.juke-track{font-size:9px}.juke-mini-controls{gap:4px;margin:6px 0 5px}.juke-mini-controls button{height:25px}.juke-detail{font-size:7px;padding:6px 3px}.juke-grille{margin-top:5px}.welcome{max-width:52%;line-height:1.2}}
+@media(orientation:landscape) and (max-height:600px){.retro-juke{right:8%;bottom:12px;width:118px;padding:7px}.juke-neon{height:35px}.juke-cyan{height:34px}.juke-magenta{height:26px}.juke-amber{height:19px}.juke-brand{font-size:11px;margin:0 0 3px}.juke-vinyl-wrap{height:40px;width:40px}.juke-track{font-size:9px}.juke-mini-controls{margin:5px 0}.juke-mini-controls button{height:23px}.juke-detail{padding:5px 2px;font-size:7px}}
+@media(prefers-reduced-motion:reduce){.juke-vinyl,.full-record{animation:none!important}.retro-juke.is-changing .juke-vinyl,.full-juke.is-changing .full-record{animation:none!important}}
+
+
+/* Correct the cabinet scale and keep every player button above the tabletop. */
+@media(min-width:601px){.retro-juke{bottom:clamp(110px,9vw,155px)}}
+@media(max-width:600px){.retro-juke{width:116px;right:13px;bottom:104px;padding:6px 7px 7px;border-width:1px}.juke-neon{height:28px;margin:0 5px}.juke-cyan{height:28px;border-width:3px}.juke-magenta{height:22px;top:5px;border-width:3px}.juke-amber{height:16px;top:10px;border-width:3px}.juke-brand{font-size:11px;margin:-2px 0 3px}.juke-vinyl-wrap{width:40px;height:40px;margin-bottom:2px}.juke-glass{padding:3px 5px 3px}.juke-needle{width:28px;right:-7px}.juke-track{font-size:8px}.juke-mini-label{font-size:5px}.juke-mini-controls{margin:5px 0 4px}.juke-mini-controls button{height:23px}.juke-detail{padding:5px 3px;font-size:7px}.juke-grille{display:none}}
+@media(orientation:landscape) and (max-height:600px){.retro-juke{right:6%;top:6px;bottom:auto;width:104px;transform:scale(.70);transform-origin:top right}}
+:root{--saloon-wide:url('');--saloon-phone:url('')}
+
+/* Approved high-contrast visual direction: richer saloon, warm plank highlights,
+   deep recesses, ivory cards, readable wood engraving. These are real CSS values,
+   not filters on an exported screenshot. The updated jukebox remains unchanged. */
+.room{background-image:none!important;background-color:#160b09;isolation:isolate}
+.room::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(0deg,#160805 0%,#16080514 32%,#05030300 75%),var(--saloon-wide);
+  background-position:center,center 49%;background-size:cover,cover;
+  filter:contrast(1.29) saturate(1.29) brightness(1.07)}
+.room::after{background:radial-gradient(ellipse at center,transparent 3%,transparent 58%,#08030273 100%)}
+.welcome{opacity:1;color:#fff1d1;text-shadow:0 2px 4px #170706,0 0 12px #000a}
+.table{isolation:isolate;background-image:none!important;background-color:#61391f;
+  box-shadow:inset 0 18px 26px #1b0b075c,inset 0 -26px 36px #10060494,0 20px 32px #000a}
+.table::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(ellipse 110% 73% at 44% 18%,#ffc98016 0%,transparent 58%,#0704012e 100%),var(--wood);
+  background-size:100% 100%,100% 100%;filter:contrast(1.35) saturate(1.21) brightness(1.105)}
+.table-layout{position:relative;z-index:2}
+.game-title{color:#fff1d1;text-shadow:0 2px 4px #130701,0 0 2px #160902}
+.game-kind{color:#fff0cf;font-weight:800;text-shadow:0 2px 3px #1c0b04}
+.stat{color:#fff2d4;text-shadow:0 2px 4px #180900}
+.stat strong{color:#fff4da;text-shadow:0 2px 5px #200b05}
+.outline-pile{border-color:#ffe0a58c;color:#ffe5afbc;background:#1c0a0520}
+.playcard{border-color:#ead9be;background:linear-gradient(150deg,#fffef6 0%,#fff7e9 100%);
+  color:#0b0807;box-shadow:0 3px 6px #000c,0 1px 1px #fff8ec inset}
+.playcard.red{color:#d30b28}
+.playcard.back{border-color:#ffe0a0;background:linear-gradient(130deg,#a62646,#6e0f2a);box-shadow:inset 0 0 0 3px #621026,inset 0 0 0 5px #edc26e,0 3px 7px #000d}
+.playcard.back::before{color:#f6d995;border-color:#f0c980cc}
+/* Approved inscription: dark incised wood letters with a thin, rubbed-in antique-brass edge. */
+.carving-text{
+  color:#170803;
+  -webkit-text-stroke:1.2px #a7804bae;
+  paint-order:stroke fill;
+  text-shadow:
+    0 -1px .5px #9a73458c,
+    1px 0 .5px #b08a5370,
+    -1px 0 .5px #98714670,
+    0 1px .5px #d2a66d8c,
+    0 2px 1.5px #f0ba6a75,
+    0 -2px 1.2px #100601d6,
+    0 3px 2px #090402ad;
+}
+.table-space::before{background:linear-gradient(180deg,#ffe3a5 0%,#be8046 10%,#532715 33%,#67361c 53%,#21100c 95%)}
+/* Keep seasonal / settings lighting functional while preserving the approved default. */
+/* v10: moonlit uses photographic variant */
+body.moonlit .room{filter:none}
+/* v10: moonlit uses photographic variant */
+body.moonlit .table{filter:none}
+body.darkwood .table::before{background-image:radial-gradient(ellipse at center,transparent,#00000086),var(--wood);filter:contrast(1.4) saturate(1.05) brightness(.80)}
+@media(max-width:600px){.room::before{background-position:center,center 52%;background-image:linear-gradient(0deg,#160905 0%,#16090510 27%,transparent 78%),var(--saloon-phone)}}
+@media(orientation:landscape) and (max-height:600px){.room::before{background-image:linear-gradient(0deg,#160905 0%,transparent 70%),var(--saloon-wide)}}
+
+
+/* Exact approved high-contrast environment retained. Vinyl replaced by LED spectrum ONLY. */
+.juke-equalizer{position:relative;display:flex;align-items:stretch;justify-content:center;gap:3px;margin:0 auto 5px;max-width:100%;height:clamp(55px,6.4vw,76px);border-radius:5px;background:radial-gradient(ellipse at 50% 85%,#0c1d2a8c,#040810c4 68%);box-shadow:inset 0 0 11px #000a,0 0 8px #30e7ff28;padding:6px 4px 5px;overflow:hidden}
+.eq-spectrum{height:100%;flex:1;display:flex;justify-content:space-around;align-items:flex-end;gap:2px;min-width:0}
+.eq-bar{position:relative;flex:1;min-width:2px;max-width:14px;border-radius:2px 2px 0 0;background:repeating-linear-gradient(to top,var(--eq-color) 0 3px,transparent 3px 5px);filter:drop-shadow(0 0 3px var(--eq-color));transition:height .095s linear}
+.eq-marker{align-self:center;flex:0 0 2px;height:62%;opacity:.68;background:repeating-linear-gradient(to top,#36dfff 0 2px,transparent 2px 6px);filter:drop-shadow(0 0 4px #36dfff)}
+.full-equalizer{width:min(94%,270px);height:clamp(150px,20vw,177px);padding:12px 13px 15px;border-radius:15px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.full-spectrum{position:relative;z-index:2;width:100%;height:100%;padding:9px 10px 11px;background:linear-gradient(180deg,#03111ddb,#040914e8);border:1px solid #41dfff50;box-shadow:inset 0 0 20px #000e,0 0 15px #39e0ff35;border-radius:9px}
+.full-spectrum .eq-spectrum{gap:4px}
+.full-spectrum .eq-bar{max-width:16px;background:repeating-linear-gradient(to top,var(--eq-color) 0 6px,transparent 6px 9px);filter:drop-shadow(0 0 5px var(--eq-color))}
+.full-spectrum .eq-marker{flex-basis:3px;background:repeating-linear-gradient(to top,#32e8ff 0 4px,transparent 4px 9px)}
+.full-eq-reflection{position:absolute;top:4px;left:10%;width:80%;height:60%;border-radius:50%;background:radial-gradient(ellipse at 50% 0%,#47dcff16,transparent 72%);pointer-events:none}
+.eq-stage-lip{position:absolute;bottom:2px;width:80%;height:3px;background:linear-gradient(90deg,transparent,#ff72c775,#ffce73ae,transparent);box-shadow:0 0 9px #ff87e852;pointer-events:none}
+.retro-juke.is-changing .juke-equalizer{filter:brightness(1.22)}
+@media(max-width:600px){.juke-equalizer{height:40px;padding:5px 2px 4px;gap:2px}.eq-spectrum{gap:1.5px}.eq-marker{flex-basis:1px}.eq-bar{min-width:1.5px}.full-equalizer{height:156px}.full-spectrum{padding:8px 8px 10px}.full-spectrum .eq-spectrum{gap:3px}.full-spectrum .eq-bar{max-width:16px}}
+@media(orientation:landscape) and (max-height:600px){.juke-equalizer{height:40px}.full-equalizer{height:140px}}
+/* Expanded player's display is tall even on small phones; the mini-height override must not shrink it. */
+.full-equalizer .full-spectrum{height:100%;margin:0;padding:10px 9px 12px}
+@media(max-width:600px){.mini-equalizer{height:51px}.full-equalizer .full-spectrum{height:100%}}
+@media(prefers-reduced-motion:reduce){.eq-bar{transition:none!important}}
+
+
+/* ======================================================
+   Approved contrast remains untouched. Subtle opposite
+   chair posts replace the curved fake table-border.
+   ====================================================== */
+.table-space::before{content:none!important;display:none!important}
+/* Only a naturally beveled *straight* table edge, no artificial sweeping arch. */
+.table{border-top:2px solid #9b6335;box-shadow:inset 0 4px 2px #e3a86c33,inset 0 18px 23px #200e0947,inset 0 -20px 24px #11070388,0 20px 30px #0006}
+/* Chair uprights sit on the far side and the tabletop occludes the lower back. */
+.chair-across{position:absolute;z-index:1;left:50%;bottom:69px;transform:translateX(-50%);height:45px;width:clamp(130px,35vw,260px);pointer-events:none;opacity:.86;filter:blur(.45px) saturate(.68);}
+.chair-post{position:absolute;bottom:0;display:block;width:clamp(11px,1.65vw,19px);height:40px;border-radius:5px 5px 1px 1px;background:linear-gradient(90deg,#140907,#412313 17%,#6e4329 40%,#3f2416 69%,#170b08 94%);border:1px solid #26120a;box-shadow:inset 1px 0 1px #f2b87730,inset -2px 0 3px #080404ad,3px 4px 10px #0503038a;}
+.chair-post-left{left:12%;transform:rotate(1.3deg)}
+.chair-post-right{right:12%;transform:rotate(-1.7deg)}
+.chair-peg{position:absolute;display:block;left:50%;top:-9px;transform:translateX(-50%);width:calc(100% + 4px);height:16px;border-radius:45% 45% 32% 32%;border:1px solid #2b150c;background:radial-gradient(ellipse at 33% 20%,#b17a4888 0%,#674029 32%,#27140e 65%,#110a07 94%);box-shadow:inset 1px 1px 1px #dda56c50,1px 2px 3px #0007;}
+.chair-peg::after{content:'';position:absolute;bottom:-5px;left:22%;width:56%;height:5px;border-radius:2px;background:linear-gradient(90deg,#1e0d07,#654025,#190c07)}
+/* Only a short, dark connecting slat just peeks up between the two posts; no arc or room-spanning rail. */
+.chair-hidden-rail{position:absolute;bottom:2px;left:16%;width:68%;height:9px;border-radius:2px;background:linear-gradient(#3d2517,#1d110b);box-shadow:0 -1px 1px #ac754342}
+
+/* Unique, hand-chiseled letters. Gold is caught in bits of the recess, not an even typeface outline. */
+.carving-text{transform:perspective(800px) rotateX(7deg);letter-spacing:0;color:#170903;-webkit-text-stroke:0;paint-order:normal;text-shadow:none;font-family:Georgia,'Times New Roman',serif;font-weight:900;line-height:1.02;filter:url(#engraving-rough)}
+.carved-line{display:block;white-space:nowrap;letter-spacing:0;font-size:inherit;line-height:1.02}
+.carving-text .carved-glyph{position:relative;display:inline-block;transform:translateY(var(--wobble)) rotate(var(--tilt)) scaleY(var(--stretch));transform-origin:50% 67%;color:#1b0d06;-webkit-text-stroke:.75px #926a3fa0;paint-order:stroke fill;text-shadow:-.5px -1.3px .8px #0e0502, .7px 1.3px 1px #e8b6798c,1.4px 2.3px 1px #0b04029c;letter-spacing:.004em}
+.carved-glyph::before{content:attr(data-glyph);position:absolute;inset:0;z-index:1;color:transparent;-webkit-text-stroke:1.2px #b68a54;opacity:.63;mask-image:repeating-linear-gradient(117deg,#000 0 3.2px,transparent 4.1px 5px,#000 5.7px 8px,transparent 8.4px 10.7px);-webkit-mask-image:repeating-linear-gradient(117deg,#000 0 3.2px,transparent 4.1px 5px,#000 5.7px 8px,transparent 8.4px 10.7px);pointer-events:none}
+.carved-glyph::after{content:attr(data-glyph);position:absolute;inset:0;color:transparent;-webkit-text-stroke:.75px #f0c58d;opacity:.20;transform:translate(-.6px,1px);mask-image:repeating-linear-gradient(62deg,transparent 0 6px,#000 7px 10px,transparent 11px 15px);-webkit-mask-image:repeating-linear-gradient(62deg,transparent 0 6px,#000 7px 10px,transparent 11px 15px);pointer-events:none}
+.carved-glyph.chip-scar::before{opacity:.32}
+.carving-text .carved-space{display:inline-block;width:.27em}
+.engrave-svg-filters{position:absolute;width:0;height:0;pointer-events:none;overflow:hidden}
+@media(min-width:601px){.chair-across{bottom:100px}}
+@media(max-width:600px){.chair-across{bottom:70px;height:43px;width:clamp(122px,41vw,185px)}.chair-post{width:12px;height:35px}.chair-peg{top:-8px;height:14px}.table{border-top-width:1px}.carved-glyph{-webkit-text-stroke:.68px #a27b49c4}.carved-glyph::before{-webkit-text-stroke:.95px #c1955c;opacity:.68}}
+@media(orientation:landscape) and (max-height:600px){.chair-across{bottom:82px;height:40px}.chair-post{height:33px}}
+@media(prefers-reduced-motion:reduce){.carving-text{filter:none}}
+
+
+/* ----- Solitaire integration additions (Cherish, 2026-10-15) ----- */
+/* Hint highlight: pulsing gold glow on hinted card + destination pile */
+.playcard.hint-glow{outline:3px solid #ffd700;outline-offset:2px;filter:brightness(1.15);animation:hintPulse 1s ease-in-out infinite}
+.pile.hint-glow{outline:3px solid #ffd700;outline-offset:2px;animation:hintPulse 1s ease-in-out infinite}
+.tableau-column.hint-glow{outline:3px solid #ffd700;outline-offset:2px;border-radius:6px;animation:hintPulse 1s ease-in-out infinite}
+@keyframes hintPulse{0%,100%{outline-color:#ffd700}50%{outline-color:#ffed9e}}
+/* Larger text mode */
+body.large-text{font-size:120%}
+body.large-text .playcard .rank{font-size:clamp(16px,2.8vw,34px)}
+body.large-text .playcard .suit{font-size:clamp(24px,4.6vw,48px)}
+/* Dragging state */
+.playcard.dragging{opacity:0.85;z-index:100;pointer-events:none}
+.pile.drop-ok{outline:2px dashed #ffe5a2;outline-offset:2px}
+.tableau-column.drop-ok{outline:2px dashed #ffe5a2;outline-offset:2px;border-radius:6px}
+
+/* Saloon theme variants - wired 2026-10-15 */
+/* v10: woodDark uses photographic variant with real plank grain */
+.woodDark .table::before{filter:brightness(.6) contrast(1.2)}
+.backDark .card-back{background:linear-gradient(135deg,#1a1a1a,#0a0a0a)!important;border-color:#d4a84b!important}
+
+/* Tap-to-move: invalid move feedback */
+@keyframes cardShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.playcard.shake {
+  animation: cardShake 0.35s ease;
+  outline: 3px solid #ff5555 !important;
+}
+@media(prefers-reduced-motion:reduce){.playcard.shake{animation:none!important}}
+
+
+/* ===== CLARA V4 PHOTOGRAPHIC THEME SYSTEM (merged 2026-10-15) =====
+   Four theme combinations via CSS variables with photographic webp backgrounds.
+   - Default: Lantern Glow + Warm Wood
+   - body.woodDark: Dark Aged Oak (real plank grain)
+   - body.moonlit: Moonlit (distinctly cool blue)
+   - body.moonlit.woodDark: Moonlit + Dark Aged Oak */
+:root{--tscms-room-scene:url('');--tscms-wood-scene:url('')}
+/* One continuous scene: the room opens behind a real oak playing table. */
+.world::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:clamp(1060px,103vw,1510px);z-index:0;pointer-events:none;
+  background-image:linear-gradient(to bottom,transparent 0%,transparent 73%,rgba(16,6,3,.56) 91%,#130904 100%),var(--tscms-room-scene);
+  background-size:100% 100%, 100% auto;
+  background-position:center top,center top;
+  background-repeat:no-repeat;
+  filter:brightness(1.035) contrast(1.055);
+}
+/* The tabletop continues below the photograph without a hard seam. */
+.world::after{
+  content:'';position:absolute;left:0;right:0;top:clamp(875px,86vw,1290px);bottom:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(to bottom,rgba(27,10,4,0),rgba(29,13,5,.22) 14%,rgba(17,7,4,.63) 98%),var(--tscms-wood-scene);
+  background-size:100% 100%,100% auto;
+  background-position:center top,center top;
+  background-repeat:repeat-y;
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 14%);mask-image:linear-gradient(to bottom,transparent,#000 14%);
+}
+.room{height:clamp(365px,40vw,520px)!important;min-height:0!important;overflow:visible!important;background:transparent!important;position:relative;z-index:1}
+.room::before,.room::after,.room-glow,.chair-across{display:none!important}
+/* Preserve background scene and visible grain by swapping same-photo color-graded variants. */
+body.woodDark .world {--tscms-room-scene:url(''); --tscms-wood-scene:url('')}
+body.moonlit .world {--tscms-room-scene:url(''); --tscms-wood-scene:url('')}
+body.moonlit.woodDark .world {--tscms-room-scene:url(''); --tscms-wood-scene:url('')}
+/* The old theme code colored `.table` itself and covered the photograph. */
+body.woodDark .table,body.darkwood .table,body.woodDark.moonlit .table,
+body.moonlit .table{background:transparent!important;background-color:transparent!important;filter:none!important;box-shadow:none!important}
+body.moonlit .room{filter:none!important}
+body.moonlit .room::before,body.moonlit .table::before{display:none!important}
+/* The room lighting should affect the photographic scene, never the interactive cards. */
+.world::before,.world::after{transition:background-image .15s ease}
+/* Let the SUNO COUNTRY MUSIC SPOT branding remain legible and carved. */
+.carving{opacity:1!important;z-index:2!important}
+@media(prefers-reduced-motion:reduce){.world::before,.world::after{transition:none}}
+
+
+/* ===== V10 MOBILE TOP-ROW FIX (2026-10-15) =====
+   CRITICAL: All top-row piles (STOCK, WASTE, 4 FOUNDATIONS) must be visible
+   on the same mobile screen WITHOUT sideways scrolling.
+   Per Clara's READ_FIRST requirements doc. */
+@media(max-width:600px){
+  /* Top row: 6 equal columns, no gapcell spacer, no scrolling */
+  .top-row{
+    grid-template-columns:repeat(6,minmax(0,1fr))!important;
+    gap:6px!important;
+    overflow:visible!important;
+    margin-bottom:12px!important;
+  }
+  .top-row .gapcell{display:none!important}
+  /* Ensure piles don't overflow */
+  .top-row .pile{
+    min-width:0!important;
+    aspect-ratio:.72;
+  }
+  /* Tableau: 7 columns fit without scrolling */
+  .tableau{
+    grid-template-columns:repeat(7,minmax(0,1fr))!important;
+    gap:4px!important;
+    overflow:visible!important;
+  }
+  .tableau-column{min-width:0!important}
+  /* Card text stays legible at small sizes */
+  .playcard .rank{font-size:clamp(12px,3.2vw,16px)!important}
+  .playcard .suit{font-size:clamp(14px,3.8vw,20px)!important}
+  /* Touch targets: piles are ~56px wide at 390px, exceeding 44px minimum */
+  .top-row .pile{min-height:44px}
+}
+/* Extra narrow phones (<370px) */
+@media(max-width:370px){
+  .top-row{gap:4px!important}
+  .tableau{gap:3px!important}
+}
+
+</style><script>
+window.TSCMS_TRACKS = [
+  {
+    "url": "https://cdn1.suno.ai/60004742-6fda-42a8-9aad-a8d5876cb9fd.mp4",
+    "title": "I Learned Spanish on the Run",
+    "artist": "Brian Ketchum"
+  },
+  {
+    "url": "https://cdn1.suno.ai/9e7a7cdb-4c3a-494d-9f56-840225581210.mp4",
+    "title": "I Kissed A Lot Of Frogs",
+    "artist": "Bettyxxoxx"
+  },
+  {
+    "url": "https://cdn1.suno.ai/09d50d05-673f-49db-8b38-915de1014d86.mp4",
+    "title": "Island Icon",
+    "artist": "The Outlaw Saint"
+  },
+  {
+    "url": "https://cdn1.suno.ai/e41f74f5-9b70-4986-8415-11dce1e701fe.mp4",
+    "title": "Choking on No's",
+    "artist": "Diesel and Dandelions"
+  },
+  {
+    "url": "https://cdn1.suno.ai/4012b836-8f4b-4f8c-9082-b284cf0d1c3b.mp4",
+    "title": "Honest Enemy",
+    "artist": "Magnum Music"
+  },
+  {
+    "url": "https://cdn1.suno.ai/1fd550bd-e549-4841-941d-a44b59143867.mp4",
+    "title": "A Little More Whiskey, A Little Less You",
+    "artist": "Zo\u0113 Titterton"
+  },
+  {
+    "url": "https://cdn1.suno.ai/f61d0302-5dac-427d-8035-858e6b5d71f6.mp4",
+    "title": "Still Love You Blues",
+    "artist": "Timothy Arnold"
+  },
+  {
+    "url": "https://cdn1.suno.ai/7395333c-3fbc-40b8-9f48-5cd8635c007b.mp4",
+    "title": "Living Proof",
+    "artist": "GWCDawg"
+  },
+  {
+    "url": "https://cdn1.suno.ai/4eac99b0-239d-483e-b5a6-1d6d04fec025.mp4",
+    "title": "Three Steps Closer",
+    "artist": "Sharkbait"
+  },
+  {
+    "url": "https://cdn1.suno.ai/63af55ce-ef8a-413d-afac-2b4e0f5a37d8.mp4",
+    "title": "Mountain Good Man",
+    "artist": "Michelle Odonnell"
+  }
+];
+</script>
+
+<style>
+/* Slim production fallbacks - solid colors instead of embedded photos */
+.world::before { background: #1a0f0a !important; }
+.world::after { background: linear-gradient(180deg, #5a3a1a 0%, #3a2410 100%) !important; }
+body.moonlit .world::before { background: #0a1420 !important; }
+body.moonlit .world::after { background: linear-gradient(180deg, #2a3a4a 0%, #1a242e 100%) !important; }
+</style>
+
+<style>
+#sol-back-btn{position:fixed;top:10px;left:10px;z-index:99999;background:rgba(20,10,0,.85);color:#f9e5bc;border:2px solid #8b6914;border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer;text-decoration:none;font-family:inherit}
+#sol-back-btn:active{background:rgba(60,30,0,.95)}
+</style>
+<a id="sol-back-btn" href="https://fudgiepie4-ux.github.io/tscms-today/">&larr; Home</a>
+</head><body>
+<svg class="engrave-svg-filters" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><defs>
+  <filter id="engraving-rough" x="-3%" y="-10%" width="106%" height="123%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.046 0.085" numOctaves="2" seed="13" stitchTiles="stitch" result="cutnoise"/>
+    <feDisplacementMap in="SourceGraphic" in2="cutnoise" scale="1.55" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</defs></svg>
+<main class="world">
+<section class="room" aria-label="Immersive Old West saloon interior; no seasonal title sign">
+  <div class="room-glow" aria-hidden="true"></div>
+  <div class="welcome"><span aria-hidden="true">✦</span> TSCMS GAMEHOUSE</div>
+  <section class="retro-juke" id="retroJuke" aria-label="TSCMS music jukebox player preview">
+  <div class="juke-neon"><i class="juke-neon-stripe juke-cyan"></i><i class="juke-neon-stripe juke-magenta"></i><i class="juke-neon-stripe juke-amber"></i></div>
+  <div class="juke-brand">TSCMS <span>RADIO</span></div>
+  <div class="juke-glass">
+    <div class="juke-equalizer mini-equalizer" aria-hidden="true"><span class="eq-marker eq-marker-left"></span><div class="eq-spectrum" id="miniEq"></div><span class="eq-marker eq-marker-right"></span></div>
+    <div class="juke-track" id="miniTrack">Radio Preview</div>
+    <div class="juke-mini-label">DEMO BARS · NO AUDIO</div>
+  </div>
+  <div class="juke-mini-controls" aria-label="Music preview controls">
+    <button type="button" id="miniPrev" aria-label="Previous preview song">◀◀</button>
+    <button type="button" id="miniPlay" aria-label="Play or pause preview animation">▶</button>
+    <button type="button" id="miniNext" aria-label="Next preview song">▶▶</button>
+  </div>
+  <button type="button" class="juke-detail" id="openJukebox" aria-label="Open full jukebox player">OPEN PLAYER <span>↗</span></button>
+  <div class="juke-grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+  <!-- The chair belongs to the room behind the table, not to the table chrome. -->
+  <div class="chair-across" aria-hidden="true">
+    <span class="chair-post chair-post-left"><i class="chair-peg"></i></span>
+    <span class="chair-post chair-post-right"><i class="chair-peg"></i></span>
+    <span class="chair-hidden-rail"></span>
+  </div>
+</section>
+<section class="table-space" aria-label="An unframed wood table in the saloon with Solitaire cards on the surface">
+  <div class="table"><div class="table-layout">
+    <header class="game-head"><div><div class="game-title">KLONDIKE</div><div class="game-kind">Draw One · Classic Solitaire</div></div>
+    <div class="stats" aria-label="Game statistics"><div class="stat">MOVES<strong id="moves">—</strong></div><div class="stat">TIME<strong id="time">00:00</strong></div><div class="stat">SCORE<strong id="score">—</strong></div></div></header>
+    <div class="top-row" id="topRow" aria-label="Draw pile, waste pile, and four foundations"><div class="pile" id="stockSlot"></div><div class="pile" id="wasteSlot"></div><div class="gapcell"></div><div class="pile outline-pile" id="foundation-0">♠</div><div class="pile outline-pile" id="foundation-1">♥</div><div class="pile outline-pile" id="foundation-3">♣</div><div class="pile outline-pile" id="foundation-2">♦</div></div>
+    <div class="carving" role="img" aria-label="SUNO COUNTRY MUSIC SPOT, irregularly hand-carved in the wood with worn antique-gold traces"><div class="carving-text" aria-hidden="true"><span class="carved-line"><span class="carved-glyph" data-glyph="S" style="--tilt:-1.05deg;--wobble:-0.65px;--stretch:0.99;">S</span><span class="carved-glyph" data-glyph="U" style="--tilt:0.65deg;--wobble:0.4px;--stretch:1.014;">U</span><span class="carved-glyph chip-scar" data-glyph="N" style="--tilt:-0.4deg;--wobble:-0.35px;--stretch:0.981;">N</span><span class="carved-glyph" data-glyph="O" style="--tilt:1.05deg;--wobble:0.5px;--stretch:1.02;">O</span><span class="carved-space" aria-hidden="true"> </span><span class="carved-glyph" data-glyph="C" style="--tilt:0.8deg;--wobble:0.35px;--stretch:1.017;">C</span><span class="carved-glyph" data-glyph="O" style="--tilt:-0.8deg;--wobble:0.8px;--stretch:0.984;">O</span><span class="carved-glyph chip-scar" data-glyph="U" style="--tilt:0.4deg;--wobble:-0.35px;--stretch:1.014;">U</span><span class="carved-glyph" data-glyph="N" style="--tilt:-1.0deg;--wobble:0.7px;--stretch:0.992;">N</span><span class="carved-glyph" data-glyph="T" style="--tilt:0.7deg;--wobble:-0.65px;--stretch:1.007;">T</span><span class="carved-glyph" data-glyph="R" style="--tilt:-0.2deg;--wobble:0.35px;--stretch:0.99;">R</span><span class="carved-glyph" data-glyph="Y" style="--tilt:0.85deg;--wobble:0.25px;--stretch:1.017;">Y</span></span><span class="carved-line"><span class="carved-glyph" data-glyph="M" style="--tilt:1.05deg;--wobble:0.5px;--stretch:1.02;">M</span><span class="carved-glyph chip-scar" data-glyph="U" style="--tilt:-0.75deg;--wobble:-0.45px;--stretch:0.988;">U</span><span class="carved-glyph" data-glyph="S" style="--tilt:0.8deg;--wobble:0.35px;--stretch:1.017;">S</span><span class="carved-glyph" data-glyph="I" style="--tilt:-0.8deg;--wobble:0.8px;--stretch:0.984;">I</span><span class="carved-glyph" data-glyph="C" style="--tilt:0.4deg;--wobble:-0.35px;--stretch:1.014;">C</span><span class="carved-space" aria-hidden="true"> </span><span class="carved-glyph chip-scar" data-glyph="S" style="--tilt:0.7deg;--wobble:-0.65px;--stretch:1.007;">S</span><span class="carved-glyph" data-glyph="P" style="--tilt:-0.2deg;--wobble:0.35px;--stretch:0.99;">P</span><span class="carved-glyph" data-glyph="O" style="--tilt:0.85deg;--wobble:0.25px;--stretch:1.017;">O</span><span class="carved-glyph" data-glyph="T" style="--tilt:-1.05deg;--wobble:-0.65px;--stretch:0.99;">T</span></span></div></div>
+    <div class="tableau" id="tableau" aria-label="Seven Klondike card columns"></div>
+  </div></div>
+  <nav class="controls" aria-label="Preview-only game controls"><button type="button" class="wood-button" id="newDeal"><span class="glyph">▤</span><b>New Deal</b></button><button type="button" class="wood-button" id="undo"><span class="glyph">↶</span><b>Undo</b></button><button type="button" class="wood-button" id="hint"><span class="glyph">✦</span><b>Hint</b></button><button type="button" class="wood-button" id="settings"><span class="glyph">⚙</span><b>Settings</b></button></nav>
+</section></main>
+<div class="setting-backdrop backdrop" id="settingsDialog" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" hidden><section class="setting-panel"><button class="close" type="button" aria-label="Close settings" data-close>×</button><h2 id="settingsTitle">Saloon Settings</h2><p>Set the mood while staying at the same table.</p><label>ROOM LIGHTING</label><div class="choice-row"><button type="button" class="active-option" id="lampWarm">Lantern Glow</button><button type="button" id="lampCool">Moonlit</button></div><label>TABLE WOOD</label><div class="choice-row"><button type="button" class="active-option" id="woodWarm">Rustic Oak</button><button type="button" id="woodDark">Dark Aged Oak</button></div><label>CARD BACKS</label><div class="choice-row"><button type="button" class="active-option" id="backRed">Red &amp; Gold</button><button type="button" id="backDark">Black &amp; Gold</button></div><label>GAME TIMER</label><div class="choice-row" role="radiogroup" aria-label="Timer mode"><button type="button" class="active-option" id="optTimerStopwatch" data-timermode="stopwatch">⏱️ Stopwatch</button><button type="button" id="optTimerRelaxed" data-timermode="relaxed">😌 Relaxed</button></div><label>DRAW MODE</label><div class="choice-row" role="radiogroup" aria-label="Draw mode"><button type="button" class="active-option" id="optDraw1" data-drawmode="1">🂠 Draw 1</button><button type="button" id="optDraw3" data-drawmode="3">🂠🂠🂠 Draw 3</button></div><label>DISPLAY</label><div class="choice-row"><button type="button" id="optLargeText">🔍 Larger Text: Off</button></div><p>These settings demonstrate the appearance, not final Solitaire rules.</p></section></div>
+<div class="setting-backdrop backdrop" id="jukeboxDialog" role="dialog" aria-modal="true" aria-labelledby="jukeboxTitle" hidden>
+  <section class="full-juke" aria-label="Full jukebox player preview">
+    <button class="close juke-close" type="button" aria-label="Close jukebox" data-close>×</button>
+    <div class="full-neon" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="full-title"><span>♫</span><h2 id="jukeboxTitle">TSCMS Radio</h2><p>SALOON JUKEBOX</p></div>
+    <div class="full-mechanism full-equalizer" aria-hidden="true"><div class="full-eq-reflection"></div><div class="juke-equalizer full-spectrum"><span class="eq-marker eq-marker-left"></span><div class="eq-spectrum" id="fullEq"></div><span class="eq-marker eq-marker-right"></span></div><div class="eq-stage-lip"></div></div>
+    <div class="full-record-meta"><strong id="jukeTrackTitle">Radio Preview</strong><span id="jukeTrackArtist">Suno Country Music Spot</span></div>
+    <div class="full-progress"><time id="jukeNow">0:00</time><input id="jukeProgress" type="range" min="0" max="100" value="0" aria-label="Preview song position"><time id="jukeEnd">3:00</time></div>
+    <div class="full-controls"><button type="button" id="fullPrev" aria-label="Previous preview track">⏮</button><button type="button" id="fullPlay" class="main-play" aria-label="Play or pause preview">▶</button><button type="button" id="fullNext" aria-label="Next preview track">⏭</button></div>
+    <div class="juke-demo-warning" id="jukeConnection">DEMO BARS · NO MUSIC AUDIO</div>
+    <p class="full-caption">The equalizer is animated in this standalone preview. On the website, it can respond to the real shared audio when the player supplies frequency data. No second audio stream is created.</p>
+  </section>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+/* ============================================================
+   PART 1: SaloonEngine — pure game logic (Cherish)
+   Tested: 93 passing. Includes findHints() + undo drawMode fix.
+   ============================================================ */
+const SaloonEngine = (() => {
+
+  /* ----- Constants ----- */
+  const SUITS = ['spades', 'hearts', 'diamonds', 'clubs'];
+  const SUIT_COLOR = { spades: 'black', hearts: 'red', diamonds: 'red', clubs: 'black' };
+  const JOKER_DEFS = [
+    { jokerId: 'radio', jokerName: 'TSCMS RADIO' },
+    { jokerId: 'pug', jokerName: 'PUG WILD CARD' },
+  ];
+
+  /* ----- Private state ----- */
+  let S = null;
+  const listeners = [];
+  function emit() {
+    const snap = getState();
+    listeners.forEach(cb => { try { cb(snap); } catch (e) { /* renderer error */ } });
+  }
+
+  /* ----- Deck ----- */
+  function cardArtId(c) {
+    if (c.isJoker) return 'joker-' + c.jokerId;
+    return c.suit[0] + c.value; // h1..h13, s1.., d1.., c1..
+  }
+  function createDeck() {
+    const deck = [];
+    for (const suit of SUITS)
+      for (let v = 1; v <= 13; v++)
+        deck.push({ suit, value: v, color: SUIT_COLOR[suit],
+                    faceUp: false, isJoker: false });
+    for (const j of JOKER_DEFS)
+      deck.push({ suit: null, value: null, color: null, faceUp: false,
+                  isJoker: true, jokerId: j.jokerId, jokerName: j.jokerName,
+                  standsFor: null });
+    deck.forEach(c => { c.artId = cardArtId(c); });
+    return deck; // 54 cards
+  }
+  /* Fisher-Yates — uniform. NEVER array.sort(() => Math.random()-0.5) (biased). */
+  function shuffle(deck) {
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    return deck;
+  }
+
+  /* ----- Deal (v4 Q4) ----- */
+  function deal(st, deck) {
+    for (let col = 0; col < 7; col++) {
+      for (let row = 0; row <= col; row++) {
+        let card = deck.pop();
+        // Face-up Joker in initial deal → bottom of stock, draw replacement.
+        // Repeat if replacement is the other Joker (v4 Q4).
+        while (card.isJoker) { deck.unshift(card); card = deck.pop(); }
+        card.faceUp = (row === col);
+        st.tableau[col].push(card);
+      }
+    }
+    // Face-down Jokers dealt into tableau stay until uncovered (v4).
+    st.stock = deck;
+  }
+
+  /* ----- History (undo) ----- */
+  function snapshot(st) {
+    return JSON.parse(JSON.stringify({
+      stock: st.stock, waste: st.waste,
+      foundations: st.foundations, tableau: st.tableau,
+      moves: st.moves, elapsed: st.elapsed, startTime: st.startTime,
+    }));
+  }
+  function saveHistory() {
+    S.history.push(snapshot(S));
+    if (S.history.length > 200) S.history.shift();
+  }
+
+  /* ----- Pure validators (take state, never mutate) ----- */
+
+  /** Tableau: build down alternating colors; King-only to empty. Jokers never. */
+  function canMoveToTableau(state, cards, col) {
+    if (!cards.length) return false;
+    const card = cards[0];
+    if (card.isJoker) return false;
+    const dest = state.tableau[col];
+    const top = dest[dest.length - 1];
+    if (!top) return card.value === 13;
+    return top.faceUp && !top.isJoker &&
+           top.color !== card.color && top.value === card.value + 1;
+  }
+
+  /** Dragged stack must itself be a valid descending alternating sequence. */
+  function isValidSequence(cards) {
+    return cards.every((card, i) => {
+      if (i === 0) return true;
+      const p = cards[i - 1];
+      return !p.isJoker && !card.isJoker &&
+             p.color !== card.color && p.value === card.value + 1;
+    });
+  }
+
+  /** Can the player pick up tableau[col][idx]? (Jokers: foundation-only.) */
+  function canPickUp(state, col, idx) {
+    const pile = state.tableau[col];
+    const card = pile[idx];
+    if (!card || !card.faceUp || card.isJoker) return false;
+    return isValidSequence(pile.slice(idx));
+  }
+
+  /** Is a face-up joker sitting on top of tableau[col]? (draggable to foundation) */
+  function isTopJoker(state, col) {
+    const pile = state.tableau[col];
+    const top = pile[pile.length - 1];
+    return !!(top && top.isJoker && top.faceUp);
+  }
+
+  /** What value does foundation fndIdx need next? (accounts for joker on top) */
+  function foundationNeeds(state, fndIdx) {
+    const pile = state.foundations[fndIdx];
+    if (!pile.length) return 1;
+    const top = pile[pile.length - 1];
+    if (top.isJoker) return top.standsFor.value + 1;
+    return top.value + 1;
+  }
+
+  /**
+   * Foundation: build up by suit Ace→King, single cards only.
+   * Joker: fills next needed slot; NO stacking (v3/v4).
+   * Natural: normal sequential OR exact buried-joker match (v4 Q3 fix).
+   */
+  function canMoveToFoundation(state, card, fndIdx) {
+    const pile = state.foundations[fndIdx];
+    if (pile.length >= 13) return false;
+    if (card.isJoker) {
+      const top = pile[pile.length - 1];
+      if (top && top.isJoker) return false; // NO JOKER STACKING
+      return true;
+    }
+    if (card.suit !== SUITS[fndIdx]) return false;
+    if (card.value === foundationNeeds(state, fndIdx)) return true;
+    // v4 Q3: natural card matching a buried joker's exact position is legal
+    return findMatchingJoker(state, fndIdx, card.suit, card.value) >= 0;
+  }
+
+  /** v4 Q3: index of the joker standing for exactly (suit, value), else -1. */
+  function findMatchingJoker(state, fndIdx, suit, value) {
+    const pile = state.foundations[fndIdx];
+    for (let i = 0; i < pile.length; i++) {
+      const c = pile[i];
+      if (c.isJoker && c.standsFor &&
+          c.standsFor.suit === suit && c.standsFor.value === value) return i;
+    }
+    return -1;
+  }
+
+  /** Auto-pick foundation for a joker: lowest need, skip full/stacked piles. */
+  function pickJokerFoundation(state) {
+    let best = -1, bestNeed = 99;
+    for (let i = 0; i < 4; i++) {
+      const pile = state.foundations[i];
+      if (pile.length >= 13) continue;
+      const top = pile[pile.length - 1];
+      if (top && top.isJoker) continue;
+      const need = foundationNeeds(state, i);
+      if (need < bestNeed) { bestNeed = need; best = i; }
+    }
+    return best;
+  }
+
+  /* ----- Internal helpers (operate on live S) ----- */
+  function noteFirstMove() {
+    if (S.timerMode === 'stopwatch' && S.startTime === null)
+      S.startTime = Date.now();
+  }
+  function flipTableauTop(col) {
+    const pile = S.tableau[col];
+    const top = pile[pile.length - 1];
+    if (top && !top.faceUp) top.faceUp = true;
+  }
+  /** v4 Q1: win = 4 foundations × 13 positions, top represents King. */
+  function checkWin() {
+    const won = S.foundations.every(pile => {
+      if (pile.length !== 13) return false;
+      const top = pile[12];
+      const rep = top.isJoker ? top.standsFor.value : top.value;
+      return rep === 13;
+    });
+    if (won && !S.gameWon) { S.gameWon = true; }
+  }
+
+  /**
+   * findHints() — Fudgie-approved v1 Hint feature.
+   * Returns an ORDERED array of legal moves WITHOUT modifying any game state.
+   * Priority: (1) tableau->foundation, (2) waste->foundation,
+   *            (3) tableau->tableau that reveals a face-down card,
+   *            (4) waste->tableau, (5) tableau->tableau (non-revealing).
+   * If no moves but stock has cards (or waste can recycle): [{ action: 'draw' }].
+   * If truly stuck: [].
+   * Each move hint: { from, fromCol, card, to, toCol, toFoundation }
+   */
+  function findHints() {
+    if (!S || S.gameWon) return [];
+    const hints = [];
+
+    // (1) tableau top -> foundation (incl. jokers via pickJokerFoundation)
+    for (let c = 0; c < 7; c++) {
+      const pile = S.tableau[c];
+      const card = pile[pile.length - 1];
+      if (!card || !card.faceUp) continue;
+      if (card.isJoker) {
+        const f = pickJokerFoundation(S);
+        if (f >= 0) hints.push({
+          from: 'tableau', fromCol: c, card,
+          to: 'foundation', toCol: null, toFoundation: f,
+        });
+      } else {
+        const f = SUITS.indexOf(card.suit);
+        if (f >= 0 && canMoveToFoundation(S, card, f)) hints.push({
+          from: 'tableau', fromCol: c, card,
+          to: 'foundation', toCol: null, toFoundation: f,
+        });
+      }
+    }
+
+    // (2) waste top -> foundation (incl. jokers)
+    const wtop = S.waste[S.waste.length - 1];
+    if (wtop) {
+      if (wtop.isJoker) {
+        const f = pickJokerFoundation(S);
+        if (f >= 0) hints.push({
+          from: 'waste', fromCol: null, card: wtop,
+          to: 'foundation', toCol: null, toFoundation: f,
+        });
+      } else {
+        const f = SUITS.indexOf(wtop.suit);
+        if (f >= 0 && canMoveToFoundation(S, wtop, f)) hints.push({
+          from: 'waste', fromCol: null, card: wtop,
+          to: 'foundation', toCol: null, toFoundation: f,
+        });
+      }
+    }
+
+    // (3) tableau -> tableau that REVEALS a face-down card
+    // (5) tableau -> tableau (non-revealing) — collected separately, appended after (4)
+    const revealing = [], nonRevealing = [];
+    for (let from = 0; from < 7; from++) {
+      const pile = S.tableau[from];
+      for (let i = 0; i < pile.length; i++) {
+        if (!canPickUp(S, from, i)) continue;
+        const cards = pile.slice(i);
+        for (let to = 0; to < 7; to++) {
+          if (to === from) continue;
+          if (!canMoveToTableau(S, cards, to)) continue;
+          // Note: King moves to empty columns are legal and included,
+          // even when strategically neutral — the player decides.
+          const hint = {
+            from: 'tableau', fromCol: from, fromIdx: i, card: cards[0],
+            to: 'tableau', toCol: to, toFoundation: null,
+          };
+          // Revealing = there's a face-down card directly beneath the moved stack
+          const below = pile[i - 1];
+          if (below && !below.faceUp) revealing.push(hint);
+          else nonRevealing.push(hint);
+          break; // one destination per source is enough for hints
+        }
+      }
+    }
+    hints.push(...revealing);
+
+    // (4) waste -> tableau
+    if (wtop && !wtop.isJoker) {
+      for (let to = 0; to < 7; to++) {
+        if (canMoveToTableau(S, [wtop], to)) {
+          hints.push({
+            from: 'waste', fromCol: null, card: wtop,
+            to: 'tableau', toCol: to, toFoundation: null,
+          });
+          break;
+        }
+      }
+    }
+
+    // (5) non-revealing tableau -> tableau
+    hints.push(...nonRevealing);
+
+    if (hints.length) return hints;
+    // (6) Suggest drawing if possible
+    if (S.stock.length || S.waste.length) return [{ action: 'draw' }];
+    return [];
+  }
+
+  /* ----- Public API ----- */
+  function newGame(timerMode, drawMode) {
+    S = {
+      stock: [], waste: [],
+      foundations: [[], [], [], []],
+      tableau: [[], [], [], [], [], [], []],
+      moves: 0, history: [],
+      timerMode: timerMode || 'stopwatch',
+      drawMode: parseInt(drawMode, 10) === 3 ? 3 : 1,
+      startTime: null, elapsed: 0,
+      gameWon: false,
+    };
+    deal(S, shuffle(createDeck()));
+    emit();
+    return getState();
+  }
+
+  /** Serializable snapshot (safe to pass to renderer / postMessage). */
+  function getState() {
+    if (!S) return null;
+    const snap = snapshot(S);
+    snap.timerMode = S.timerMode;
+    snap.drawMode = S.drawMode;
+    snap.gameWon = S.gameWon;
+    snap.canUndo = S.history.length > 0;
+    return snap;
+  }
+
+  function onStateChange(cb) { listeners.push(cb); }
+
+  function drawFromStock() {
+    if (!S || S.gameWon) return false;
+    if (!S.stock.length && !S.waste.length) return false;
+    saveHistory(); noteFirstMove();
+    if (S.stock.length) {
+      const n = Math.min(S.drawMode, S.stock.length);
+      for (let i = 0; i < n; i++) {
+        const card = S.stock.pop();
+        card.faceUp = true;
+        S.waste.push(card);
+      }
+    } else {
+      S.stock = S.waste.reverse().map(c => ({ ...c, faceUp: false }));
+      S.waste = [];
+    }
+    S.moves++;
+    emit();
+    return true;
+  }
+
+  /**
+   * Move top card of waste/tableau[col] to its foundation.
+   * Handles joker placement + natural-card joker replacement (v4 Q2/Q3).
+   */
+  function moveToFoundation(from, col) {
+    if (!S || S.gameWon) return false;
+    let card;
+    if (from === 'waste') {
+      card = S.waste[S.waste.length - 1];
+      if (!card) return false;
+    } else {
+      const pile = S.tableau[col];
+      card = pile[pile.length - 1];
+      if (!card || !card.faceUp) return false;
+    }
+    const fndIdx = card.isJoker ? pickJokerFoundation(S) : SUITS.indexOf(card.suit);
+    if (fndIdx < 0 || !canMoveToFoundation(S, card, fndIdx)) return false;
+
+    saveHistory(); noteFirstMove();
+    if (from === 'waste') S.waste.pop(); else S.tableau[col].pop();
+
+    if (card.isJoker) {
+      card.standsFor = { suit: SUITS[fndIdx], value: foundationNeeds(S, fndIdx) };
+      S.foundations[fndIdx].push(card);
+    } else {
+      const ji = findMatchingJoker(S, fndIdx, card.suit, card.value);
+      if (ji >= 0) {
+        // v4 Q3: replace the exact matching joker
+        const freed = S.foundations[fndIdx][ji];
+        freed.standsFor = null;
+        freed.faceUp = true;
+        S.foundations[fndIdx][ji] = card;
+        // v4 Q2: freed joker → top of waste pile
+        S.waste.push(freed);
+      } else {
+        S.foundations[fndIdx].push(card);
+      }
+    }
+    S.moves++;
+    if (from === 'tableau') flipTableauTop(col);
+    checkWin();
+    emit();
+    return true;
+  }
+
+  /**
+   * Move top card of waste/tableau[col] to a SPECIFIC foundation
+   * (used by drag-and-drop onto a foundation pile).
+   */
+  function moveToSpecificFoundation(from, col, fndIdx) {
+    if (!S || S.gameWon) return false;
+    let card;
+    if (from === 'waste') {
+      card = S.waste[S.waste.length - 1];
+      if (!card) return false;
+    } else {
+      const pile = S.tableau[col];
+      card = pile[pile.length - 1];
+      if (!card || !card.faceUp) return false;
+    }
+    if (!canMoveToFoundation(S, card, fndIdx)) return false;
+    saveHistory(); noteFirstMove();
+    if (from === 'waste') S.waste.pop(); else S.tableau[col].pop();
+    if (card.isJoker) {
+      card.standsFor = { suit: SUITS[fndIdx], value: foundationNeeds(S, fndIdx) };
+      S.foundations[fndIdx].push(card);
+    } else {
+      const ji = findMatchingJoker(S, fndIdx, card.suit, card.value);
+      if (ji >= 0) {
+        const freed = S.foundations[fndIdx][ji];
+        freed.standsFor = null; freed.faceUp = true;
+        S.foundations[fndIdx][ji] = card;
+        S.waste.push(freed);
+      } else {
+        S.foundations[fndIdx].push(card);
+      }
+    }
+    S.moves++;
+    if (from === 'tableau') flipTableauTop(col);
+    checkWin();
+    emit();
+    return true;
+  }
+
+  function moveTableauToTableau(fromCol, fromIdx, toCol) {
+    if (!S || S.gameWon || fromCol === toCol) return false;
+    const cards = S.tableau[fromCol].slice(fromIdx);
+    if (!isValidSequence(cards)) return false;
+    if (!canMoveToTableau(S, cards, toCol)) return false;
+    saveHistory(); noteFirstMove();
+    S.tableau[fromCol] = S.tableau[fromCol].slice(0, fromIdx);
+    S.tableau[toCol] = S.tableau[toCol].concat(cards);
+    S.moves++;
+    flipTableauTop(fromCol);
+    checkWin();
+    emit();
+    return true;
+  }
+
+  function moveWasteToTableau(toCol) {
+    if (!S || S.gameWon) return false;
+    const card = S.waste[S.waste.length - 1];
+    if (!card || card.isJoker) return false;
+    if (!canMoveToTableau(S, [card], toCol)) return false;
+    saveHistory(); noteFirstMove();
+    S.waste.pop();
+    S.tableau[toCol].push(card);
+    S.moves++;
+    checkWin();
+    emit();
+    return true;
+  }
+
+  function undo() {
+    if (!S || !S.history.length) return false;
+    const prev = S.history.pop();
+    const keepTimerMode = S.timerMode;
+    const keepDrawMode = S.drawMode;
+    S.stock = prev.stock; S.waste = prev.waste;
+    S.foundations = prev.foundations; S.tableau = prev.tableau;
+    S.moves = prev.moves; S.elapsed = prev.elapsed;
+    S.startTime = prev.startTime; S.gameWon = false;
+    S.timerMode = keepTimerMode;
+    S.drawMode = keepDrawMode;
+    emit();
+    return true;
+  }
+
+  /** For tests: replace live state. */
+  function _setState(s) { S = s; }
+  function _getState() { return S; }
+
+  return {
+    newGame, getState, onStateChange,
+    drawFromStock, moveToFoundation, moveToSpecificFoundation,
+    moveTableauToTableau, moveWasteToTableau, undo,
+    canMoveToTableau, isValidSequence, canPickUp, isTopJoker,
+    canMoveToFoundation, foundationNeeds, findMatchingJoker, pickJokerFoundation,
+    findHints,
+    SUITS, JOKER_DEFS,
+    _setState, _getState,
+  };
+})();
+/* ============================================================
+   PART 2: SaloonRenderer — Clara's shell DOM binding (Cherish)
+   ============================================================ */
+/* ============================================================
+   SaloonRenderer — renders SaloonEngine state into Clara's
+   approved visual shell DOM. Clara owns this layer's visuals;
+   the engine underneath is untouched.
+   DOM contract:
+     #stockSlot, #wasteSlot          — stock & waste piles
+     #foundation-0..3               — foundations (engine indices:
+                                      0=spades, 1=hearts, 2=diamonds, 3=clubs)
+     #tableau                       — container for 7 .tableau-column divs
+     #moves, #time                  — stats
+     #hint, #newDeal, #undo         — control buttons
+     #settings / #settingsDialog    — settings UI
+     #toast                         — status messages
+   Cards use Clara's .playcard markup (.rank/.suit spans).
+   ============================================================ */
+const SaloonRenderer = (() => {
+  const $ = id => document.getElementById(id);
+  const SUIT_SYMBOL = { spades: '♠', hearts: '♥', diamonds: '♦', clubs: '♣' };
+  const RANK_LABEL = { 1: 'A', 11: 'J', 12: 'Q', 13: 'K' };
+
+  let selected = null;      // { from, col, idx } for tap-to-move
+  let dragInfo = null;
+  let timerId = null;
+  let hintIdx = 0;
+  let lastHints = [];
+
+  /* ---------- CARD_ART config ---------- */
+  // When Clara delivers the 14 illustrated cards + number cards,
+  // set enabled:true and basePath to the art directory. Until then,
+  // clean CSS/text rendering is used. The deck concept collage is
+  // NOT approved production artwork and is never referenced.
+  const CARD_ART = { basePath: 'solitaire-v7-cards', enabled: true };
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function fmtTime(sec) {
+    const m = Math.floor(sec / 60), s = sec % 60;
+    return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  }
+
+  /* ---------- Card rendering ---------- */
+  function renderCard(card) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    const isRed = !card.isJoker && card.faceUp && card.color === 'red';
+    b.className = 'playcard' + (isRed ? ' red' : '') + (!card.faceUp ? ' back' : '');
+    b.dataset.artId = card.artId || 'back';
+
+    if (!card.faceUp) {
+      b.setAttribute('aria-label', 'Face-down card');
+      return b;
+    }
+
+    // Card art with fallback: try <img>, revert to CSS on error
+    if (CARD_ART.enabled && CARD_ART.basePath && card.artId && card.artId !== 'back') {
+      const img = document.createElement('img');
+      img.src = CARD_ART.basePath + '/' + card.artId + '.png';
+      img.alt = cardLabel(card);
+      img.style.cssText = 'width:100%;height:100%;object-fit:contain;border-radius:6px;';
+      img.onerror = () => {
+        img.remove();
+        b.append(...cardTextNodes(card));
+      };
+      b.appendChild(img);
+      b.setAttribute('aria-label', cardLabel(card));
+      return b;
+    }
+
+    b.append(...cardTextNodes(card));
+    b.setAttribute('aria-label', cardLabel(card));
+    return b;
+  }
+
+  function cardTextNodes(card) {
+    const nodes = [];
+    if (card.isJoker) {
+      const r = document.createElement('span');
+      r.className = 'rank';
+      r.style.fontSize = 'clamp(8px,1.6vw,14px)';
+      r.textContent = card.jokerId === 'radio' ? '🃏 RADIO' : '🃏 PUG';
+      nodes.push(r);
+      const s = document.createElement('span');
+      s.className = 'suit';
+      s.style.fontSize = 'clamp(14px,2.4vw,22px)';
+      s.textContent = '★';
+      nodes.push(s);
+      if (card.standsFor) {
+        const sf = document.createElement('span');
+        sf.className = 'rank';
+        sf.style.fontSize = 'clamp(7px,1.4vw,11px)';
+        sf.textContent = 'as ' + (RANK_LABEL[card.standsFor.value] || card.standsFor.value) +
+          SUIT_SYMBOL[card.standsFor.suit];
+        nodes.push(sf);
+      }
+      return nodes;
+    }
+    const r = document.createElement('span');
+    r.className = 'rank';
+    r.textContent = RANK_LABEL[card.value] || card.value;
+    const s = document.createElement('span');
+    s.className = 'suit';
+    s.textContent = SUIT_SYMBOL[card.suit];
+    nodes.push(r, s);
+    return nodes;
+  }
+
+  function cardLabel(card) {
+    if (!card.faceUp) return 'Face-down card';
+    if (card.isJoker) return (card.jokerName || 'Joker') + ' (wild)';
+    const names = { 1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King' };
+    const r = names[card.value] || card.value;
+    return `${r} of ${card.suit}`;
+  }
+
+  /* ---------- Full board render ---------- */
+  function render(state) {
+    if (!state) return;
+    clearHints();
+
+    // Stock
+    const sp = $('stockSlot');
+    sp.innerHTML = '';
+    sp.classList.remove('outline-pile');
+    if (state.stock.length) {
+      const back = renderCard({ faceUp: false, artId: 'back' });
+      back.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+      back.setAttribute('aria-label', `Draw pile — ${state.stock.length} cards left`);
+      sp.appendChild(back);
+      const n = document.createElement('span');
+      n.style.cssText = 'position:absolute;bottom:2px;right:4px;color:#f9e5bc;font-size:0.75em;font-weight:bold;text-shadow:0 1px 2px #000;';
+      n.textContent = state.stock.length;
+      sp.appendChild(n);
+    } else {
+      sp.classList.add('outline-pile');
+      sp.innerHTML = '<span style="font-size:1.2em">↻</span>';
+      sp.setAttribute('aria-label', 'Recycle waste pile');
+    }
+
+    // Waste — show top 3 fanned for Draw-3 mode
+    const wp = $('wasteSlot');
+    wp.innerHTML = '';
+    wp.classList.remove('outline-pile');
+    if (state.waste.length) {
+      const show = state.drawMode === 3
+        ? state.waste.slice(-3)
+        : state.waste.slice(-1);
+      show.forEach((c, i) => {
+        const el = renderCard(c);
+        el.style.cssText = `position:absolute;top:0;left:${i * 12}px;width:calc(100% - ${i * 12}px);height:100%;`;
+        el.dataset.wasteIdx = state.waste.length - show.length + i;
+        // Only the top card is interactive
+        if (i < show.length - 1) el.style.pointerEvents = 'none';
+        wp.appendChild(el);
+      });
+    } else {
+      wp.classList.add('outline-pile');
+      wp.setAttribute('aria-label', 'Waste pile (empty)');
+    }
+
+    // Foundations (engine indices 0-3; DOM ids foundation-0..3)
+    for (let i = 0; i < 4; i++) {
+      const fp = $('foundation-' + i);
+      if (!fp) continue;
+      // Preserve the suit symbol when empty
+      const suitSym = fp.textContent.trim() || SUIT_SYMBOL[SaloonEngine.SUITS[i]];
+      fp.innerHTML = '';
+      const pile = state.foundations[i];
+      if (pile.length) {
+        const top = pile[pile.length - 1];
+        const el = renderCard(top);
+        el.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+        el.dataset.foundation = i;
+        fp.appendChild(el);
+        // Show count badge
+        const n = document.createElement('span');
+        n.style.cssText = 'position:absolute;bottom:2px;right:4px;color:#f9e5bc;font-size:0.7em;font-weight:bold;text-shadow:0 1px 2px #000;';
+        n.textContent = pile.length + '/13';
+        fp.appendChild(n);
+      } else {
+        fp.textContent = suitSym;
+      }
+    }
+
+    // Tableau — 7 columns
+    const tab = $('tableau');
+    tab.innerHTML = '';
+    for (let c = 0; c < 7; c++) {
+      const col = document.createElement('div');
+      col.className = 'tableau-column';
+      col.id = 'tab-' + c;
+      col.setAttribute('aria-label', 'Column ' + (c + 1));
+      col.style.position = 'relative';
+      let y = 0;
+      state.tableau[c].forEach((card, idx) => {
+        const el = renderCard(card);
+        el.style.setProperty('--y', y + 'px');
+        el.style.top = 'var(--y)';
+        el.dataset.col = c;
+        el.dataset.idx = idx;
+        col.appendChild(el);
+        y += card.faceUp ? 22 : 10;
+      });
+      // Empty column placeholder
+      if (!state.tableau[c].length) {
+        col.classList.add('outline-pile');
+        col.style.minHeight = '80px';
+        col.innerHTML = '<span style="display:grid;place-items:center;height:80px;color:#f9e5bc72;font-size:1.2em">K</span>';
+      } else {
+        col.style.minHeight = (y + 70) + 'px';
+      }
+      tab.appendChild(col);
+    }
+
+    // Stats
+    const movesEl = $('moves');
+    if (movesEl) movesEl.textContent = state.moves;
+    const timeEl = $('time');
+    if (timeEl) {
+      timeEl.textContent = state.timerMode === 'stopwatch' ? fmtTime(state.elapsed || 0) : '--:--';
+      if (timeEl.parentElement)
+        timeEl.parentElement.style.opacity = state.timerMode === 'stopwatch' ? '1' : '0.4';
+    }
+    const undoBtn = $('undo');
+    if (undoBtn) undoBtn.disabled = !state.canUndo;
+
+    manageTimer(state);
+    clearSelection();
+    if (state.gameWon) showWin(state);
+  }
+
+  function manageTimer(state) {
+    const shouldRun = state.timerMode === 'stopwatch' &&
+                      state.startTime !== null && !state.gameWon;
+    if (shouldRun && !timerId) {
+      timerId = setInterval(() => {
+        const st = SaloonEngine._getState();
+        if (!st || st.timerMode !== 'stopwatch') return;
+        st.elapsed = Math.floor((Date.now() - st.startTime) / 1000);
+        const el = $('time');
+        if (el) el.textContent = fmtTime(st.elapsed);
+      }, 500);
+    } else if (!shouldRun && timerId) {
+      clearInterval(timerId); timerId = null;
+    }
+  }
+
+  /* ---------- Selection / tap-to-move ---------- */
+  function clearSelection() {
+    document.querySelectorAll('.playcard.selected').forEach(e => e.classList.remove('selected'));
+    document.querySelectorAll('.drop-ok').forEach(e => e.classList.remove('drop-ok'));
+    selected = null;
+  }
+  function getCardEl(t) { return t.closest ? t.closest('.playcard') : null; }
+
+  function onPointerDown(e) {
+    const state = SaloonEngine.getState();
+    if (!state || state.gameWon) return;
+    clearHints();
+    if (e.target.closest && e.target.closest('#stockSlot')) return; // stock handled by click
+    const cardEl = getCardEl(e.target);
+    if (!cardEl || cardEl.classList.contains('back')) { clearSelection(); return; }
+
+    const col = cardEl.dataset.col;
+    if (col === undefined) {
+      // Waste or foundation card
+      if (cardEl.closest('#wasteSlot')) {
+        const live = SaloonEngine._getState();
+        const cards = [live.waste[live.waste.length - 1]];
+        startDrag(e, 'waste', null, null, cards, cardEl);
+      }
+      return;
+    }
+    const c = +col, i = +cardEl.dataset.idx;
+    const live = SaloonEngine._getState();
+    if (SaloonEngine.canPickUp(live, c, i)) {
+      startDrag(e, 'tableau', c, i, live.tableau[c].slice(i), cardEl);
+    } else if (SaloonEngine.isTopJoker(live, c)) {
+      startDrag(e, 'tableau', c, i, [live.tableau[c][i]], cardEl);
+    } else {
+      clearSelection();
+    }
+  }
+
+  function startDrag(e, from, col, idx, cards, cardEl) {
+    dragInfo = { from, col, idx, cards, el: cardEl, x0: 0, y0: 0, moved: false };
+    const pt = e.type.startsWith('touch') ? e.touches[0] : e;
+    dragInfo.x0 = pt.clientX; dragInfo.y0 = pt.clientY;
+  }
+
+  function onPointerMove(e) {
+    if (!dragInfo) return;
+    const pt = e.type.startsWith('touch')
+      ? (e.touches[0] || e.changedTouches[0]) : e;
+    const dx = pt.clientX - dragInfo.x0, dy = pt.clientY - dragInfo.y0;
+    const live = SaloonEngine._getState();
+    if (!dragInfo.moved && Math.hypot(dx, dy) > 8) {
+      dragInfo.moved = true;
+      dragInfo.el.classList.add('dragging');
+      // Highlight valid drop targets
+      for (let c = 0; c < 7; c++) {
+        if (dragInfo.from === 'tableau' && c === dragInfo.col) continue;
+        if (SaloonEngine.canMoveToTableau(live, dragInfo.cards, c)) {
+          const colEl = $('tab-' + c);
+          if (colEl) colEl.classList.add('drop-ok');
+        }
+      }
+      if (dragInfo.cards.length === 1) {
+        const card = dragInfo.cards[0];
+        for (let f = 0; f < 4; f++) {
+          if (SaloonEngine.canMoveToFoundation(live, card, f)) {
+            const fp = $('foundation-' + f);
+            if (fp) fp.classList.add('drop-ok');
+          }
+        }
+      }
+      if (e.cancelable) e.preventDefault();
+    }
+    if (dragInfo.moved) {
+      dragInfo.el.style.transform = `translate(${dx}px,${dy}px)`;
+      if (e.cancelable) e.preventDefault();
+    }
+  }
+
+  function onPointerUp(e) {
+    if (!dragInfo) return;
+    const d = dragInfo; dragInfo = null;
+    d.el.style.transform = '';
+    d.el.classList.remove('dragging');
+    document.querySelectorAll('.drop-ok').forEach(el => el.classList.remove('drop-ok'));
+
+    if (!d.moved) { handleTap(d); return; }
+
+    const pt = e.type.startsWith('touch') ? e.changedTouches[0] : e;
+    const below = document.elementFromPoint(pt.clientX, pt.clientY);
+    if (!below) { render(SaloonEngine.getState()); return; }
+
+    // Check foundation drop
+    const fndEl = below.closest ? below.closest('[id^="foundation-"]') : null;
+    if (fndEl && d.cards.length === 1) {
+      const f = parseInt(fndEl.id.split('-')[1], 10);
+      const ok = d.from === 'waste'
+        ? SaloonEngine.moveToSpecificFoundation('waste', null, f)
+        : SaloonEngine.moveToSpecificFoundation('tableau', d.col, f);
+      if (!ok) render(SaloonEngine.getState());
+      return;
+    }
+    // Check tableau drop
+    const tabEl = below.closest ? below.closest('.tableau-column') : null;
+    if (tabEl && tabEl.id) {
+      const toCol = parseInt(tabEl.id.split('-')[1], 10);
+      let ok = false;
+      if (d.from === 'waste') ok = SaloonEngine.moveWasteToTableau(toCol);
+      else if (d.from === 'tableau' && toCol !== d.col)
+        ok = SaloonEngine.moveTableauToTableau(d.col, d.idx, toCol);
+      if (!ok) render(SaloonEngine.getState());
+      return;
+    }
+    render(SaloonEngine.getState());
+  }
+
+  function handleTap(d) {
+    // Tap = select, then tap destination to move. Or double-tap = to foundation.
+    const now = Date.now();
+    if (d.lastTap && now - d.lastTap < 500 && d.cards.length === 1) {
+      // Double-tap: send to foundation
+      const ok = d.from === 'waste'
+        ? SaloonEngine.moveToFoundation('waste')
+        : SaloonEngine.moveToFoundation('tableau', d.col);
+      d.lastTap = 0;
+      clearSelection();
+      if (!ok) {
+        toast('That card can\'t go to a foundation right now.');
+      }
+      render(SaloonEngine.getState());
+      return;
+    }
+    d.lastTap = now;
+
+    var isSameCard = selected &&
+      selected.from === d.from &&
+      selected.col === d.col &&
+      selected.idx === d.idx;
+
+    if (isSameCard) {
+      // Tap selected card again → deselect
+      clearSelection();
+      render(SaloonEngine.getState());
+      return;
+    }
+
+    if (selected && d.from === 'tableau') {
+      // Try to move selected cards onto this tableau card's column
+      var destCol = d.col;
+      var ok = false;
+      if (selected.from === 'waste') {
+        ok = SaloonEngine.moveWasteToTableau(destCol);
+      } else if (selected.from === 'tableau' && destCol !== selected.col) {
+        ok = SaloonEngine.moveTableauToTableau(selected.col, selected.idx, destCol);
+      }
+      if (ok) {
+        clearSelection();
+        return; // render via state change
+      }
+      // Invalid move → shake, keep selection
+      if (d.el) {
+        d.el.classList.add('shake');
+        setTimeout(function(){ d.el.classList.remove('shake'); }, 400);
+      }
+      toast('That move isn\'t legal.');
+      return;
+    }
+
+    if (selected && d.from === 'waste') {
+      // Tapped waste card while something selected → switch selection to waste card
+      clearSelection();
+    }
+
+    // Select this card/stack
+    selectCardStack(d);
+  }
+
+  function selectCardStack(d) {
+    selected = { from: d.from, col: d.col, idx: d.idx };
+    if (d.el) d.el.classList.add('selected');
+    // Highlight valid destinations
+    const live = SaloonEngine._getState();
+    for (let c = 0; c < 7; c++) {
+      if (d.from === 'tableau' && c === d.col) continue;
+      if (SaloonEngine.canMoveToTableau(live, d.cards, c)) {
+        const colEl = $('tab-' + c);
+        if (colEl) colEl.classList.add('drop-ok');
+      }
+    }
+    if (d.cards.length === 1) {
+      for (let f = 0; f < 4; f++) {
+        if (SaloonEngine.canMoveToFoundation(live, d.cards[0], f)) {
+          const fp = $('foundation-' + f);
+          if (fp) fp.classList.add('drop-ok');
+        }
+      }
+    }
+  }
+
+  // Tap on empty column or foundation with a selection active
+  function onBoardClick(e) {
+    if (!selected) return;
+    // If the click was on a card, handleTap already processed it — skip
+    if (e.target.closest && e.target.closest('.playcard')) return;
+    const tabEl = e.target.closest ? e.target.closest('.tableau-column') : null;
+    const fndEl = e.target.closest ? e.target.closest('[id^="foundation-"]') : null;
+    const sel = selected;
+    clearSelection();
+
+    if (tabEl && tabEl.id) {
+      const toCol = parseInt(tabEl.id.split('-')[1], 10);
+      if (sel.from === 'tableau' && toCol === sel.col) { render(SaloonEngine.getState()); return; }
+      let ok = false;
+      if (sel.from === 'waste') ok = SaloonEngine.moveWasteToTableau(toCol);
+      else ok = SaloonEngine.moveTableauToTableau(sel.col, sel.idx, toCol);
+      if (!ok) {
+        toast('That move isn\'t legal.');
+        tabEl.classList.add('shake');
+        setTimeout(function(){ tabEl.classList.remove('shake'); }, 400);
+        // Re-apply selection highlight since we cleared it
+        render(SaloonEngine.getState());
+      }
+      return;
+    }
+    if (fndEl) {
+      const f = parseInt(fndEl.id.split('-')[1], 10);
+      // Only single cards go to foundations
+      const live = SaloonEngine._getState();
+      const isSingle = sel.from === 'waste' ||
+        (sel.from === 'tableau' && sel.idx === live.tableau[sel.col].length - 1);
+      if (!isSingle) { toast('Only single cards go to foundations.'); render(SaloonEngine.getState()); return; }
+      const ok = sel.from === 'waste'
+        ? SaloonEngine.moveToSpecificFoundation('waste', null, f)
+        : SaloonEngine.moveToSpecificFoundation('tableau', sel.col, f);
+      if (!ok) {
+        toast('That card can\'t go there.');
+        fndEl.classList.add('shake');
+        setTimeout(function(){ fndEl.classList.remove('shake'); }, 400);
+        render(SaloonEngine.getState());
+      }
+      return;
+    }
+  }
+
+  /* ---------- Hint system ---------- */
+  function clearHints() {
+    document.querySelectorAll('.hint-glow').forEach(e => e.classList.remove('hint-glow'));
+    hintIdx = 0;
+    lastHints = [];
+  }
+
+  function cardElementFor(hint) {
+    if (hint.from === 'waste') {
+      return document.querySelector('#wasteSlot .playcard:not([style*="pointer-events: none"])')
+        || document.querySelector('#wasteSlot .playcard');
+    }
+    if (hint.from === 'tableau') {
+      const colEl = $('tab-' + hint.fromCol);
+      if (!colEl) return null;
+      const idx = hint.fromIdx !== undefined ? hint.fromIdx
+        : SaloonEngine._getState().tableau[hint.fromCol].length - 1;
+      return colEl.querySelector(`[data-idx="${idx}"]`);
+    }
+    return null;
+  }
+
+  function destElementFor(hint) {
+    if (hint.to === 'foundation') return $('foundation-' + hint.toFoundation);
+    if (hint.to === 'tableau') return $('tab-' + hint.toCol);
+    return null;
+  }
+
+  function describeHint(hint) {
+    if (hint.action === 'draw') return 'No moves — draw from the stock.';
+    const lbl = hint.card.isJoker ? 'Joker'
+      : (({ 1: 'A', 11: 'J', 12: 'Q', 13: 'K' })[hint.card.value] || hint.card.value) +
+        ({ spades: '♠', hearts: '♥', diamonds: '♦', clubs: '♣' })[hint.card.suit];
+    const dest = hint.to === 'foundation'
+      ? 'foundation ' + ({ spades: '♠', hearts: '♥', diamonds: '♦', clubs: '♣' })[SaloonEngine.SUITS[hint.toFoundation]]
+      : 'column ' + (hint.toCol + 1);
+    return `Try ${lbl} → ${dest}`;
+  }
+
+  function showHint() {
+    const state = SaloonEngine.getState();
+    if (!state || state.gameWon) return;
+    clearHints();
+
+    const hints = SaloonEngine.findHints();
+    if (!hints.length) {
+      toast('No moves available. Start a new deal!');
+      return;
+    }
+    lastHints = hints;
+    const hint = hints[hintIdx % hints.length];
+    hintIdx++;
+
+    if (hint.action === 'draw') {
+      const sp = $('stockSlot');
+      if (sp) sp.classList.add('hint-glow');
+      toast(hints.length > 1
+        ? 'No card moves — draw from the stock.'
+        : 'Draw from the stock to continue.');
+      // Keep the glow until next action; store for clearing
+      lastHints = [{ action: 'draw' }];
+      return;
+    }
+
+    const cardEl = cardElementFor(hint);
+    const destEl = destElementFor(hint);
+    if (cardEl) cardEl.classList.add('hint-glow');
+    if (destEl) destEl.classList.add('hint-glow');
+    toast(describeHint(hint) + (hints.length > 1 ? ` (${hintIdx % hints.length || hints.length}/${hints.length})` : ''));
+  }
+
+  /* ---------- Toast ---------- */
+  let toastTimer = null;
+  function toast(msg) {
+    const t = $('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  /* ---------- Win overlay + Dicey reward ---------- */
+  function showWin(state) {
+    if ($('saloon-win')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'saloon-win';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:2000;display:grid;place-items:center;background:rgba(10,5,2,0.85);padding:20px;';
+    overlay.innerHTML =
+      '<div style="background:linear-gradient(180deg,#2a1a0c,#1a0f06);border:2px solid #d4a84b;border-radius:12px;padding:28px;max-width:420px;text-align:center;color:#f0d080;">' +
+      '<div style="font-size:2.5em">🎉</div>' +
+      '<h2 style="margin:8px 0;color:#f0d080;">You Win!</h2>' +
+      '<p style="color:#d4a84b;">' + state.moves + ' moves' +
+      (state.timerMode === 'stopwatch' ? ' · ' + fmtTime(state.elapsed || 0) : '') + '</p>' +
+      '<div id="dicey-box" style="margin:16px 0;min-height:60px;"><p style="color:#999;font-size:0.9em;">Loading Dicey reward…</p></div>' +
+      '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">' +
+      '<button id="btn-dicey" class="wood-button" type="button"><span class="glyph">🎲</span><b>Roll Dicey</b></button>' +
+      '<button id="btn-playagain" class="wood-button" type="button"><span class="glyph">🂠</span><b>Play Again</b></button>' +
+      '<button id="btn-notnow" class="wood-button" type="button"><b>Close</b></button>' +
+      '</div></div>';
+    document.body.appendChild(overlay);
+
+    $('btn-dicey').addEventListener('click', rollDicey);
+    $('btn-playagain').addEventListener('click', () => {
+      overlay.remove();
+      const s = getSettings();
+      SaloonEngine.newGame(s.timer, s.draw);
+    });
+    $('btn-notnow').addEventListener('click', () => overlay.remove());
+  }
+
+  async function rollDicey() {
+    const box = $('dicey-box');
+    if (!box) return;
+    box.innerHTML = '<p style="color:#999;">🎲 Rolling…</p>';
+    try {
+      const res = await fetch('https://fudgiepie4-ux.github.io/tscms-today/danger-zone-public.json');
+      const data = await res.json();
+      const entries = (data.entries || []).filter(e => e.post_url);
+      if (!entries.length) throw new Error('empty');
+      const pick = entries[Math.floor(Math.random() * entries.length)];
+      const tierCls = pick.tier === 'CRITICAL' ? 'color:#ff6b6b' : pick.tier === 'AT RISK' ? 'color:#ffa94d' : 'color:#69db7c';
+      box.innerHTML =
+        '<div><b style="color:#f0d080">' + esc(pick.member) + '</b> ' +
+        '<span style="' + tierCls + ';font-size:0.8em;font-weight:bold">' + esc(pick.tier) + '</span></div>' +
+        '<p style="color:#d4a84b;">🎵 ' + esc(pick.title) + '</p>' +
+        '<p><a href="' + esc(pick.post_url) + '" target="_blank" rel="noopener" style="color:#69db7c;">Visit post on Facebook →</a></p>' +
+        '<p style="font-size:0.8em;color:#999">Go show some love — a comment means everything.</p>';
+    } catch (err) {
+      box.innerHTML = '<p style="color:#999">Couldn\'t reach the Danger Zone list right now. Play again or try later!</p>';
+    }
+  }
+
+  /* ---------- Settings ---------- */
+  function getSettings() {
+    const t = document.querySelector('[data-timermode].active-option');
+    const d = document.querySelector('[data-drawmode].active-option');
+    return {
+      timer: t ? t.dataset.timermode : 'stopwatch',
+      draw: d ? d.dataset.drawmode : '1',
+    };
+  }
+
+  function wireSettings() {
+    const dlg = $('settingsDialog');
+    const openBtn = $('settings');
+    if (openBtn && dlg) {
+      openBtn.addEventListener('click', () => { dlg.hidden = false; });
+      dlg.querySelectorAll('[data-close]').forEach(b =>
+        b.addEventListener('click', () => { dlg.hidden = true; }));
+      dlg.addEventListener('click', e => {
+        if (e.target === dlg) dlg.hidden = true;
+      });
+    }
+    // Timer mode buttons
+    document.querySelectorAll('[data-timermode]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-timermode]').forEach(b => b.classList.remove('active-option'));
+        btn.classList.add('active-option');
+        const s = getSettings();
+        SaloonEngine.newGame(s.timer, s.draw);
+        toast(s.timer === 'stopwatch' ? '⏱️ Stopwatch mode — new deal!' : '😌 Relaxed mode — new deal!');
+      });
+    });
+    // Draw mode buttons
+    document.querySelectorAll('[data-drawmode]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-drawmode]').forEach(b => b.classList.remove('active-option'));
+        btn.classList.add('active-option');
+        const s = getSettings();
+        SaloonEngine.newGame(s.timer, s.draw);
+        toast(btn.dataset.drawmode === '3' ? '🂠🂠🂠 Draw 3 — new deal!' : '🂠 Draw 1 — new deal!');
+      });
+    });
+    // Larger text toggle
+    const ltBtn = $('optLargeText');
+    if (ltBtn) {
+      const saved = localStorage.getItem('tscms_saloon_large_text') === '1';
+      if (saved) {
+        document.body.classList.add('large-text');
+        ltBtn.textContent = '🔍 Larger Text: On';
+      }
+      ltBtn.addEventListener('click', () => {
+        const on = document.body.classList.toggle('large-text');
+        localStorage.setItem('tscms_saloon_large_text', on ? '1' : '0');
+        ltBtn.textContent = on ? '🔍 Larger Text: On' : '🔍 Larger Text: Off';
+      });
+    }
+    // Preserve Clara's cosmetic settings (lamp/wood/back) — already wired in her script
+  }
+
+  /* ---------- Init ---------- */
+  function init() {
+    // Build tableau columns container (empty; render fills them)
+    const s = getSettings();
+    SaloonEngine.newGame(s.timer, s.draw);
+    SaloonEngine.onStateChange(render);
+
+    // Stock click = draw
+    $('stockSlot').addEventListener('click', () => {
+      clearHints();
+      SaloonEngine.drawFromStock();
+    });
+
+    // Control buttons
+    $('newDeal').addEventListener('click', () => {
+      clearHints();
+      const st = getSettings();
+      SaloonEngine.newGame(st.timer, st.draw);
+      toast('🂠 New deal!');
+    });
+    const undoBtn = $('undo');
+    if (undoBtn) undoBtn.addEventListener('click', () => {
+      clearHints();
+      if (!SaloonEngine.undo()) toast('Nothing to undo.');
+    });
+    const hintBtn = $('hint');
+    if (hintBtn) hintBtn.addEventListener('click', showHint);
+
+    // Pointer handling for drag + tap-to-move + double-tap
+    const board = $('tableau').parentElement;
+    document.addEventListener('pointerdown', onPointerDown, { passive: true });
+    document.addEventListener('pointermove', onPointerMove, { passive: false });
+    document.addEventListener('pointerup', onPointerUp, { passive: true });
+    document.addEventListener('click', onBoardClick);
+
+    wireSettings();
+
+    // Initial render
+    render(SaloonEngine.getState());
+  }
+
+  return { init, render, showHint, toast, CARD_ART, getSettings };
+})();
+
+
+/* ----- Boot ----- */
+document.addEventListener('DOMContentLoaded', () => {
+  SaloonRenderer.init();
+});
+</script><script>
+/* Cosmetic settings wiring - 2026-10-15 */
+(function(){
+  function setActive(row, btn){
+    row.querySelectorAll('button').forEach(b=>b.classList.remove('active-option'));
+    btn.classList.add('active-option');
+  }
+  // Room Lighting
+  var lw=document.getElementById('lampWarm'), lc=document.getElementById('lampCool');
+  if(lw&&lc){
+    lw.addEventListener('click',()=>{document.body.classList.remove('moonlit');setActive(lw.parentElement,lw);});
+    lc.addEventListener('click',()=>{document.body.classList.add('moonlit');setActive(lc.parentElement,lc);});
+  }
+  // Table Wood
+  var ww=document.getElementById('woodWarm'), wd=document.getElementById('woodDark');
+  if(ww&&wd){
+    ww.addEventListener('click',()=>{document.body.classList.remove('woodDark');setActive(ww.parentElement,ww);});
+    wd.addEventListener('click',()=>{document.body.classList.add('woodDark');setActive(wd.parentElement,wd);});
+  }
+  // Card Backs
+  var br=document.getElementById('backRed'), bd=document.getElementById('backDark');
+  if(br&&bd){
+    br.addEventListener('click',()=>{document.body.classList.remove('backDark');setActive(br.parentElement,br);});
+    bd.addEventListener('click',()=>{document.body.classList.add('backDark');setActive(bd.parentElement,bd);});
+  }
+  // Jukebox open/close
+  var oj=document.getElementById('openJukebox'), jd=document.getElementById('jukeboxDialog');
+  if(oj&&jd){
+    oj.addEventListener('click',()=>{jd.hidden=false;});
+    jd.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>{jd.hidden=true;}));
+  }
+})();
+</script><script>
+/**
+ * TSCMSSharedAudio — shared cross-page audio state for TSCMS static pages.
+ *
+ * Problem: the public page, admin page, and Solitaire Saloon are separate
+ * static HTML files (GitHub Pages). True seamless audio across page loads
+ * is impossible without SPA architecture. This module implements the
+ * best-effort pattern Fudgie approved 2026-10-15:
+ *
+ *   - ONE shared state object in localStorage (key tscms_shared_audio_v1).
+ *   - ONE <audio> element per page — never two competing streams.
+ *   - Play on the public page, navigate to the game page: the game page
+ *     reads shared state on load and resumes the same track from the saved
+ *     position (brief gap during navigation is unavoidable on static pages).
+ *   - Pause on the game jukebox: writes isPlaying:false to shared state;
+ *     other open tabs pick it up via the `storage` event and pause too.
+ *   - A 3s poll covers same-tab navigation (storage events only fire in
+ *     OTHER tabs).
+ *
+ * Mobile autoplay policy: browsers block audio.play() without a user
+ * gesture. On load, if shared state says isPlaying but play() is rejected,
+ * the module surfaces a "tap to resume" callback instead of failing
+ * silently. The host page decides how to render that prompt.
+ *
+ * Track list: injected via `window.TSCMS_TRACKS` (array of
+ * {url, title, artist}). In production this comes from the radio pipeline
+ * (radio_tracks.json / build_radio.py). NEVER hardcode fake tracks here.
+ *
+ * Usage:
+ *   const audio = TSCMSSharedAudio.init({
+ *     audioEl: document.getElementById('my-audio'),  // optional; created if omitted
+ *     onState: (s) => renderPlayer(s),               // UI sync callback
+ *     onNeedGesture: () => showTapToResume(),        // autoplay-blocked callback
+ *     onError: (msg) => toast(msg),                  // load/play error callback
+ *   });
+ *   audio.play(); audio.pause(); audio.toggle();
+ *   audio.next(); audio.prev(); audio.seekTo(seconds);
+ *   audio.setTrackList([{url,title,artist}, ...]);
+ *
+ * State shape in localStorage:
+ *   { trackUrl, trackTitle, trackArtist, trackIndex,
+ *     position, duration, isPlaying, updatedAt }
+ */
+(function (global) {
+  'use strict';
+
+  var STORAGE_KEY = 'tscms_shared_audio_v1';
+  var POSITION_THROTTLE_MS = 5000;  // persist position at most every 5s
+  var POLL_MS = 3000;               // same-tab navigation fallback
+  var STALE_MS = 15000;             // ignore state older than this when resuming w/o gesture context
+
+  function now() { return Date.now(); }
+
+  function readState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      var s = JSON.parse(raw);
+      if (!s || typeof s !== 'object') return null;
+      return s;
+    } catch (e) { return null; }
+  }
+
+  function writeState(patch) {
+    try {
+      var cur = readState() || {};
+      for (var k in patch) cur[k] = patch[k];
+      cur.updatedAt = now();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cur));
+      return cur;
+    } catch (e) { return null; }
+  }
+
+  function fmtTime(sec) {
+    if (!isFinite(sec) || sec < 0) sec = 0;
+    var m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  function init(opts) {
+    opts = opts || {};
+    var onState = opts.onState || function () {};
+    var onNeedGesture = opts.onNeedGesture || function () {};
+    var onError = opts.onError || function () {};
+
+    // Single audio element per page. Reuse a module-level one if the host
+    // didn't pass one, so repeated init() calls never double up.
+    var el = opts.audioEl || global.__tscmsSharedAudioEl || null;
+    if (!el) {
+      el = document.createElement('audio');
+      el.preload = 'metadata';
+      el.id = 'tscms-shared-audio-el';
+      el.style.display = 'none';
+      document.body.appendChild(el);
+      global.__tscmsSharedAudioEl = el;
+    }
+
+    var tracks = Array.isArray(global.TSCMS_TRACKS) ? global.TSCMS_TRACKS.slice() : [];
+    var lastPersist = 0;
+    var suppressWrite = false;   // true while applying remote state
+    var pollTimer = null;
+    var destroyed = false;
+
+    function snapshot() {
+      var s = readState() || {};
+      return {
+        trackUrl: s.trackUrl || null,
+        trackTitle: s.trackTitle || 'No track',
+        trackArtist: s.trackArtist || '',
+        trackIndex: typeof s.trackIndex === 'number' ? s.trackIndex : -1,
+        position: el.currentTime || s.position || 0,
+        duration: el.duration || s.duration || 0,
+        isPlaying: !el.paused && !el.ended,
+        trackCount: tracks.length,
+      };
+    }
+
+    function emit() { try { onState(snapshot()); } catch (e) {} }
+
+    // Persist current playback state (throttled for position-only updates).
+    function persist(force) {
+      if (suppressWrite || destroyed) return;
+      var t = now();
+      if (!force && t - lastPersist < POSITION_THROTTLE_MS) return;
+      lastPersist = t;
+      var idx = currentIndex();
+      var tr = idx >= 0 && tracks[idx] ? tracks[idx] : {};
+      writeState({
+        trackUrl: el.src || tr.url || null,
+        trackTitle: tr.title || '',
+        trackArtist: tr.artist || '',
+        trackIndex: idx,
+        position: el.currentTime || 0,
+        duration: el.duration || 0,
+        isPlaying: !el.paused && !el.ended,
+      });
+    }
+
+    function currentIndex() {
+      var s = readState();
+      if (s && typeof s.trackIndex === 'number' && s.trackIndex >= 0 && s.trackIndex < tracks.length) {
+        // Prefer the shared index when the loaded src matches.
+        var tr = tracks[s.trackIndex];
+        if (tr && el.src && tr.url && el.src.indexOf(tr.url) !== -1) return s.trackIndex;
+        if (!el.src && tr) return s.trackIndex;
+      }
+      // Fall back: match by URL.
+      for (var i = 0; i < tracks.length; i++) {
+        if (tracks[i].url && el.src && el.src.indexOf(tracks[i].url) !== -1) return i;
+      }
+      return tracks.length ? 0 : -1;
+    }
+
+    function loadIndex(i, autoplay) {
+      if (i < 0 || i >= tracks.length) return false;
+      var tr = tracks[i];
+      if (!tr || !tr.url) return false;
+      suppressWrite = true;
+      try {
+        if (el.src !== tr.url) el.src = tr.url;
+      } finally { suppressWrite = false; }
+      writeState({
+        trackUrl: tr.url, trackTitle: tr.title || '', trackArtist: tr.artist || '',
+        trackIndex: i, position: 0, isPlaying: !!autoplay,
+      });
+      emit();
+      if (autoplay) return play();
+      return true;
+    }
+
+    function play() {
+      if (!tracks.length) { onError('No tracks loaded'); return Promise.resolve(false); }
+      if (!el.src) {
+        var s = readState();
+        var i = (s && s.trackIndex >= 0) ? s.trackIndex : 0;
+        loadIndex(i, false);
+      }
+      var p = el.play();
+      if (p && typeof p.then === 'function') {
+        return p.then(function () { persist(true); emit(); return true; })
+          .catch(function () { onNeedGesture(); return false; });
+      }
+      persist(true); emit();
+      return Promise.resolve(true);
+    }
+
+    function pause() {
+      el.pause();
+      persist(true);
+      emit();
+    }
+
+    function toggle() {
+      if (el.paused) return play();
+      pause();
+      return Promise.resolve(false);
+    }
+
+    function next() {
+      if (!tracks.length) return false;
+      var i = currentIndex();
+      return loadIndex((i + 1) % tracks.length, true);
+    }
+
+    function prev() {
+      if (!tracks.length) return false;
+      var i = currentIndex();
+      // If >3s into the track, restart it instead of going back.
+      if (el.currentTime > 3) { el.currentTime = 0; persist(true); emit(); return true; }
+      return loadIndex((i - 1 + tracks.length) % tracks.length, true);
+    }
+
+    function seekTo(sec) {
+      if (!isFinite(sec) || sec < 0) return;
+      try { el.currentTime = sec; } catch (e) {}
+      persist(true);
+      emit();
+    }
+
+    function setTrackList(list) {
+      tracks = Array.isArray(list) ? list.slice() : [];
+      emit();
+    }
+
+    // ---- Remote changes (another tab wrote new state) ----
+    function applyRemote() {
+      if (destroyed) return;
+      var s = readState();
+      if (!s || !s.trackUrl) return;
+      suppressWrite = true;
+      try {
+        var srcMatch = el.src && s.trackUrl && el.src.indexOf(s.trackUrl) !== -1;
+        if (!srcMatch) {
+          el.src = s.trackUrl;
+          if (s.position && isFinite(s.position)) {
+            // Set position once metadata loads if not ready yet.
+            if (el.readyState > 0) { try { el.currentTime = s.position; } catch (e) {} }
+            else {
+              var pos = s.position;
+              el.onloadedmetadata = function () { try { el.currentTime = pos; } catch (e) {} };
+            }
+          }
+        }
+        // Fudgie's rule: pause in one place pauses everywhere.
+        if (s.isPlaying === false && !el.paused) { el.pause(); }
+        else if (s.isPlaying === true && el.paused) {
+          // Another tab started playback — try to follow. Autoplay policy
+          // may block this; surface the gesture prompt instead of failing.
+          var p = el.play();
+          if (p && typeof p.catch === 'function') p.catch(function () { onNeedGesture(); });
+        }
+      } finally { suppressWrite = false; }
+      emit();
+    }
+
+    function onStorageEvent(e) {
+      if (e.key !== STORAGE_KEY) return;
+      applyRemote();
+    }
+
+    // ---- Resume on page load ----
+    function resumeFromShared() {
+      var s = readState();
+      if (!s || !s.trackUrl) { emit(); return; }
+      // Match track list index if we have tracks, else use the raw URL.
+      var idx = -1;
+      for (var i = 0; i < tracks.length; i++) {
+        if (tracks[i].url === s.trackUrl) { idx = i; break; }
+      }
+      suppressWrite = true;
+      try {
+        el.src = s.trackUrl;
+        if (s.position && isFinite(s.position) && s.position > 1) {
+          var pos = s.position;
+          if (el.readyState > 0) { try { el.currentTime = pos; } catch (e) {} }
+          else el.onloadedmetadata = function () { try { el.currentTime = pos; } catch (e) {} };
+        }
+      } finally { suppressWrite = false; }
+      writeState({
+        trackUrl: s.trackUrl, trackTitle: s.trackTitle || '', trackArtist: s.trackArtist || '',
+        trackIndex: idx, position: s.position || 0, isPlaying: !!s.isPlaying,
+      });
+      emit();
+      if (s.isPlaying) {
+        var age = now() - (s.updatedAt || 0);
+        // If the state is fresh the user was just listening; attempt resume.
+        // Autoplay policy may still block it -> gesture prompt.
+        if (age < STALE_MS * 12) {
+          var p = el.play();
+          if (p && typeof p.catch === 'function') p.catch(function () { onNeedGesture(); });
+        } else { onNeedGesture(); }
+      }
+    }
+
+    // ---- Wire element events ----
+    el.addEventListener('play', function () { persist(true); emit(); });
+    el.addEventListener('pause', function () { persist(true); emit(); });
+    el.addEventListener('ended', function () { persist(true); next(); });
+    el.addEventListener('timeupdate', function () { persist(false); });
+    el.addEventListener('loadedmetadata', function () { persist(true); emit(); });
+    el.addEventListener('error', function () {
+      var msg = 'Could not play this track';
+      try { if (el.error && el.error.message) msg += ': ' + el.error.message; } catch (e) {}
+      onError(msg);
+      persist(true); emit();
+    });
+    el.addEventListener('seeked', function () { persist(true); emit(); });
+
+    global.addEventListener('storage', onStorageEvent);
+    pollTimer = setInterval(function () {
+      if (destroyed) return;
+      var s = readState();
+      if (!s) return;
+      // Same-tab navigation fallback: if shared says paused but we're
+      // playing (or vice versa), converge. Compare updatedAt to avoid
+      // fighting our own writes.
+      var lastWrite = lastPersist;
+      if (s.updatedAt > lastWrite + 1000) applyRemote();
+    }, POLL_MS);
+
+    resumeFromShared();
+
+    return {
+      play: play, pause: pause, toggle: toggle,
+      next: next, prev: prev, seekTo: seekTo,
+      setTrackList: setTrackList,
+      getState: snapshot,
+      fmtTime: fmtTime,
+      destroy: function () {
+        destroyed = true;
+        global.removeEventListener('storage', onStorageEvent);
+        if (pollTimer) clearInterval(pollTimer);
+      },
+    };
+  }
+
+  global.TSCMSSharedAudio = { init: init, STORAGE_KEY: STORAGE_KEY, fmtTime: fmtTime };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+
+/* ============================================================
+   PART: Shared cross-page audio (TSCMSSharedAudio) + jukebox UI
+   Fudgie 2026-10-15: one shared audio state across public/game/
+   admin pages. Pause in the card room pauses everywhere.
+   Track list comes from window.TSCMS_TRACKS (radio pipeline);
+   no hardcoded fake tracks. STAGING ONLY.
+   ============================================================ */
+(function(){
+  'use strict';
+  function $(id){ return document.getElementById(id); }
+
+  // "Tap to resume" prompt element (created once)
+  var resumePrompt = null;
+  function showResumePrompt(){
+    if (resumePrompt) { resumePrompt.style.display = 'flex'; return; }
+    resumePrompt = document.createElement('div');
+    resumePrompt.id = 'tscms-resume-prompt';
+    resumePrompt.innerHTML = '<button type="button" id="tscms-resume-btn">\u25B6 Tap to resume music</button>';
+    resumePrompt.style.cssText = 'position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;';
+    var btn = resumePrompt.querySelector('button');
+    btn.style.cssText = 'background:linear-gradient(180deg,#5a3a1a,#3a2410);color:#f0d080;border:2px solid #d4a84b;border-radius:10px;padding:12px 20px;font-size:1em;font-weight:bold;cursor:pointer;';
+    document.body.appendChild(resumePrompt);
+    btn.addEventListener('click', function(){
+      resumePrompt.style.display = 'none';
+      if (window.__tscmsAudio) window.__tscmsAudio.play();
+    });
+  }
+  function hideResumePrompt(){
+    if (resumePrompt) resumePrompt.style.display = 'none';
+  }
+
+  function setEqPlaying(playing){
+    ['retroJuke'].forEach(function(id){
+      var n = $(id); if (n) n.classList.toggle('is-playing', !!playing);
+    });
+    var fj = document.querySelector('.full-juke');
+    if (fj) fj.classList.toggle('is-playing', !!playing);
+    // Drive the real EQ visualizer
+    if (window.TSCMSEqualizer) {
+      if (playing) window.TSCMSEqualizer.onPlay();
+      else window.TSCMSEqualizer.onPause();
+    }
+  }
+
+  function renderPlayer(s){
+    var title = s.trackTitle && s.trackTitle !== 'No track' ? s.trackTitle : 'TSCMS Radio';
+    var artist = s.trackArtist || '';
+    var jt = $('jukeTrackTitle'); if (jt) jt.textContent = title;
+    var ja = $('jukeTrackArtist'); if (ja) ja.textContent = artist || 'Suno Country Music Spot';
+    var mt = $('miniTrack'); if (mt) mt.textContent = artist ? (title + ' \u2014 ' + artist) : title;
+    var mp = $('miniPlay'); if (mp) mp.textContent = s.isPlaying ? '\u23F8' : '\u25B6';
+    var fp = $('fullPlay'); if (fp) fp.textContent = s.isPlaying ? '\u23F8' : '\u25B6';
+    var jn = $('jukeNow'); if (jn) jn.textContent = TSCMSSharedAudio.fmtTime(s.position);
+    var je = $('jukeEnd'); if (je) je.textContent = TSCMSSharedAudio.fmtTime(s.duration);
+    var pr = $('jukeProgress');
+    if (pr && s.duration > 0) pr.value = Math.round(100 * s.position / s.duration);
+    setEqPlaying(s.isPlaying);
+    var conn = $('jukeConnection');
+    if (conn) {
+      if (!s.trackCount) { conn.textContent = 'NO TRACKS LOADED'; }
+      else if (s.isPlaying) { conn.textContent = 'ON AIR \u00B7 SHARED AUDIO'; }
+      else { conn.textContent = 'PAUSED \u00B7 SHARED AUDIO'; }
+    }
+    var demoLabel = document.querySelector('.juke-mini-label');
+    if (demoLabel) demoLabel.textContent = s.trackCount ? (s.isPlaying ? 'PLAYING' : 'PAUSED') : 'NO TRACKS';
+  }
+
+  function toastMsg(msg){
+    if (typeof toast === 'function') toast(msg);
+  }
+
+  var audio = TSCMSSharedAudio.init({
+    onState: renderPlayer,
+    onNeedGesture: showResumePrompt,
+    onError: toastMsg,
+  });
+  window.__tscmsAudio = audio;
+
+  // Play/pause toggles
+  [['miniPlay'], ['fullPlay']].forEach(function(pair){
+    var b = $(pair[0]);
+    if (b) b.addEventListener('click', function(){ hideResumePrompt(); audio.toggle(); });
+  });
+  // Next/prev
+  var mn = $('miniNext'); if (mn) mn.addEventListener('click', function(){ audio.next(); });
+  var mp2 = $('miniPrev'); if (mp2) mp2.addEventListener('click', function(){ audio.prev(); });
+  var fn = $('fullNext'); if (fn) fn.addEventListener('click', function(){ audio.next(); });
+  var fp2 = $('fullPrev'); if (fp2) fp2.addEventListener('click', function(){ audio.prev(); });
+  // Seek
+  var pr = $('jukeProgress');
+  if (pr) pr.addEventListener('change', function(){
+    var s = audio.getState();
+    if (s.duration > 0) audio.seekTo(s.duration * pr.value / 100);
+  });
+
+  // If tracks arrive later (pipeline injects async), pick them up.
+  if (!window.TSCMS_TRACKS || !window.TSCMS_TRACKS.length) {
+    var checkCount = 0;
+    var iv = setInterval(function(){
+      checkCount++;
+      if (window.TSCMS_TRACKS && window.TSCMS_TRACKS.length) {
+        audio.setTrackList(window.TSCMS_TRACKS);
+        clearInterval(iv);
+      } else if (checkCount > 20) clearInterval(iv);
+    }, 1000);
+  }
+})();
+
+</script>
+<script>
+/* ============================================================
+   PART: Real EQ Visualizer — Web Audio API + CORS fallback
+   - Drives .eq-bar elements from actual audio frequency data
+   - Falls back to beat-synced pseudo-animation if CORS blocks analysis
+   - Mobile-safe: AudioContext created/resumed on user gesture
+   ============================================================ */
+(function(){
+  'use strict';
+
+  var BAR_COUNT_MINI = 12;
+  var BAR_COUNT_FULL = 24;
+  var FFT_SIZE = 256; // 128 frequency bins
+
+  var ctx = null;           // AudioContext
+  var analyser = null;      // AnalyserNode
+  var mediaSrc = null;      // MediaElementSource
+  var freqData = null;      // Uint8Array for getByteFrequencyData
+  var rafId = null;
+  var mode = 'none';        // 'real' | 'pseudo' | 'none'
+  var zeroFrames = 0;       // consecutive all-zero frames (CORS detection)
+  var audioEl = null;
+  var isPlaying = false;
+  var beatPhase = 0;
+
+  var miniBars = [];
+  var fullBars = [];
+
+  function buildBars(containerId, count, store) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    for (var i = 0; i < count; i++) {
+      var bar = document.createElement('span');
+      bar.className = 'eq-bar';
+      bar.style.height = '8%';
+      // Color gradient: bass=warm, mid=gold, treble=cyan
+      var t = i / (count - 1);
+      bar.style.setProperty('--eq-color',
+        t < 0.33 ? '#ff9a3c' : (t < 0.66 ? '#ffd76a' : '#42eafd'));
+      container.appendChild(bar);
+      store.push(bar);
+    }
+  }
+
+  function ensureContext() {
+    if (ctx) {
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(function(){});
+      }
+      return true;
+    }
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      ctx = new AC();
+      analyser = ctx.createAnalyser();
+      analyser.fftSize = FFT_SIZE;
+      analyser.smoothingTimeConstant = 0.75;
+      freqData = new Uint8Array(analyser.frequencyBinCount);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function tryConnect(el) {
+    // NOTE 2026-10-15: Real frequency analysis via createMediaElementSource
+    // PERMANENTLY silences cross-origin audio without CORS headers (Suno CDN).
+    // Once called, the element cannot be un-bound. So we ALWAYS use the
+    // beat-synced pseudo visualizer — it looks musical without breaking sound.
+    mode = 'pseudo';
+    return false;
+  }
+
+  function setBarHeight(bar, pct) {
+    // Clamp 4%–100%, use transform for perf
+    var h = Math.max(4, Math.min(100, pct));
+    bar.style.height = h.toFixed(1) + '%';
+  }
+
+  function renderReal() {
+    analyser.getByteFrequencyData(freqData);
+    // Check for all-zeros (CORS-tainted = analyzer outputs silence)
+    var sum = 0;
+    for (var i = 0; i < freqData.length; i++) sum += freqData[i];
+    if (sum === 0) {
+      zeroFrames++;
+      if (zeroFrames > 30) { mode = 'pseudo'; return; } // ~0.5s of silence
+    } else {
+      zeroFrames = 0;
+    }
+
+    var bins = freqData.length;
+    // Map bars to log-spaced frequency bins (bass-heavy like real music)
+    function binFor(t) {
+      // t: 0..1 → log scale across bins
+      var logMax = Math.log(bins);
+      return Math.min(bins - 1, Math.floor(Math.exp(t * logMax)) - 1);
+    }
+    var i, t, v;
+    for (i = 0; i < miniBars.length; i++) {
+      t = i / (miniBars.length - 1);
+      v = freqData[Math.max(0, binFor(t))] / 255;
+      setBarHeight(miniBars[i], 4 + v * 96);
+    }
+    for (i = 0; i < fullBars.length; i++) {
+      t = i / (fullBars.length - 1);
+      v = freqData[Math.max(0, binFor(t))] / 255;
+      setBarHeight(fullBars[i], 4 + v * 96);
+    }
+  }
+
+  function renderPseudo() {
+    // Beat-synced musical pattern (not random) — 4/4 feel at ~120 BPM
+    beatPhase += 0.09;
+    var i, t, env, v;
+    for (i = 0; i < miniBars.length; i++) {
+      t = i / (miniBars.length - 1);
+      // Bass bars pulse on beat, treble shimmer faster
+      env = t < 0.33
+        ? Math.pow(Math.abs(Math.sin(beatPhase)), 2)
+        : t < 0.66
+          ? Math.pow(Math.abs(Math.sin(beatPhase * 1.5 + 1)), 1.5)
+          : Math.pow(Math.abs(Math.sin(beatPhase * 2.3 + 2)), 1.2);
+      // Per-bar variation so it's not uniform
+      v = env * (0.5 + 0.5 * Math.abs(Math.sin(beatPhase * 0.7 + i * 1.3)));
+      setBarHeight(miniBars[i], 4 + v * 92);
+    }
+    for (i = 0; i < fullBars.length; i++) {
+      t = i / (fullBars.length - 1);
+      env = t < 0.33
+        ? Math.pow(Math.abs(Math.sin(beatPhase)), 2)
+        : t < 0.66
+          ? Math.pow(Math.abs(Math.sin(beatPhase * 1.5 + 1)), 1.5)
+          : Math.pow(Math.abs(Math.sin(beatPhase * 2.3 + 2)), 1.2);
+      v = env * (0.5 + 0.5 * Math.abs(Math.sin(beatPhase * 0.7 + i * 0.9)));
+      setBarHeight(fullBars[i], 4 + v * 92);
+    }
+  }
+
+  function tick() {
+    if (!isPlaying) { rafId = null; return; }
+    if (mode === 'real') renderReal();
+    else renderPseudo();
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function flatten() {
+    // Paused: settle bars to minimum
+    var i;
+    for (i = 0; i < miniBars.length; i++) setBarHeight(miniBars[i], 4);
+    for (i = 0; i < fullBars.length; i++) setBarHeight(fullBars[i], 4);
+  }
+
+  var EQ = {
+    init: function() {
+      buildBars('miniEq', BAR_COUNT_MINI, miniBars);
+      buildBars('fullEq', BAR_COUNT_FULL, fullBars);
+      // Find the shared audio element
+      audioEl = window.__tscmsSharedAudioEl || document.querySelector('audio');
+      // Resume AudioContext on first user gesture (mobile policy)
+      function onGesture() {
+        if (ctx && ctx.state === 'suspended') ctx.resume().catch(function(){});
+        if (audioEl && isPlaying) tryConnect(audioEl);
+      }
+      ['pointerdown', 'touchend', 'click'].forEach(function(ev){
+        document.addEventListener(ev, onGesture, { passive: true });
+      });
+    },
+    onPlay: function() {
+      isPlaying = true;
+      audioEl = window.__tscmsSharedAudioEl || audioEl || document.querySelector('audio');
+      if (audioEl && mode !== 'real') tryConnect(audioEl);
+      else if (mode === 'none') mode = 'pseudo';
+      if (ctx && ctx.state === 'suspended') ctx.resume().catch(function(){});
+      if (!rafId) rafId = requestAnimationFrame(tick);
+      document.querySelectorAll('.juke-equalizer, .full-juke').forEach(function(el){
+        el.classList.add('is-playing');
+      });
+    },
+    onPause: function() {
+      isPlaying = false;
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      flatten();
+      document.querySelectorAll('.juke-equalizer, .full-juke').forEach(function(el){
+        el.classList.remove('is-playing');
+      });
+    },
+    getMode: function() { return mode; } // 'real' | 'pseudo' | 'none' — for testing
+  };
+
+  window.TSCMSEqualizer = EQ;
+
+  // Auto-init on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', EQ.init);
+  } else {
+    EQ.init();
+  }
+})();
+
+</script>
+<script src="tscms-feedback.js" defer></script></body></html>

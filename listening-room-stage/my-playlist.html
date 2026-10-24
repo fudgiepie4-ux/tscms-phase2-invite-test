@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Playlist — Your Listening Room — TSCMS</title>
+<link rel="stylesheet" href="./tscms-favorites.css">
+<link rel="stylesheet" href="./tscms-legibility.css?v=wave-20261022">
+<link rel="stylesheet" href="./tscms-listening-room.css?v=gate-a-approved-20261023">
+</head><body class="tc-listening-room">
+<main id="tc-fav-playlist-root" class="tc-room">
+  <nav class="tc-room-topline" aria-label="Listening Room navigation">
+    <a class="tc-room-back" href="./">← Back to TSCMS</a>
+    <span class="tc-room-tag">Your listening room</span>
+  </nav>
+  <header class="tc-room-masthead">
+    <span class="tc-room-disc" aria-hidden="true"></span>
+    <div><h1 class="tc-room-title">My Playlist</h1><p class="tc-room-kicker">YOUR LISTENING ROOM</p></div>
+  </header>
+  <section class="tc-room-scene" aria-label="Illustrated wooden record crate">
+    <img id="tc-room-art-filled" class="tc-room-art" src="./assets/listening-room-crate-filled.svg" alt="" aria-hidden="true" hidden>
+    <img id="tc-room-art-empty" class="tc-room-art" src="./assets/listening-room-crate-empty.svg" alt="" aria-hidden="true">
+    <div class="tc-room-sign" aria-hidden="true">TSCMS<br>RADIO</div>
+    <p class="tc-room-wall-note" aria-hidden="true">SAME SONGS<br>A LITTLE CLOSER<br>TO HOME ♥</p>
+    <p id="tc-fav-crate-count" class="tc-room-plaque" hidden></p>
+  </section>
+  <div id="tc-room-action-holder" class="tc-room-action-holder" aria-label="Listening Room playback controls"></div>
+  <section class="tc-room-library" aria-label="Your saved records">
+    <div id="tc-room-tools" class="tc-room-tools" hidden>
+      <label class="tc-room-search">
+        <span class="tc-room-search-icon" aria-hidden="true">⌕</span>
+        <span class="tc-sr-only">Search only your saved songs by title or artist</span>
+        <input id="tc-room-search" type="search" placeholder="Search your crate…" autocomplete="off">
+      </label>
+      <div class="tc-room-sortbar">
+        <label class="tc-sr-only" for="tc-room-sort">Sort saved songs</label>
+        <select id="tc-room-sort">
+          <option value="newest">Newest Saved</option>
+          <option value="title">Title A–Z</option>
+          <option value="artist">Artist A–Z</option>
+        </select>
+        <div class="tc-room-view" role="group" aria-label="Saved song layout">
+          <button id="tc-room-list-view" type="button" aria-label="List view" aria-pressed="true">☷</button>
+          <button id="tc-room-grid-view" type="button" aria-label="Grid view" aria-pressed="false">▦</button>
+        </div>
+      </div>
+    </div>
+    <p id="tc-fav-playlist-message" role="status" aria-live="polite">Checking your sign-in…</p>
+    <div id="tc-fav-playlist-list"></div>
+  </section>
+</main>
+<!-- No competing player, bottom radio console, or additional radio engine. -->
+<script src="./tscms-public-runtime.js" defer></script>
+<script src="./tscms-legibility.js?v=wave-20261022" defer></script>
+<script type="module" src="./tscms-favorites.js"></script>
+</body></html>

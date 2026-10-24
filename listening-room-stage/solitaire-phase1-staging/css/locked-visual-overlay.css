@@ -1,0 +1,239 @@
+/* TSCMS: FUDGIE-APPROVED VISUAL MASTER | Oct 16, 2026 | STAGING ONLY
+   All CSS percentages are coordinates on locked 941 x 1672 art. 
+   This CSS is appended AFTER Cherish's unmodified v5 live-cards.css.
+   Do NOT paint/edit/replace the approved master image. */
+html,body { background: #100705; }
+.main { max-width: 941px; padding: 0; overflow: visible; }
+.stage { aspect-ratio: 941 / 1672; overflow: hidden; position: relative; }
+.stage-art { width:100%; height:100%; object-fit:fill; }
+.integration-warning {display:none!important;} /* staging reminder remains below art */
+.note {display:block; max-width:941px; padding:8px 12px 12px; color:#d9b991;background:#241208}
+.stage .engine-slot-placeholder { position:absolute;z-index:4;pointer-events:auto!important; cursor:pointer;border:0!important;border-radius:0; box-shadow:none;overflow:visible; }
+.stage .engine-slot-placeholder.empty { cursor:pointer; }
+/* Foundations: artwork order ♠ ♥ ♣ ♦, engine order ♠ ♥ ♦ ♣.
+   IDs 2 and 3 therefore appear in reversed visual positions. */
+#stock-pile {left:4.9%!important;top:37.45%!important;width:12.75%!important;height:10.0%!important}
+#waste-pile {left:19.20%!important;top:37.45%!important;width:12.65%!important;height:10.0%!important}
+#foundation-0 {left:40.35%!important;top:37.45%!important;width:12.15%!important;height:10.0%!important}
+#foundation-1 {left:53.55%!important;top:37.45%!important;width:12.15%!important;height:10.0%!important}
+#foundation-2 {left:81.75%!important;top:37.45%!important;width:12.15%!important;height:10.0%!important}
+#foundation-3 {left:67.10%!important;top:37.45%!important;width:12.15%!important;height:10.0%!important}
+#tableau-0 {left:3.15%!important;top:52.02%!important;width:12.45%!important;height:15.00%!important}
+#tableau-1 {left:16.65%!important;top:52.02%!important;width:12.45%!important;height:15.00%!important}
+#tableau-2 {left:30.42%!important;top:52.02%!important;width:12.45%!important;height:15.00%!important}
+#tableau-3 {left:43.92%!important;top:52.02%!important;width:12.45%!important;height:15.00%!important}
+#tableau-4 {left:57.45%!important;top:52.02%!important;width:12.45%!important;height:15.00%!important}
+#tableau-5 {left:71.10%!important;top:52.02%!important;width:12.45%!important;height:15.00%!important}
+#tableau-6 {left:84.55%!important;top:52.02%!important;width:12.45%!important;height:15.00%!important}
+/* Live cards should cover their corresponding painted EMPTY positions.
+   Tableau fans are bounded independently by locked-visual-adapter.js. */
+.stage .live-card {width:100%;aspect-ratio:5/7;border-radius:4px;min-width:0;z-index:1;}
+.stage .live-card .card-text .corner {font-size:clamp(8px,1.8vw,19px)}
+.stage .live-card .card-text .center {font-size:clamp(13px,3.1vw,28px)}
+/* HUD overlays painted numerical values, NOT the decorative label/panel. */
+#timer-display,#move-counter {
+  position:absolute!important;right:auto!important;left:auto!important;top:auto!important;
+  z-index:8!important;margin:0!important;padding:0 1px!important;
+  font-family:Georgia,serif!important;font-size:clamp(8px,1.8vw,18px)!important;
+  font-weight:bold!important;line-height:1.4!important;text-align:center!important;
+  color:#2a160b!important;background:#d7ae7a!important;border:0!important;border-radius:1px!important;
+  box-shadow:none!important;pointer-events:none!important;
+}
+#timer-display {left:84.0%!important;top:8.28%!important;width:13.5%!important;}
+#move-counter {left:88.3%!important;top:11.72%!important;width:5.5%!important;}
+/* The EXIT and hamburger controls are actual invisible buttons above their artwork. */
+#btn-exit,#btn-menu {
+  position:absolute!important;display:block!important;opacity:1!important;top:0.66%!important;
+  z-index:11!important;appearance:none!important;border:0!important;
+  background:transparent!important;color:transparent!important;min-height:44px!important;
+  padding:0!important;cursor:pointer!important;touch-action:manipulation!important;
+}
+#btn-exit {left:68.45%!important;width:auto!important;height:4.55%!important;right:max(9.25%,44px)!important;}
+#btn-menu {left:auto!important;width:max(9.25%,44px)!important;height:4.55%!important;right:0!important;}
+#btn-exit:focus-visible,#btn-menu:focus-visible {outline:3px solid #ffe0a0!important;outline-offset:-3px!important}
+/* The four wooden controls EXIST IN THE IMAGE. No second painted row. */
+.bottom-rail {position:absolute!important;left:0!important;right:0!important;top:82.04%!important;
+  z-index:10!important;height:6.4%!important;padding:0!important;border:0!important;
+  background:none!important;box-shadow:none!important;pointer-events:none!important;}
+.bottom-rail::before {display:none!important}
+.primary-controls {position:relative!important;display:block!important;width:100%!important;height:100%!important;}
+.primary-controls .wood-btn {position:absolute!important;top:0!important;height:100%!important;min-height:0!important;
+  border:none!important;border-radius:0!important;padding:0!important;
+  background:transparent!important;box-shadow:none!important;color:transparent!important;
+  text-shadow:none!important;font-size:0!important;opacity:1!important;pointer-events:auto!important;}
+.primary-controls .wood-btn .icon,.primary-controls .wood-btn .word {visibility:hidden!important}
+#btn-undo {left:4.9%!important;width:20.9%!important}
+#btn-hint {left:28.1%!important;width:20.4%!important}
+#btn-pause {left:51.0%!important;width:20.3%!important}
+#btn-newgame {left:73.5%!important;width:21.2%!important}
+.primary-controls .wood-btn:focus-visible {outline:3px solid #ffe0a0!important;outline-offset:-3px!important;}
+@media (max-width:370px) {.primary-controls .wood-btn{min-height:0!important}}
+/* Never let the old CSS override the stage clipping in the new art; fan bounded by JS. */
+.stage {overflow:hidden!important;}
+/* Beat v5 selector #timer-display.engine-value-pending specificity. */
+.stage #timer-display.engine-value-pending {left:84.0%!important;right:auto!important;top:8.28%!important}
+.stage #move-counter.engine-value-pending {left:88.3%!important;right:auto!important;top:11.72%!important}
+#toast {font:14px system-ui;}
+
+/* Phase 1B: Viewer card fallback - clean Western-style readable card
+   Used when card art PNG is not yet uploaded. High contrast, large text. */
+#fullCard {
+  width: 200px;
+  height: 280px;
+  margin: 0 auto;
+  background: #faf8f0; /* ivory, not cream-on-cream */
+  border: 3px solid #8b6914; /* aged gold */
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+#fullCard .viewer-fallback {
+  text-align: center;
+  font-family: Georgia, serif;
+  padding: 16px;
+}
+#fullCard .viewer-fallback .rank {
+  font-size: 64px;
+  font-weight: bold;
+  line-height: 1;
+}
+#fullCard .viewer-fallback .rank.red { color: #a00000; }
+#fullCard .viewer-fallback .rank.black { color: #1a1a1a; }
+#fullCard .viewer-fallback .suit {
+  font-size: 48px;
+  line-height: 1.2;
+}
+#fullCard .viewer-fallback .suit.red { color: #a00000; }
+#fullCard .viewer-fallback .suit.black { color: #1a1a1a; }
+#fullCard .viewer-fallback .joker-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #8b6914;
+  margin-top: 8px;
+}
+#fullCard img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Phase 1B: Victory overlay */
+#victory-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 99999;
+  background: rgba(0, 0, 0, 0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+#victory-screen .victory-panel {
+  background: linear-gradient(180deg, #3a2410, #2a1808);
+  border: 3px solid #c9a227;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 90%;
+  width: 400px;
+  text-align: center;
+  color: #f5e6c8;
+}
+#victory-screen h2 {
+  font-size: 28px;
+  margin: 0 0 8px 0;
+  color: #c9a227;
+}
+#victory-screen .victory-sub {
+  font-size: 16px;
+  margin: 0 0 20px 0;
+  opacity: 0.9;
+}
+#victory-screen .victory-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+#victory-screen .p-btn {
+  padding: 12px 20px;
+  font-size: 16px;
+  background: #5a3a1a;
+  color: #f5e6c8;
+  border: 2px solid #c9a227;
+  border-radius: 8px;
+  cursor: pointer;
+}
+#victory-screen .p-btn:hover {
+  background: #6a4a2a;
+}
+#victory-screen .p-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+#dicey-result {
+  margin: 20px 0;
+  padding: 16px;
+  background: rgba(201, 162, 39, 0.1);
+  border: 1px solid #c9a227;
+  border-radius: 8px;
+}
+#dicey-result .dicey-label {
+  font-size: 14px;
+  color: #c9a227;
+  margin-bottom: 8px;
+}
+#dicey-result .dicey-member {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+#dicey-result .dicey-song {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 8px;
+  word-break: break-word;
+}
+#dicey-result .dicey-link {
+  color: #c9a227;
+  text-decoration: underline;
+}
+
+/* Phase 1B v6: Victory completion time */
+#victory-screen .victory-time {
+  font-size: 18px;
+  color: #c9a227;
+  margin: 8px 0 0 0;
+  font-weight: bold;
+}
+
+/* Viewer correction v9 (Clara handoff 2026-10-16) — apply ONLY when the full PNG is loaded.
+   Do not change approved PNGs; keep ivory/high-contrast fallback unchanged. */
+#fullCard.art-loaded {
+  width: auto;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  max-width: calc(100vw - 70px);
+  aspect-ratio: auto;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  overflow: visible;
+  display: block;
+}
+#fullCard.art-loaded img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(82vw, 340px);
+  max-height: calc(100dvh - 190px);
+  aspect-ratio: auto;
+  object-fit: contain;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, .55);
+}
