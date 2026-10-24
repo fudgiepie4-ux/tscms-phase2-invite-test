@@ -248,9 +248,9 @@ body.tc-listening-room {
    never calls dayPlay anymore. */
 .tc-listening-room .tc-console{position:relative}
 .tc-listening-room .tc-console img{position:relative;z-index:1}
-.tc-eq-overlay{position:absolute;z-index:2;left:21.5%;top:16%;width:41%;height:37%;
+.tc-eq-overlay{position:absolute;z-index:2;left:21.5%;top:15%;width:41%;height:40%;
   display:flex;align-items:flex-end;gap:2.5%;pointer-events:none}
-.tc-eq-overlay i{flex:1 1 0;display:block;height:16%;border-radius:2px 2px 0 0;
+.tc-eq-overlay i{flex:1 1 0;display:block;height:85%;border-radius:2px 2px 0 0;
   background:linear-gradient(180deg,#ffe9a0,#ffb347 60%,#ff7a3c);opacity:.75;
   transform-origin:bottom;animation:tc-eq-bounce 1.1s ease-in-out infinite;
   animation-play-state:paused}
@@ -308,3 +308,7 @@ body.tc-listening-room {
   background:linear-gradient(180deg,#221305,#170b03 60%,#120801)}
 .tc-eq-overlay{z-index:3}
 .tc-transport{z-index:4}
+
+/* EQ bars must read as a real equalizer: tall bars while playing, low
+   flat bars while idle (never the frozen mid-bounce frame). */
+.tc-console:not(.tc-console-on) .tc-eq-overlay i{animation:none;transform:scaleY(.22)}
