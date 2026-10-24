@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Rye&family=Roboto+Slab:wght@500;600;700;800&display=swap');
+
 /* TSCMS Listening Room — Oct 23 approved phone reference.
    All lettering, count, songs, labels, and controls are real accessible HTML.
    Artwork: exact Fudgie-approved 941×1672 phone PNG (sha256 03f3e35a16e36abb8927b5d199b7017c58efffecb455cd68c37ae3ce9e927b8a). No regenerated or stretched SVG.
@@ -312,3 +314,43 @@ body.tc-listening-room {
 /* EQ bars must read as a real equalizer: tall bars while playing, low
    flat bars while idle (never the frozen mid-bounce frame). */
 .tc-console:not(.tc-console-on) .tc-eq-overlay i{animation:none;transform:scaleY(.22)}
+
+/* Listening Room type polish — TEST STAGE ONLY, 2026-10-24.
+   Typography on REAL scene text only. No geometry, player,
+   console, equalizer, radar control or shared-site styles. */
+.tc-listening-room .tc-fill-title{
+  font-family:'Rye','Rockwell','Bookman Old Style',Georgia,serif;
+  font-weight:400;
+  font-size:clamp(1.42rem,6.35vw,2.38rem);
+  letter-spacing:.006em;
+  text-shadow:0 2px 1px #1d0d05,0 0 9px rgba(21,8,3,.48);
+}
+.tc-listening-room .tc-fill-title span{
+  font-family:'Roboto Slab','Rockwell',Georgia,serif;
+  font-weight:800;
+  letter-spacing:.15em;
+  text-shadow:0 1px 2px #210b04;
+}
+.tc-listening-room .tc-fill-count{
+  font-family:'Roboto Slab','Rockwell','Bookman Old Style',Georgia,serif;
+  font-weight:800;
+  letter-spacing:.01em;
+  text-shadow:0 1px 0 rgba(255,243,197,.7),0 -1px 1px rgba(36,16,2,.36);
+}
+.tc-listening-room .tc-fill-actions button{
+  font-family:'Roboto Slab','Rockwell','Bookman Old Style',Georgia,serif;
+  font-weight:800;
+  letter-spacing:0;
+  text-shadow:0 1px 2px rgba(0,0,0,.65),0 0 2px rgba(255,212,142,.28);
+}
+.tc-listening-room .tc-fill-tools .tc-room-search input{
+  font-family:'Roboto Slab','Rockwell',Georgia,serif;
+  font-style:italic;
+  font-weight:600;
+  letter-spacing:.005em;
+}
+.tc-listening-room .tc-fill-tools .tc-room-sortbar select{
+  font-family:'Roboto Slab','Rockwell',Georgia,serif;
+  font-weight:700;
+  letter-spacing:.005em;
+}
