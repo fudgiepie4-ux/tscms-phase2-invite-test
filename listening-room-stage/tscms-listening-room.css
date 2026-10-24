@@ -239,3 +239,44 @@ body.tc-listening-room {
   text-shadow:0 1px 2px rgba(0,0,0,.65)}
 .tc-console{margin:0;line-height:0;border:1px solid #542c19;border-top:0}
 .tc-console img{display:block;width:100%;height:auto}
+
+/* ROOM PLAYER FIX (Oct 24 2026, Fudgie's morning notes):
+   The console is now the control. Real buttons sit over the painted
+   transport circles; the equalizer dances while music plays; the
+   buttons glow warm while the radio is on. The shared dayPlay white
+   bar can never paint on this page (last rule), because the room
+   never calls dayPlay anymore. */
+.tc-listening-room .tc-console{position:relative}
+.tc-listening-room .tc-console img{position:relative;z-index:1}
+.tc-eq-overlay{position:absolute;z-index:2;left:21.5%;top:16%;width:41%;height:37%;
+  display:flex;align-items:flex-end;gap:2.5%;pointer-events:none}
+.tc-eq-overlay i{flex:1 1 0;display:block;height:16%;border-radius:2px 2px 0 0;
+  background:linear-gradient(180deg,#ffe9a0,#ffb347 60%,#ff7a3c);opacity:.75;
+  transform-origin:bottom;animation:tc-eq-bounce 1.1s ease-in-out infinite;
+  animation-play-state:paused}
+.tc-eq-overlay i:nth-child(2n){animation-duration:.9s;animation-delay:.12s}
+.tc-eq-overlay i:nth-child(3n){animation-duration:1.3s;animation-delay:.24s}
+.tc-eq-overlay i:nth-child(4n){animation-duration:.8s;animation-delay:.05s}
+.tc-eq-overlay i:nth-child(5n){animation-duration:1.5s;animation-delay:.3s}
+@keyframes tc-eq-bounce{0%,100%{transform:scaleY(.35)}30%{transform:scaleY(1)}55%{transform:scaleY(.6)}80%{transform:scaleY(.9)}}
+.tc-transport{position:absolute;z-index:3;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.tc-console-btn{position:absolute;display:flex;align-items:center;justify-content:center;
+  background:transparent;border:0;border-radius:50%;color:transparent;cursor:pointer;
+  pointer-events:auto;padding:0}
+.tc-console-btn:focus-visible{outline:3px solid #ffdc88;outline-offset:2px}
+.tc-console-prev{left:63.5%;top:22.3%;width:11.5%;height:59.3%}
+.tc-console-next{left:86.5%;top:22.3%;width:11.5%;height:59.3%}
+.tc-console-play{left:74%;top:13.3%;width:15%;height:77.3%}
+.tc-console-play span{display:flex;align-items:center;justify-content:center;
+  width:86%;height:86%;border-radius:50%;color:#fff6dd;
+  background:radial-gradient(circle at 50% 42%,#1d1d1d,#000 72%);
+  font-size:clamp(18px,6.5vw,40px);line-height:1;
+  text-shadow:0 0 8px rgba(255,220,140,.6)}
+/* Powered on: warm light around the buttons, equalizer bright + dancing. */
+.tc-console-on .tc-console-btn{box-shadow:0 0 10px 2px rgba(255,196,92,.85),0 0 26px 8px rgba(255,170,60,.45)}
+.tc-console-on .tc-console-play span{color:transparent;background:transparent;text-shadow:none}
+.tc-console-on .tc-eq-overlay i{opacity:1;animation-play-state:running;
+  filter:drop-shadow(0 0 4px rgba(255,190,90,.9))}
+/* Safety net: the shared dayPlay bar must never paint on this page. */
+.tc-listening-room #tscms-song-player{display:none!important}
+.tc-fav-row-playing{outline:2px solid rgba(255,210,120,.65);box-shadow:0 0 14px rgba(255,190,90,.35)}

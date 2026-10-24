@@ -20,6 +20,7 @@ const currentCount=()=>STATE.items.length;
 function event(name,detail={}){document.dispatchEvent(new CustomEvent(name,{detail}));}
 function notice(msg){const p=byId('tc-fav-playlist-message');if(p)p.textContent=msg;}
 function strip(){
+  if(roomAudio&&!roomAudio.paused)roomAudio.pause();roomNow=null;roomQueue=null;roomSeq=false;
   each('.tc-fav-heart,.tc-fav-door,.tc-fav-toolbar,.tc-fav-toast,.tc-fav-qj-link',el=>el.remove());
   byId('tscms-v7-modal-host')?.shadowRoot?.getElementById('tc-fav-game-controls')?.remove();
   if(lastGameRefresh){document.removeEventListener('tscms:jukebox:trackchange',lastGameRefresh);lastGameRefresh=null;}
@@ -322,7 +323,7 @@ function playlist(){
   if(emptyArt)emptyArt.hidden=!!count;
   if(plaque){plaque.textContent='Your crate holds '+count+' '+(count===1?'record':'records');plaque.hidden=false;}
   const toolbar=byId('tc-room-tools');if(toolbar)toolbar.hidden=!count;
-  installRoomTools();
+  installRoomTools();roomConsoleInit();
   notice(count?count+' songs saved, newest first.':'No saved songs yet — tap the heart on any song you love and it’ll be waiting for you here.');
   if(!count){
     const empty=document.createElement('section');empty.className='tc-room-empty';
@@ -370,29 +371,83 @@ function playlist(){
   }
   updateRoomLinks();applyRoomFilters();void indexExtras();
 }
+/* ROOM PLAYER (Oct 24 2026, Fudgie's morning notes): the room owns its
+   audio. dayPlay's white bar never appears here; the console transport
+   + equalizer glow are the control. The sitewide station pauses itself
+   when this plays and pauses this when it starts (its own
+   coordination), so the two never talk over each other. */
+let roomAudio=null,roomNow=null,roomQueue=null,roomIndex=-1,roomSeq=false;
+function roomPlayer(){
+  if(roomAudio)return roomAudio;
+  const a=document.createElement('audio');a.id='tc-room-player';a.preload='none';a.hidden=true;document.body.append(a);
+  a.addEventListener('play',()=>roomSyncState(true));
+  a.addEventListener('pause',()=>roomSyncState(false));
+  a.addEventListener('ended',()=>{if(roomSeq)roomStep(1);else roomSyncState(false);});
+  a.addEventListener('error',()=>{roomPlayError(roomNow?.row||null);if(roomSeq)roomStep(1);});
+  roomAudio=a;return a;
+}
+function roomRowFor(song){
+  const root=byId('tc-fav-playlist-list');if(!root)return null;
+  return [...root.querySelectorAll('.tc-fav-row')].find(el=>el.dataset.stream===song.play_url)||null;
+}
+function roomSyncState(playing){
+  const fig=byId('tc-room-console');if(fig)fig.classList.toggle('tc-console-on',playing);
+  const playBtn=fig?.querySelector('.tc-console-play');
+  if(playBtn)playBtn.setAttribute('aria-label',playing?'Pause':'Play');
+  document.querySelectorAll('.tc-fav-row').forEach(r=>{
+    const b=r.querySelector('.tc-fav-row-actions .tc-fav-mode');
+    const on=playing&&roomNow&&r.dataset.stream===roomNow.song.play_url;
+    r.classList.toggle('tc-fav-row-playing',!!on);
+    if(b){b.textContent=on?'⏸ Pause':'▶ Play';
+      b.setAttribute('aria-label',(on?'Pause ':'Play ')+(r.dataset.title||'this song')+(r.dataset.artist?' by '+r.dataset.artist:''));}
+  });
+}
+function roomPlayError(row){
+  const msg="This one can't play right now";
+  if(row){let p=row.querySelector('.tc-fav-play-error');if(!p){p=document.createElement('p');p.className='tc-fav-play-error';p.setAttribute('role','status');row.append(p);}p.textContent=msg;}
+  else announce(msg);
+}
+function roomStart(song,seq){
+  const a=roomPlayer();roomNow={song,row:roomRowFor(song)};roomSeq=seq;
+  a.src=song.play_url;
+  a.play().catch(()=>{roomPlayError(roomNow.row);});
+}
 function playSong(song,button,row){
-  if(!window.dayPlay){announce('TSCMS player is not ready.');return;}
-  const prior=byId('tscms-song-player');
-  const onError=()=>{
-    const msg="This one can't play right now";
-    if(row){let p=row.querySelector('.tc-fav-play-error');if(!p){p=document.createElement('p');p.className='tc-fav-play-error';p.setAttribute('role','status');row.append(p);}p.textContent=msg;}
-    else announce(msg);
-  };
-  if(prior)prior.addEventListener('error',onError,{once:true});
-  window.dayPlay(button);
-  const current=byId('tscms-song-player');
-  if(current && current!==prior)current.addEventListener('error',onError,{once:true});
+  const a=roomPlayer();
+  if(roomNow&&roomNow.song.play_url===song.play_url){
+    if(!a.paused){a.pause();return;}
+    a.play().catch(()=>roomPlayError(roomNow.row));return;
+  }
+  roomStart(song,false);
 }
 function playSequence(){
-  const queue=[...source()];if(!queue.length)return;playlistQueue=queue;
-  let index=0;
-  function next(){if(!playlistQueue||index>=queue.length){playlistQueue=null;return;}
-    const song=queue[index++];const button=byId('tc-fav-play-seq')||document.createElement('button');button.id='tc-fav-play-seq';button.dataset.stream=song.play_url;button.dataset.title=song.title;
-    button.hidden=true;if(!button.isConnected)document.body.append(button);playSong(song,button,null);
-    setTimeout(()=>{const audio=byId('tscms-song-player');if(audio){audio.addEventListener('ended',next,{once:true});audio.addEventListener('error',()=>{announce("This one can't play right now");next();},{once:true});}},0);
-  }
-  next();
+  const queue=[...source()];if(!queue.length)return;
+  roomQueue=queue;roomIndex=-1;roomStep(1);
 }
+function roomStep(dir){
+  if(!roomQueue)return;roomIndex+=dir;
+  if(roomIndex<0)roomIndex=0;
+  if(roomIndex>=roomQueue.length){roomQueue=null;roomSeq=false;roomSyncState(false);return;}
+  roomStart(roomQueue[roomIndex],true);
+}
+function roomConsoleInit(){
+  const fig=byId('tc-room-console');if(!fig||fig.dataset.wired)return;fig.dataset.wired='1';
+  fig.querySelector('.tc-console-play')?.addEventListener('click',()=>{
+    const a=roomPlayer();
+    if(roomNow&&!a.paused){a.pause();return;}
+    if(roomNow&&a.paused&&a.src){a.play().catch(()=>roomPlayError(roomNow.row));return;}
+    if(source().length)playSequence();
+  });
+  fig.querySelector('.tc-console-prev')?.addEventListener('click',()=>{
+    if(roomQueue)roomStep(-1);
+    else if(roomNow){const list=source();const i=list.findIndex(s=>s.play_url===roomNow.song.play_url);if(i>0)roomStart(list[i-1],false);}
+  });
+  fig.querySelector('.tc-console-next')?.addEventListener('click',()=>{
+    if(roomQueue)roomStep(1);
+    else if(roomNow){const list=source();const i=list.findIndex(s=>s.play_url===roomNow.song.play_url);if(i>=0&&i<list.length-1)roomStart(list[i+1],false);}
+  });
+}
+
 function gamehouse(){
   const J=window.TSCMSJukebox;if(!J)return;
   const host=byId('tscms-v7-modal-host');if(!host?.shadowRoot)return;

@@ -4,7 +4,7 @@
 <title>My Playlist — Your Listening Room — TSCMS</title>
 <link rel="stylesheet" href="./tscms-favorites.css">
 <link rel="stylesheet" href="./tscms-legibility.css?v=wave-20261022">
-<link rel="stylesheet" href="./tscms-listening-room.css?v=fillin-20261024">
+<link rel="stylesheet" href="./tscms-listening-room.css?v=roomplayer-20261024">
 </head><body class="tc-listening-room">
 <main id="tc-fav-playlist-root" class="tc-room">
   <nav class="tc-room-topline" aria-label="Listening Room navigation">
@@ -40,8 +40,14 @@
     <p id="tc-fav-playlist-message" role="status" aria-live="polite">Checking your sign-in…</p>
     <div id="tc-fav-playlist-list"></div>
   </section>
-  <figure class="tc-console">
+  <figure class="tc-console" id="tc-room-console">
     <img src="./assets/lr-console.png" alt="Wooden stereo console with an equalizer display — TSCMS Radio">
+    <div class="tc-eq-overlay" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="tc-transport" role="group" aria-label="Console playback controls">
+      <button type="button" class="tc-console-btn tc-console-prev" aria-label="Previous track">⏮</button>
+      <button type="button" class="tc-console-btn tc-console-play" aria-label="Play or pause"><span aria-hidden="true">▶</span></button>
+      <button type="button" class="tc-console-btn tc-console-next" aria-label="Next track">⏭</button>
+    </div>
   </figure>
 </main>
 <!-- No competing player, bottom radio console, or additional radio engine. -->
