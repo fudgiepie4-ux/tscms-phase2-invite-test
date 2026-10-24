@@ -280,3 +280,31 @@ body.tc-listening-room {
 /* Safety net: the shared dayPlay bar must never paint on this page. */
 .tc-listening-room #tscms-song-player{display:none!important}
 .tc-fav-row-playing{outline:2px solid rgba(255,210,120,.65);box-shadow:0 0 14px rgba(255,190,90,.35)}
+
+/* THREE NOTES (Oct 24 2026, Fudgie's morning screenshots):
+   (1) The painted red plaque at the scene's top right was blank — it
+   now carries a live ON AIR / OFF AIR sign tied to playback.
+   (3) The paused center console button was a solid black disc — it
+   now has a warm brass face like its neighbors. */
+.tc-fill-onair{position:absolute;left:84.1%;top:2.2%;width:12.3%;height:15.2%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  color:#ffe9b0;font:700 clamp(9px,2.6vw,13px) Georgia,serif;text-align:center;
+  text-shadow:0 1px 3px #000;pointer-events:none;z-index:4}
+.tc-onair-dot{width:8px;height:8px;border-radius:50%;background:#7a4a44;box-shadow:none}
+.tc-fill-onair .tc-onair-on{display:none}
+.tc-room-playing .tc-fill-onair .tc-onair-on{display:inline}
+.tc-room-playing .tc-fill-onair .tc-onair-off{display:none}
+.tc-room-playing .tc-onair-dot{background:#ff5a4e;box-shadow:0 0 8px 2px rgba(255,90,78,.9);
+  animation:tc-onair-pulse 1.4s ease-in-out infinite}
+@keyframes tc-onair-pulse{0%,100%{box-shadow:0 0 6px 1px rgba(255,90,78,.7)}50%{box-shadow:0 0 12px 4px rgba(255,90,78,.95)}}
+.tc-console-play span{background:radial-gradient(circle at 50% 38%,#8a5a24,#4a2c12 55%,#241407);
+  border:1px solid #d6a85e}
+
+/* NOTE 4 (Oct 24 2026, Fudgie's video): only ONE equalizer may show —
+   the working one. A dark backdrop hides the painted bars completely;
+   the animated bars dance on top of it. */
+.tc-eq-backdrop{position:absolute;z-index:2;left:20.5%;top:13.5%;width:43%;height:43%;
+  border-radius:8px;pointer-events:none;
+  background:linear-gradient(180deg,#221305,#170b03 60%,#120801)}
+.tc-eq-overlay{z-index:3}
+.tc-transport{z-index:4}

@@ -392,6 +392,7 @@ function roomRowFor(song){
 }
 function roomSyncState(playing){
   const fig=byId('tc-room-console');if(fig)fig.classList.toggle('tc-console-on',playing);
+  const root=byId('tc-fav-playlist-root');if(root)root.classList.toggle('tc-room-playing',playing);
   const playBtn=fig?.querySelector('.tc-console-play');
   if(playBtn)playBtn.setAttribute('aria-label',playing?'Pause':'Play');
   document.querySelectorAll('.tc-fav-row').forEach(r=>{
