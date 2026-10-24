@@ -162,3 +162,12 @@ body.tc-listening-room {
  .tc-room-view button{width:42px}
  .tc-room-action-holder button{font-size:clamp(.79rem,3.25vw,.93rem)}
 }
+
+/* Clean theme background (Fudgie's theme-background method, Oct 24 2026):
+   the approved background is shown WHOLE at page width — no window, no
+   crop, no zoom. Real content is filled in over/below it in the next pass.
+   The .tc-room-scene / .tc-room-art / .tc-room-plaque rules above are
+   retired with the old markup and match nothing on the staged page. */
+.tc-room-bg{margin:0;border:1px solid #542c19;background:#1d100b;
+  box-shadow:0 5px 10px #090403;line-height:0}
+.tc-room-bg-img{display:block;width:100%;height:auto}
